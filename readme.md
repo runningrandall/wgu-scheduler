@@ -1,2 +1,2 @@
 # WGU-scheduling
-WGU Scheduling project written in Java
+WGU Scheduling project written in Java:w
