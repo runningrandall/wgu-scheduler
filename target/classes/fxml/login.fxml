@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -14,7 +15,7 @@
         <ColumnConstraints hgrow="ALWAYS" maxWidth="Infinity" minWidth="200" prefWidth="200" />
     </columnConstraints>
     <!-- Add Header Label -->
-    <Label text="Scheduler Login" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.rowSpan="1">
+    <Label text="%login.header" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.rowSpan="1">
         <font>
             <Font name="Arial" size="24" />
         </font>
@@ -23,15 +24,15 @@
         </GridPane.margin>
     </Label>
     <!-- Username Label -->
-    <Label text="Username : " GridPane.columnIndex="0" GridPane.rowIndex="2" />
+    <Label text="%login.username" GridPane.columnIndex="0" GridPane.rowIndex="2" />
     <!-- Username Field -->
     <TextField fx:id="username" prefHeight="40" GridPane.columnIndex="1" GridPane.rowIndex="2" />
     <!-- Password Label -->
-    <Label text="Password : " GridPane.columnIndex="0" GridPane.rowIndex="4" />
+    <Label text="%login.password" GridPane.columnIndex="0" GridPane.rowIndex="4" />
     <!-- Password Field -->
     <PasswordField fx:id="password" prefHeight="40" GridPane.columnIndex="1" GridPane.rowIndex="4" />
     <!-- Add Submit Button -->
-    <Button fx:id="loginButton" defaultButton="true" onAction="#login" prefHeight="40" prefWidth="100" text="Submit" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.rowSpan="1">
+    <Button fx:id="loginButton" defaultButton="true" onAction="#login" prefHeight="40" prefWidth="100" text="%login.submit" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.rowSpan="1">
         <GridPane.margin>
             <Insets bottom="20" left="0" right="0" top="20" />
         </GridPane.margin>
@@ -39,7 +40,7 @@
          <Font size="16.0" />
       </font>
     </Button>
-   <Label text="System Timezone:" />
+   <Label text="%login.timezone" />
    <Label id="timezone" fx:id="timezoneLabel" GridPane.columnIndex="1" />
    <rowConstraints>
       <RowConstraints minHeight="10.0" prefHeight="30.0" />
