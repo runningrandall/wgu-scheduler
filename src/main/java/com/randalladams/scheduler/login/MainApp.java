@@ -1,4 +1,4 @@
-package com.randalladams.login;
+package com.randalladams.scheduler.login;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

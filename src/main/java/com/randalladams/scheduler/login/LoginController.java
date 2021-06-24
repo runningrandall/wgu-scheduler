@@ -1,8 +1,8 @@
-package com.randalladams.login;
+package com.randalladams.scheduler.login;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -22,7 +22,7 @@ public class LoginController {
   private Button loginButton;
 
   @FXML
-  public void login(ActionEvent event) throws SQLException {
+  public void login() throws SQLException {
 
     Window owner = loginButton.getScene().getWindow();
 
@@ -41,15 +41,19 @@ public class LoginController {
     String usernameText = username.getText();
     String passwordText = password.getText();
 
-    LoginDao loginDao = new LoginDao();
-    boolean isValidLogin =  loginDao.isValidLogin(usernameText, passwordText);
+    LoginService loginService = new LoginService();
+    try {
+      boolean isValidLogin = loginService.isValidLogin(usernameText, passwordText);
 
-    if(isValidLogin) {
-      showAlert(Alert.AlertType.CONFIRMATION, owner, "Login Successful!",
-        "Welcome " + usernameText);
-    } else {
-      showAlert(Alert.AlertType.ERROR, owner, "Login Failed!",
-        "Incorrect credentials for username:  " + usernameText);
+      if (isValidLogin) {
+        showAlert(Alert.AlertType.CONFIRMATION, owner, "Login Successful!",
+          "Welcome " + usernameText);
+      } else {
+        showAlert(Alert.AlertType.ERROR, owner, "Login Failed!",
+          "Incorrect credentials for username:  " + usernameText);
+      }
+    } catch (NoSuchAlgorithmException e) {
+      System.out.println("Error trying to decrypt password" + e.getMessage());
     }
   }
 
