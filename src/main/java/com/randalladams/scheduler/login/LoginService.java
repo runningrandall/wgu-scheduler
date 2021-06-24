@@ -1,12 +1,10 @@
 package com.randalladams.scheduler.login;
 
 import com.randalladams.scheduler.util.Database;
-import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
-import java.util.Objects;
-import java.util.Properties;
+import java.time.ZoneId;
 
 // TODO: extend dao class
 public class LoginService {
@@ -35,6 +33,10 @@ public class LoginService {
       return resultSet.next();
   }
 
+  public String getTimezoneId() {
+    ZoneId zone = ZoneId.systemDefault();
+    return zone.toString();
+  }
   /**
    * function to encrypt the password text
    * @param password - the user's password
