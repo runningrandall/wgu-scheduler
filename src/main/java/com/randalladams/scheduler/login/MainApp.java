@@ -1,5 +1,6 @@
 package com.randalladams.scheduler.login;
 
+import com.randalladams.scheduler.util.SceneManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,17 +13,10 @@ import java.util.ResourceBundle;
 
 public class MainApp extends Application {
 
+  private SceneManager sm = new SceneManager();
   @Override
   public void start(Stage stage) throws Exception {
-    // get and set the locale
-    String lang = System.getProperty("user.language");
-    Locale locale = new Locale(lang, lang.toUpperCase());
-    ResourceBundle bundle = ResourceBundle.getBundle("i18n", locale);
-    FXMLLoader fxmlLoader = new FXMLLoader();
-    Parent root = fxmlLoader.load(getClass().getResource("/fxml/login.fxml"), bundle);
-    stage.setTitle("Login");
-    stage.setScene(new Scene(root, 800, 500));
-    stage.show();
+    sm.setScene("/fxml/login.fxml", "Login", 800, 500);
   }
 
   public static void main(String[] args) {

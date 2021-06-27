@@ -4,22 +4,16 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.util.Locale;
 import java.util.ResourceBundle;
-
+import com.randalladams.scheduler.util.SceneManager;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.stage.Window;
 
 public class LoginController implements Initializable {
@@ -37,6 +31,8 @@ public class LoginController implements Initializable {
 
   @FXML
   private Label timezoneLabel;
+
+  private SceneManager sm = new SceneManager();
 
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
@@ -74,17 +70,7 @@ public class LoginController implements Initializable {
       boolean isValidLogin = loginService.isValidLogin(usernameText, passwordText);
 
       if (isValidLogin) {
-        // TODO...make parent class and pass the appriopriate behaviors
-        String lang = System.getProperty("user.language");
-        Locale locale = new Locale(lang, lang.toUpperCase());
-        ResourceBundle bundle = ResourceBundle.getBundle("i18n", locale);
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("/fxml/contacts.fxml"));
-        Parent scene = fxmlLoader.load(getClass().getResource("/fxml/contacts.fxml"), bundle);
-        Stage stage = new Stage();
-        stage.setTitle("Contacts");
-        stage.setScene(new Scene(scene, 800, 500));
-        stage.show();
+        sm.setScene("/fxml/contacts.fxml", "Contacts", 800, 500);
         owner.hide();
       } else {
         showAlert(Alert.AlertType.ERROR, owner, "Login Failed!",
