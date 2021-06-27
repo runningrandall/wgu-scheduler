@@ -33,6 +33,10 @@ public class LoginService {
       return resultSet.next();
   }
 
+  /**
+   * function to get the current timezone id
+   * @return String - timezone as string
+   */
   public String getTimezoneId() {
     ZoneId zone = ZoneId.systemDefault();
     return zone.toString();
