@@ -25,7 +25,7 @@ import javafx.stage.Window;
 public class LoginController implements Initializable {
 
   private static LoginService loginService;
-  private static final String fxmlFile = "/fxml/contacts.fxml";
+  private static final String nextFxmlScene = "/fxml/customers.fxml";
   private static final SceneManager sm = new SceneManager();
   // TODO: reference i18n key instead of hard coded string
   private static final String nextSceneTitle = "Contacts";
@@ -85,7 +85,7 @@ public class LoginController implements Initializable {
 
       // valid login path
       if (isValidLogin) {
-        sm.setScene(fxmlFile, nextSceneTitle, 800, 500);
+        sm.setScene(nextFxmlScene, nextSceneTitle, 800, 500);
         owner.hide();
       } else { // if login fails we show an error
         SceneManager.showAlert(Alert.AlertType.ERROR, owner, "Login Failed!",

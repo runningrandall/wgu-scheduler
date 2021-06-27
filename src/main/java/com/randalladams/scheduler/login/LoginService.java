@@ -38,14 +38,14 @@ public class LoginService {
    * @throws NoSuchAlgorithmException - exception for when it can't encrypt the password
    */
   public boolean isValidLogin(String username, String password) throws SQLException, NoSuchAlgorithmException {
-    String LOGIN_QUERY = "SELECT * FROM " + DATABASE_TABLE + " WHERE user_name = ? AND Password = ? LIMIT 1";
-      PreparedStatement preparedStatement = conn.prepareStatement(LOGIN_QUERY);
-      preparedStatement.setString(1, username);
-      preparedStatement.setString(2, encryptPassword(password));
+    String loginQuery = "SELECT * FROM " + DATABASE_TABLE + " WHERE user_name = ? AND Password = ? LIMIT 1";
+    PreparedStatement preparedStatement = conn.prepareStatement(loginQuery);
+    preparedStatement.setString(1, username);
+    preparedStatement.setString(2, encryptPassword(password));
 
-      // Execute the query
-      ResultSet resultSet = preparedStatement.executeQuery();
-      return resultSet.next();
+    // Execute the query
+    ResultSet resultSet = preparedStatement.executeQuery();
+    return resultSet.next();
   }
 
   /**

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<GridPane hgap="10" vgap="10" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.randalladams.scheduler.customers.CustomersController">
+    <padding>
+        <Insets bottom="40" left="40" right="40" top="40" />
+    </padding>
+    <columnConstraints>
+        <ColumnConstraints halignment="RIGHT" maxWidth="Infinity" minWidth="200.0" prefWidth="400.0" />
+      <ColumnConstraints />
+    </columnConstraints>
+    <Label text="%customers.header" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.rowSpan="1">
+        <font>
+            <Font name="Arial" size="24" />
+        </font>
+        <GridPane.margin>
+            <Insets bottom="20" left="0" right="0" top="20" />
+        </GridPane.margin>
+    </Label>
+   <Pane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+      <children>
+         <TableView id="customersTable" fx:id="customersTable" prefHeight="400.0" prefWidth="600" />
+      </children></Pane>
+   <rowConstraints>
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints />
+      <RowConstraints maxHeight="73.0" minHeight="73.0" prefHeight="73.0" />
+      <RowConstraints maxHeight="24.0" minHeight="10.0" prefHeight="24.0" />
+   </rowConstraints>
+</GridPane>
