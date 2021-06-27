@@ -1,4 +1,10 @@
 package com.randalladams.scheduler.login;
+/*
+ * LoginService is service for processing the login scene
+ * @author Randall Adams
+ * @version 1.0.0
+ * @since 06/01/2020
+ */
 
 import com.randalladams.scheduler.util.Database;
 import java.security.MessageDigest;
@@ -6,14 +12,15 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.time.ZoneId;
 
-// TODO: extend dao class
 public class LoginService {
 
   private static Connection conn;
   private static final String DATABASE_TABLE = "users";
-  private static String LOGIN_QUERY;
 
-  public LoginService() throws SQLException {
+  /**
+   * constructor to create connection to the database
+   */
+  public LoginService() {
     try {
       Database db = new Database();
       conn = db.getConnection();
@@ -22,8 +29,16 @@ public class LoginService {
     }
   }
 
+  /**
+   * method to see if a user has a valid login
+   * @param username - user's username
+   * @param password - user's password
+   * @return validLogin - boolean
+   * @throws SQLException - exception for when sql can't be executed
+   * @throws NoSuchAlgorithmException - exception for when it can't encrypt the password
+   */
   public boolean isValidLogin(String username, String password) throws SQLException, NoSuchAlgorithmException {
-      LOGIN_QUERY = "SELECT * FROM " + DATABASE_TABLE + " WHERE user_name = ? AND Password = ? LIMIT 1";
+    String LOGIN_QUERY = "SELECT * FROM " + DATABASE_TABLE + " WHERE user_name = ? AND Password = ? LIMIT 1";
       PreparedStatement preparedStatement = conn.prepareStatement(LOGIN_QUERY);
       preparedStatement.setString(1, username);
       preparedStatement.setString(2, encryptPassword(password));
@@ -41,6 +56,7 @@ public class LoginService {
     ZoneId zone = ZoneId.systemDefault();
     return zone.toString();
   }
+
   /**
    * function to encrypt the password text
    * @param password - the user's password

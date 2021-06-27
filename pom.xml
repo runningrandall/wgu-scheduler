@@ -8,7 +8,7 @@
     <version>1.0-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mainClass>com.randalladams.scheduler.login.MainApp</mainClass>
+        <mainClass>com.randalladams.scheduler.MainApp</mainClass>
     </properties>
     <dependencies>
         <dependency>

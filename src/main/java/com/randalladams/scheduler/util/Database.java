@@ -1,5 +1,10 @@
 package com.randalladams.scheduler.util;
-
+/*
+ * Database class is our class for managing database connections and printing exceptions
+ * @author Randall Adams
+ * @version 1.0.0
+ * @since 06/01/2020
+ */
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -14,6 +19,9 @@ public class Database {
   private static String DATABASE_USERNAME;
   private static String DATABASE_PASSWORD;
 
+  /**
+   * database constructor creates connection
+   */
   public Database() {
     try {
       ClassLoader classloader = Thread.currentThread().getContextClassLoader();
@@ -34,11 +42,20 @@ public class Database {
     }
   }
 
+  /**
+   * getter for connection
+   * @return - DriverManager connection
+   * @throws SQLException - exception when unable to connect to the database
+   */
   public Connection getConnection() throws SQLException {
     return DriverManager
       .getConnection(DATABASE_HOST, DATABASE_USERNAME, DATABASE_PASSWORD);
   }
 
+  /**
+   * standard method for printing any sql exceptions
+   * @param ex - the sql exception
+   */
   public static void printSQLException(SQLException ex) {
     for (Throwable e : ex) {
       if (e instanceof SQLException) {
