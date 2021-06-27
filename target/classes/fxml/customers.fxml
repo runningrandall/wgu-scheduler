@@ -5,12 +5,14 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<GridPane hgap="10" vgap="10" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.randalladams.scheduler.customers.CustomersController">
+<GridPane hgap="10" prefHeight="505.0" prefWidth="719.0" vgap="10" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.randalladams.scheduler.customers.CustomersController">
     <padding>
         <Insets bottom="40" left="40" right="40" top="40" />
     </padding>
     <columnConstraints>
         <ColumnConstraints halignment="RIGHT" maxWidth="Infinity" minWidth="200.0" prefWidth="400.0" />
+      <ColumnConstraints />
+      <ColumnConstraints />
       <ColumnConstraints />
     </columnConstraints>
     <Label text="%customers.header" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.rowSpan="1">
@@ -23,8 +25,10 @@
     </Label>
    <Pane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
       <children>
-         <TableView id="customersTable" fx:id="customersTable" prefHeight="400.0" prefWidth="600" />
+         <TableView id="customersTable" fx:id="customersTable" prefHeight="400.0" prefWidth="641.0" />
       </children></Pane>
+   <Button fx:id="editCustomerButton" mnemonicParsing="false" onAction="#editCustomer" text="%customers_table.actions.edit" GridPane.columnIndex="2" />
+   <Button fx:id="createCustomerButton" mnemonicParsing="false" onAction="#createCustomer" text="%customers_table.actions.new" GridPane.columnIndex="3" />
    <rowConstraints>
       <RowConstraints minHeight="10.0" prefHeight="30.0" />
       <RowConstraints />

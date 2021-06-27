@@ -21,6 +21,7 @@ public class SceneManager {
 
   private static final int defaultWidth = 800;
   private static final int defaultHeight = 500;
+  private static Stage stage;
 
   /**
    * method to set our scene
@@ -40,13 +41,21 @@ public class SceneManager {
     ResourceBundle bundle = ResourceBundle.getBundle("i18n", locale);
     try {
       Parent scene = FXMLLoader.load(getClass().getResource(fxml), bundle);
-      Stage stage = new Stage();
+      stage = new Stage();
       stage.setTitle(title);
       stage.setScene(new Scene(scene, theWidth, theHeight));
       stage.show();
     } catch(Exception e) {
       throw new IOException(e.getMessage());
     }
+  }
+
+  /**
+   * method to get the current stage
+   * @return
+   */
+  public static final Stage getCurrentStage() {
+    return stage;
   }
   /**
    * Method to show a standard alert to the user

@@ -7,13 +7,17 @@ package com.randalladams.scheduler.customers;
  */
 
 import com.randalladams.scheduler.util.Database;
+import com.randalladams.scheduler.util.SceneManager;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.net.URL;
@@ -27,6 +31,8 @@ public class CustomersController implements Initializable {
 
   @FXML
   private TableView customersTable;
+
+
 
   /**
    * Initializer for login scene
@@ -89,5 +95,23 @@ public class CustomersController implements Initializable {
       postalCodeCol,
       phoneCol,
       createDateCol);
+  }
+
+  public void editCustomer(ActionEvent actionEvent) {
+    try {
+      // TODO: do something with the customer
+      Customer selectedCustomer = (Customer) customersTable.getSelectionModel().getSelectedItem();
+      Stage dialog = new Stage();
+      dialog.initOwner(SceneManager.getCurrentStage());
+      dialog.initModality(Modality.APPLICATION_MODAL);
+      dialog.showAndWait();
+    } catch (Exception e) {
+      Window owner = customersTable.getScene().getWindow();
+      SceneManager.showAlert(Alert.AlertType.ERROR, owner, "Contacts Error!",
+        "Could not edit contact: " + e.getMessage());
+    }
+  }
+
+  public void createCustomer(ActionEvent actionEvent) {
   }
 }
