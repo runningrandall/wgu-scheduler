@@ -3,7 +3,7 @@ package com.randalladams.scheduler.login;
  * LoginController is responsible for controlling our login operations
  * @author Randall Adams
  * @version 1.0.0
- * @since 06/01/2020
+ * @since 06/01/2021
  */
 
 import java.io.IOException;
@@ -11,6 +11,8 @@ import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+
+import com.randalladams.scheduler.util.Lang;
 import com.randalladams.scheduler.util.SceneManager;
 
 import javafx.fxml.FXML;
@@ -27,8 +29,7 @@ public class LoginController implements Initializable {
   private static LoginService loginService;
   private static final String nextFxmlScene = "/fxml/customers.fxml";
   private static final SceneManager sm = new SceneManager();
-  // TODO: reference i18n key instead of hard coded string
-  private static final String nextSceneTitle = "Contacts";
+  private static final String nextSceneTitle = Lang.getString("login.header");
 
   @FXML
   private TextField username;
@@ -62,18 +63,17 @@ public class LoginController implements Initializable {
   public void login() {
 
     Window owner = loginButton.getScene().getWindow();
+    String formError = Lang.getString("login.form_error");
 
-    // TODO: i18n
     if (username.getText().isEmpty()) {
-      SceneManager.showAlert(Alert.AlertType.ERROR, owner, "Form Error!",
-        "Please enter your username");
+      SceneManager.showAlert(Alert.AlertType.ERROR, owner, formError,
+        Lang.getString("login.invalid_username"));
       return;
     }
 
-    // TODO: i18n
     if (password.getText().isEmpty()) {
-      SceneManager.showAlert(Alert.AlertType.ERROR, owner, "Form Error!",
-        "Please enter your password");
+      SceneManager.showAlert(Alert.AlertType.ERROR, owner, formError,
+        Lang.getString("login.invalid_password"));
       return;
     }
 
@@ -88,8 +88,8 @@ public class LoginController implements Initializable {
         sm.setScene(nextFxmlScene, nextSceneTitle, 800, 500);
         owner.hide();
       } else { // if login fails we show an error
-        SceneManager.showAlert(Alert.AlertType.ERROR, owner, "Login Failed!",
-          "Incorrect credentials for username:  " + usernameText);
+        SceneManager.showAlert(Alert.AlertType.ERROR, owner, Lang.getString("login.invalid_credentials"),
+          Lang.getString("login.invalid_credentials_message") + usernameText);
       }
     } catch (NoSuchAlgorithmException | SQLException | IOException e) {
       System.out.println("Error trying to login: " + e.getMessage());

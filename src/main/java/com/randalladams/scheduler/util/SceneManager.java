@@ -3,7 +3,7 @@ package com.randalladams.scheduler.util;
  * SceneManager is a class for managing presentation of scenes
  * @author Randall Adams
  * @version 1.0.0
- * @since 06/01/2020
+ * @since 06/01/2021
  */
 
 import javafx.fxml.FXMLLoader;
