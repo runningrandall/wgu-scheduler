@@ -18,6 +18,7 @@ public class Database {
   private static String DATABASE_HOST;
   private static String DATABASE_USERNAME;
   private static String DATABASE_PASSWORD;
+  private static String DATABASE_SCHEMA;
 
   /**
    * database constructor creates connection
@@ -33,6 +34,7 @@ public class Database {
       DATABASE_HOST = props.getProperty("db.host");
       DATABASE_USERNAME = props.getProperty("db.username");
       DATABASE_PASSWORD = props.getProperty("db.password");
+      DATABASE_SCHEMA = props.getProperty("db.schema");
 
       reader.close();
     } catch (FileNotFoundException ex) {
@@ -49,7 +51,7 @@ public class Database {
    */
   public Connection getConnection() throws SQLException {
     return DriverManager
-      .getConnection(DATABASE_HOST, DATABASE_USERNAME, DATABASE_PASSWORD);
+      .getConnection(DATABASE_HOST + "/" + DATABASE_SCHEMA, DATABASE_USERNAME, DATABASE_PASSWORD);
   }
 
   /**

@@ -65,6 +65,9 @@ public class SceneManager {
    * @param message - actual message
    */
   public static void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
+    String lang = System.getProperty("user.language");
+    Locale locale = new Locale(lang, lang.toUpperCase());
+    ResourceBundle bundle = ResourceBundle.getBundle("i18n", locale);
     Alert alert = new Alert(alertType);
     alert.setTitle(title);
     alert.setHeaderText(null);

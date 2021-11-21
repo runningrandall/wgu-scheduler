@@ -15,7 +15,7 @@ import java.time.ZoneId;
 public class LoginService {
 
   private static Connection conn;
-  private static final String DATABASE_TABLE = "users";
+  private static final String DATABASE_TABLE = "client_schedule.users";
 
   /**
    * constructor to create connection to the database
@@ -38,11 +38,10 @@ public class LoginService {
    * @throws NoSuchAlgorithmException - exception for when it can't encrypt the password
    */
   public boolean isValidLogin(String username, String password) throws SQLException, NoSuchAlgorithmException {
-    String loginQuery = "SELECT * FROM " + DATABASE_TABLE + " WHERE user_name = ? AND Password = ? LIMIT 1";
+    String loginQuery = "SELECT * FROM " + DATABASE_TABLE + " WHERE User_name = ? AND Password = ? LIMIT 1";
     PreparedStatement preparedStatement = conn.prepareStatement(loginQuery);
     preparedStatement.setString(1, username);
     preparedStatement.setString(2, encryptPassword(password));
-
     // Execute the query
     ResultSet resultSet = preparedStatement.executeQuery();
     return resultSet.next();
