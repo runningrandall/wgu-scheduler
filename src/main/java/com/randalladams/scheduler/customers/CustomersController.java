@@ -91,6 +91,12 @@ public class CustomersController implements Initializable {
     createDateCol.setCellValueFactory(
       new PropertyValueFactory<Customer, Date>("createDate"));
 
+    TableColumn countryCol = new TableColumn("Country");
+    countryCol.setMinWidth(50);
+    countryCol.setCellValueFactory(
+      new PropertyValueFactory<Customer, String>("country")
+    );
+
     customersTable.setItems(allCustomers);
     customersTable.setMinSize(600, 400);
     customersTable.getColumns().addAll(
@@ -98,7 +104,8 @@ public class CustomersController implements Initializable {
       addressCol,
       postalCodeCol,
       phoneCol,
-      createDateCol);
+      createDateCol,
+      countryCol);
   }
 
   public void editCustomer(ActionEvent actionEvent) {
@@ -107,7 +114,7 @@ public class CustomersController implements Initializable {
       Customer selectedCustomer = (Customer) customersTable.getSelectionModel().getSelectedItem();
       Stage stage = new Stage();
       Parent root = FXMLLoader.load(
-        CustomersController.class.getResource("/fxml/customerForm.fxml"));
+        CustomersController.class.getResource(customersForm));
       stage.setScene(new Scene(root));
       stage.setTitle("Edit Customer");
       stage.initModality(Modality.WINDOW_MODAL);

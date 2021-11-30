@@ -60,7 +60,7 @@ public class LoginController implements Initializable {
    * shows an alert if unsuccessful
    */
   @FXML
-  public void login() {
+  public void login() throws IOException {
 
     Window owner = loginButton.getScene().getWindow();
     String formError = Lang.getString("login.form_error");
@@ -79,20 +79,20 @@ public class LoginController implements Initializable {
 
     String usernameText = username.getText();
     String passwordText = password.getText();
+    boolean isValidLogin = false;
 
     try {
-      boolean isValidLogin = loginService.isValidLogin(usernameText, passwordText);
-
-      // valid login path
-      if (isValidLogin) {
-        sm.setScene(nextFxmlScene, nextSceneTitle, 800, 500);
-        owner.hide();
-      } else { // if login fails we show an error
-        SceneManager.showAlert(Alert.AlertType.ERROR, owner, Lang.getString("login.invalid_credentials"),
-          Lang.getString("login.invalid_credentials_message") + usernameText);
-      }
-    } catch (NoSuchAlgorithmException | SQLException | IOException e) {
+      isValidLogin = loginService.isValidLogin(usernameText, passwordText);
+    } catch (NoSuchAlgorithmException | SQLException e) {
       System.out.println("Error trying to login: " + e.getMessage());
+    }
+      // valid login path
+    if (isValidLogin) {
+      sm.setScene(nextFxmlScene, nextSceneTitle, 800, 500);
+      owner.hide();
+    } else { // if login fails we show an error
+      SceneManager.showAlert(Alert.AlertType.ERROR, owner, Lang.getString("login.invalid_credentials"),
+        Lang.getString("login.invalid_credentials_message") + usernameText);
     }
   }
 }
