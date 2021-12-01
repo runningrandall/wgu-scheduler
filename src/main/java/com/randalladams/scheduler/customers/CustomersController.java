@@ -31,12 +31,10 @@ import java.util.ResourceBundle;
 
 public class CustomersController implements Initializable {
 
-  private static final SceneManager sm = new SceneManager();
-  private ObservableList<Customer> allCustomers;
   private static final String customersForm = "/fxml/customersForm.fxml";
 
   @FXML
-  private TableView customersTable;
+  private TableView<Customer> customersTable;
 
   /**
    * Initializer for login scene
@@ -46,7 +44,7 @@ public class CustomersController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     CustomersService customersService = new CustomersService();
     try {
-      allCustomers = customersService.getCustomers();
+      ObservableList<Customer> allCustomers = customersService.getCustomers();
       setupCustomersTable(allCustomers, resourceBundle);
       // setCustomerTableDimensions();
     } catch (SQLException ex) {
@@ -58,64 +56,71 @@ public class CustomersController implements Initializable {
    * method to print all the customer data
    * @param allCustomers - all the customers in the database
    */
-  private void setupCustomersTable(ObservableList allCustomers, ResourceBundle resourceBundle) {
+  private void setupCustomersTable(ObservableList<Customer> allCustomers, ResourceBundle resourceBundle) {
 
     // TODO: get labels from i18n
-    TableColumn idCol = new TableColumn(resourceBundle.getString("customers_table.columns.id"));
+    TableColumn<Customer, String> idCol = new TableColumn<>(resourceBundle.getString("customers_table.columns.id"));
     idCol.setMinWidth(10);
     idCol.setCellValueFactory(
-      new PropertyValueFactory<Customer, String>("id"));
+      new PropertyValueFactory<>("id"));
 
-    TableColumn nameCol = new TableColumn(resourceBundle.getString("customers_table.columns.name"));
+    TableColumn<Customer, String> nameCol = new TableColumn<>(resourceBundle.getString("customers_table.columns.name"));
     nameCol.setMinWidth(100);
     nameCol.setCellValueFactory(
-      new PropertyValueFactory<Customer, String>("name"));
+      new PropertyValueFactory<>("name"));
 
-    TableColumn addressCol = new TableColumn(resourceBundle.getString("customers_table.columns.address"));
+    TableColumn<Customer, String> addressCol = new TableColumn<>(resourceBundle.getString("customers_table.columns.address"));
     addressCol.setMinWidth(150);
     addressCol.setCellValueFactory(
-      new PropertyValueFactory<Customer, String>("address"));
+      new PropertyValueFactory<>("address"));
 
-    TableColumn postalCodeCol = new TableColumn(resourceBundle.getString("customers_table.columns.postal_code"));
+    TableColumn<Customer, String> postalCodeCol = new TableColumn<>(resourceBundle.getString("customers_table.columns.postal_code"));
     postalCodeCol.setMinWidth(50);
     postalCodeCol.setCellValueFactory(
-      new PropertyValueFactory<Customer, String>("postalCode"));
+      new PropertyValueFactory<>("postalCode"));
 
-    TableColumn phoneCol = new TableColumn(resourceBundle.getString("customers_table.columns.phone"));
+    TableColumn<Customer, String> phoneCol = new TableColumn<>(resourceBundle.getString("customers_table.columns.phone"));
     phoneCol.setMinWidth(50);
     phoneCol.setCellValueFactory(
-      new PropertyValueFactory<Customer, String>("phone"));
+      new PropertyValueFactory<>("phone"));
 
-    TableColumn createDateCol = new TableColumn(resourceBundle.getString("customers_table.columns.created"));
+    TableColumn<Customer, Date> createDateCol = new TableColumn<>(resourceBundle.getString("customers_table.columns.created"));
     createDateCol.setMinWidth(50);
     createDateCol.setCellValueFactory(
-      new PropertyValueFactory<Customer, Date>("createDate"));
+      new PropertyValueFactory<>("createDate"));
 
-    TableColumn countryCol = new TableColumn("Country");
+    TableColumn<Customer, String> divisionCol = new TableColumn<>("Division");
+    divisionCol.setMinWidth(50);
+    divisionCol.setCellValueFactory(
+      new PropertyValueFactory<>("division")
+    );
+
+    TableColumn<Customer, String> countryCol = new TableColumn<>("Country");
     countryCol.setMinWidth(50);
     countryCol.setCellValueFactory(
-      new PropertyValueFactory<Customer, String>("country")
+      new PropertyValueFactory<>("country")
     );
 
     customersTable.setItems(allCustomers);
-    customersTable.setMinSize(600, 400);
+    customersTable.setMinSize(800, 400);
     customersTable.getColumns().addAll(
       nameCol,
       addressCol,
       postalCodeCol,
       phoneCol,
       createDateCol,
+      divisionCol,
       countryCol);
   }
 
   public void editCustomer(ActionEvent actionEvent) {
     // TODO: move to service
     try {
-      Customer selectedCustomer = (Customer) customersTable.getSelectionModel().getSelectedItem();
+      Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
       Stage stage = new Stage();
       Parent root = FXMLLoader.load(
         CustomersController.class.getResource(customersForm));
-      stage.setScene(new Scene(root));
+      stage.setScene(new Scene(root, 820, 520));
       stage.setTitle("Edit Customer");
       stage.initModality(Modality.WINDOW_MODAL);
       stage.initOwner(

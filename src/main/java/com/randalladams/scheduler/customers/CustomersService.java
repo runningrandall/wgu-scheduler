@@ -7,6 +7,7 @@ package com.randalladams.scheduler.customers;
  */
 
 import com.randalladams.scheduler.country.CountryService;
+import com.randalladams.scheduler.firstLevelDivisions.FirstLevelDivisionsService;
 import com.randalladams.scheduler.login.LoginService;
 import com.randalladams.scheduler.util.Database;
 import javafx.collections.FXCollections;
@@ -44,6 +45,7 @@ public class CustomersService {
     ObservableList<Customer> customerList = FXCollections.observableArrayList();
 
     CountryService countryService = new CountryService();
+    FirstLevelDivisionsService fldService = new FirstLevelDivisionsService();
     while (resultSet.next()) {
       try {
         Customer customer = new Customer(
@@ -57,7 +59,8 @@ public class CustomersService {
           resultSet.getDate("c.Last_Update"),
           resultSet.getString("c.Last_Updated_By"),
           resultSet.getInt("c.Division_ID"),
-          countryService.getCountryById(resultSet.getInt("fld.Country_ID")));
+          countryService.getCountryById(resultSet.getInt("fld.Country_ID")),
+          fldService.getFirstLevelDivisionById(resultSet.getInt("c.Division_ID")));
           customerList.add(customer);
       } catch (Exception e) {
         System.out.println(e.getMessage());

@@ -15,8 +15,9 @@ public class Customer {
   private String lastUpdatedBy;
   private int divisionId;
   private String country;
+  private String division;
 
-  public Customer(int customer_id, String customer_name, String address, String postal_code, String phone, java.sql.Date create_date, String created_by, java.sql.Date last_update, String last_updated_by, int division_id, String country) {
+  public Customer(int customer_id, String customer_name, String address, String postal_code, String phone, java.sql.Date create_date, String created_by, java.sql.Date last_update, String last_updated_by, int division_id, String country, String division) {
     this.setId(customer_id);
     this.setName(customer_name);
     this.setAddress(address);
@@ -28,6 +29,15 @@ public class Customer {
     this.setLastUpdatedBy(last_updated_by);
     this.setDivisionId(division_id);
     this.setCountry(country);
+    this.setDivision(division);
+  }
+
+  private void setDivision(String division) {
+    this.division = division;
+  }
+
+  public String getDivision() {
+    return division;
   }
 
   public int getId() {
