@@ -36,6 +36,7 @@ import java.util.ResourceBundle;
 public class CustomerController implements Initializable {
 
   private static final String customerForm = "/fxml/customerForm.fxml";
+  private static ResourceBundle resourceBundle = null;
 
   @FXML
   private TableView<Customer> customersTable;
@@ -47,6 +48,7 @@ public class CustomerController implements Initializable {
    */
   public void initialize(URL url, ResourceBundle resourceBundle) {
     CustomerService customerService = new CustomerService();
+    this.resourceBundle = resourceBundle;
     try {
       ObservableList<Customer> allCustomers = customerService.getCustomers();
       setupCustomersTable(allCustomers, resourceBundle);
@@ -139,13 +141,9 @@ public class CustomerController implements Initializable {
 
   public void createCustomer(ActionEvent actionEvent) throws IOException {
 
-    String lang = System.getProperty("user.language");
-    Locale locale = new Locale(lang, lang.toUpperCase());
-    ResourceBundle bundle = ResourceBundle.getBundle("i18n", locale);
-
     Stage stage = new Stage();
     Parent root = FXMLLoader.load(
-      CustomerController.class.getResource(customerForm), bundle);
+      CustomerController.class.getResource(customerForm), resourceBundle);
     stage.setScene(new Scene(root, 820, 520));
     stage.setTitle("New Customer");
     stage.initModality(Modality.WINDOW_MODAL);
