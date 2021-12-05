@@ -1,5 +1,6 @@
-package com.randalladams.scheduler.country;
+package com.randalladams.scheduler.services;
 
+import com.randalladams.scheduler.model.Country;
 import com.randalladams.scheduler.util.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

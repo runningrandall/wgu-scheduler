@@ -1,4 +1,4 @@
-package com.randalladams.scheduler.customers;
+package com.randalladams.scheduler.services;
 /*
  * CustomersService is the service for managing CRUD operations on the Customers table
  * @author Randall Adams
@@ -6,9 +6,7 @@ package com.randalladams.scheduler.customers;
  * @since 06/01/2020
  */
 
-import com.randalladams.scheduler.country.CountryService;
-import com.randalladams.scheduler.firstLevelDivisions.FirstLevelDivisionsService;
-import com.randalladams.scheduler.login.LoginService;
+import com.randalladams.scheduler.model.Customer;
 import com.randalladams.scheduler.util.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,14 +16,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class CustomersService {
+public class CustomerService {
   private static Connection conn;
   private static final String DATABASE_TABLE = "customers";
 
   /**
    * constructor to create connection to the database
    */
-  public CustomersService() {
+  public CustomerService() {
     try {
       Database db = new Database();
       conn = db.getConnection();

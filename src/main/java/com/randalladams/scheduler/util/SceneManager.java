@@ -30,8 +30,9 @@ public class SceneManager {
    * @param width - width of our new scene
    * @param height - height of our scene
    * @throws IOException - thrown when we can't get the xml file
+   * @return
    */
-  public void setScene(String fxml, String title, int width, int height) throws IOException {
+  public Parent setScene(String fxml, String title, int width, int height) throws IOException {
 
     int theWidth = width != 0 ? width : defaultWidth;
     int theHeight = height != 0 ? height : defaultHeight;
@@ -45,6 +46,7 @@ public class SceneManager {
       stage.setTitle(title);
       stage.setScene(new Scene(scene, theWidth, theHeight));
       stage.show();
+      return scene;
     } catch(Exception e) {
       throw new IOException(e.getMessage());
     }

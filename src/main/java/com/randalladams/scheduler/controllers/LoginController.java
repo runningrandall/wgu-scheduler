@@ -1,4 +1,4 @@
-package com.randalladams.scheduler.login;
+package com.randalladams.scheduler.controllers;
 /*
  * LoginController is responsible for controlling our login operations
  * @author Randall Adams
@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
+import com.randalladams.scheduler.services.LoginService;
 import com.randalladams.scheduler.util.Lang;
 import com.randalladams.scheduler.util.SceneManager;
 

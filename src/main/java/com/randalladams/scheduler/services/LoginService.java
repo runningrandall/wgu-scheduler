@@ -1,4 +1,4 @@
-package com.randalladams.scheduler.login;
+package com.randalladams.scheduler.services;
 /*
  * LoginService is service for processing the login scene
  * @author Randall Adams

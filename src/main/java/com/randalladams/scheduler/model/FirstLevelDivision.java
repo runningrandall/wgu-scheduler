@@ -1,4 +1,4 @@
-package com.randalladams.scheduler.firstLevelDivisions;
+package com.randalladams.scheduler.model;
 
 import java.util.Date;
 

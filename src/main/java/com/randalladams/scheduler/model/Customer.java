@@ -1,4 +1,4 @@
-package com.randalladams.scheduler.customers;
+package com.randalladams.scheduler.model;
 
 import java.util.Date;
 

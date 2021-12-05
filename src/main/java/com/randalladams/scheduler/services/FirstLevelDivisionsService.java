@@ -1,7 +1,6 @@
-package com.randalladams.scheduler.firstLevelDivisions;
+package com.randalladams.scheduler.services;
 
-import com.randalladams.scheduler.country.Country;
-import com.randalladams.scheduler.customers.Customer;
+import com.randalladams.scheduler.model.FirstLevelDivision;
 import com.randalladams.scheduler.util.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

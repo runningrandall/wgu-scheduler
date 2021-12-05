@@ -1,4 +1,4 @@
-package com.randalladams.scheduler.customers;
+package com.randalladams.scheduler.controllers;
 /*
  * CustomersController is the controller for CRUD operations on Customers
  * @author Randall Adams
@@ -6,6 +6,8 @@ package com.randalladams.scheduler.customers;
  * @since 06/01/2020
  */
 
+import com.randalladams.scheduler.model.Customer;
+import com.randalladams.scheduler.services.CustomerService;
 import com.randalladams.scheduler.util.Database;
 import com.randalladams.scheduler.util.SceneManager;
 import javafx.collections.ObservableList;
@@ -24,14 +26,16 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class CustomersController implements Initializable {
+public class CustomerController implements Initializable {
 
-  private static final String customersForm = "/fxml/customersForm.fxml";
+  private static final String customerForm = "/fxml/customerForm.fxml";
 
   @FXML
   private TableView<Customer> customersTable;
@@ -42,9 +46,9 @@ public class CustomersController implements Initializable {
    * @param resourceBundle - the resource bundle for the scene
    */
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    CustomersService customersService = new CustomersService();
+    CustomerService customerService = new CustomerService();
     try {
-      ObservableList<Customer> allCustomers = customersService.getCustomers();
+      ObservableList<Customer> allCustomers = customerService.getCustomers();
       setupCustomersTable(allCustomers, resourceBundle);
       // setCustomerTableDimensions();
     } catch (SQLException ex) {
@@ -119,7 +123,7 @@ public class CustomersController implements Initializable {
       Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
       Stage stage = new Stage();
       Parent root = FXMLLoader.load(
-        CustomersController.class.getResource(customersForm));
+        CustomerController.class.getResource(customerForm));
       stage.setScene(new Scene(root, 820, 520));
       stage.setTitle("Edit Customer");
       stage.initModality(Modality.WINDOW_MODAL);
@@ -133,6 +137,20 @@ public class CustomersController implements Initializable {
     }
   }
 
-  public void createCustomer(ActionEvent actionEvent) {
+  public void createCustomer(ActionEvent actionEvent) throws IOException {
+
+    String lang = System.getProperty("user.language");
+    Locale locale = new Locale(lang, lang.toUpperCase());
+    ResourceBundle bundle = ResourceBundle.getBundle("i18n", locale);
+
+    Stage stage = new Stage();
+    Parent root = FXMLLoader.load(
+      CustomerController.class.getResource(customerForm), bundle);
+    stage.setScene(new Scene(root, 820, 520));
+    stage.setTitle("New Customer");
+    stage.initModality(Modality.WINDOW_MODAL);
+    stage.initOwner(
+      ((Node)actionEvent.getSource()).getScene().getWindow() );
+    stage.show();
   }
 }
