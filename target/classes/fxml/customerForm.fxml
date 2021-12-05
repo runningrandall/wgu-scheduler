@@ -8,14 +8,21 @@
    <children>
       <Pane layoutX="6.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Button layoutX="455.0" layoutY="361.0" mnemonicParsing="false" text="%shared.submit_btn" />
-            <TextField layoutX="14.0" layoutY="62.0" promptText="%customer_form.name.prompt" />
-            <Label layoutX="14.0" layoutY="45.0" text="%customer_form.name.label" />
-            <Text layoutX="14.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="customer_form.title">
+            <Text layoutX="14.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%customer_form.title">
                <font>
                   <Font size="24.0" />
                </font>
             </Text>
+            <Label layoutX="14.0" layoutY="50.0" text="%customer_form.name.label" />
+            <TextField fx:id="customerName" layoutX="14.0" layoutY="64.0" prefHeight="32.0" prefWidth="300.0" promptText="%customer_form.name.prompt" />
+            <Label layoutX="14.0" layoutY="105.0" text="%customer_form.address.label" />
+            <TextField fx:id="customerAddress" layoutX="14.0" layoutY="119.0" prefHeight="32.0" prefWidth="300.0" promptText="%customer_form.address.prompt" />
+            <Label layoutX="14.0" layoutY="160.0" text="%customer_form.postal.label" />
+            <TextField fx:id="customerPostalcode" layoutX="14.0" layoutY="174.0" prefHeight="32.0" prefWidth="300.0" promptText="%customer_form.postal.prompt" />
+            <Label layoutX="14.0" layoutY="215.0" text="%customer_form.phone.label" />
+            <TextField fx:id="customerPhone" layoutX="14.0" layoutY="229.0" prefHeight="32.0" prefWidth="300.0" promptText="%customer_form.phone.prompt" />
+            <Button fx:id="customerSubmitBtn" layoutX="455.0" layoutY="361.0" mnemonicParsing="false" onAction="#submitCustomer" text="%shared.submit_btn" />
+            <ChoiceBox fx:id="firstLevelDivisionChoiceBox" layoutX="14.0" layoutY="306.0" prefWidth="150.0" />
          </children>
       </Pane>
    </children>
