@@ -2,6 +2,7 @@ package com.randalladams.scheduler.services;
 
 import com.randalladams.scheduler.model.Country;
 import com.randalladams.scheduler.util.Database;
+import com.randalladams.scheduler.util.KeyValuePair;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -52,5 +53,19 @@ public class CountryService {
     ResultSet resultSet = preparedStatement.executeQuery();
     resultSet.next();
     return resultSet.getString("Country");
+  }
+
+  public ObservableList<KeyValuePair> getCountriesKeyValuePairs() throws SQLException {
+    String query = "SELECT Country_ID, Country FROM " + DATABASE_TABLE + " ORDER BY Country ASC";
+    PreparedStatement preparedStatement = conn.prepareStatement(query);
+    ResultSet resultSet = preparedStatement.executeQuery();
+    ObservableList<KeyValuePair> countries = FXCollections.observableArrayList();
+    while (resultSet.next()) {
+      String countryId = resultSet.getString("Country_ID");
+      String country = resultSet.getString("Country");
+      KeyValuePair fldKeyValuePair = new KeyValuePair(countryId, country);
+      countries.add(fldKeyValuePair);
+    }
+    return countries;
   }
 }

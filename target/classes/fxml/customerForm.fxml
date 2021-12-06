@@ -22,7 +22,10 @@
             <Label layoutX="14.0" layoutY="215.0" text="%customer_form.phone.label" />
             <TextField fx:id="customerPhone" layoutX="14.0" layoutY="229.0" prefHeight="32.0" prefWidth="300.0" promptText="%customer_form.phone.prompt" />
             <Button fx:id="customerSubmitBtn" layoutX="455.0" layoutY="361.0" mnemonicParsing="false" onAction="#submitCustomer" text="%shared.submit_btn" />
-            <ChoiceBox fx:id="firstLevelDivisionChoiceBox" layoutX="14.0" layoutY="306.0" prefWidth="150.0" />
+            <ChoiceBox fx:id="firstLevelDivisionChoiceBox" layoutX="15.0" layoutY="341.0" prefWidth="150.0" />
+            <Label layoutX="15.0" layoutY="317.0" text="%customers_form.state.label" />
+            <ChoiceBox fx:id="countriesChoiceBox" layoutX="14.0" layoutY="287.0" prefWidth="150.0" />
+            <Label layoutX="15.0" layoutY="270.0" text="%customers_form.country.label" />
          </children>
       </Pane>
    </children>

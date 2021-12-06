@@ -2,6 +2,7 @@ package com.randalladams.scheduler.services;
 
 import com.randalladams.scheduler.model.FirstLevelDivision;
 import com.randalladams.scheduler.util.Database;
+import com.randalladams.scheduler.util.KeyValuePair;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -21,19 +22,6 @@ public class FirstLevelDivisionsService {
     } catch (SQLException e) {
       Database.printSQLException(e);
     }
-  }
-
-  public class KeyValuePair {
-    private final String key;
-    private final String value;
-    public KeyValuePair(String key, String value) {
-      this.key = key;
-      this.value = value;
-    }
-
-    public String getKey()   {    return key;    }
-
-    public String toString() {    return value;  }
   }
 
   public ObservableList<FirstLevelDivision> getAllFirstLevelDivisions() throws SQLException {
@@ -57,8 +45,23 @@ public class FirstLevelDivisionsService {
   }
 
   public ObservableList<KeyValuePair> getFirstLevelDivisionsKeyValuePairs() throws SQLException {
-    String query = "SELECT * FROM " + DATABASE_TABLE + " ORDER BY Division DESC";
+    String query = "SELECT Division_ID, Division FROM " + DATABASE_TABLE + " ORDER BY Division DESC";
     PreparedStatement preparedStatement = conn.prepareStatement(query);
+    ResultSet resultSet = preparedStatement.executeQuery();
+    ObservableList<KeyValuePair> firstLevelDivisionsList = FXCollections.observableArrayList();
+    while (resultSet.next()) {
+      String divisionId = resultSet.getString("Division_ID");
+      String division = resultSet.getString("Division");
+      KeyValuePair fldKeyValuePair = new KeyValuePair(divisionId, division);
+      firstLevelDivisionsList.add(fldKeyValuePair);
+    }
+    return firstLevelDivisionsList;
+  }
+
+  public ObservableList<KeyValuePair> getFirstLevelDivisionsByCountryId(int countryId) throws SQLException {
+    String query = "SELECT Division_ID, Division FROM " + DATABASE_TABLE + " WHERE Country_ID = ? ORDER BY Division ASC";
+    PreparedStatement preparedStatement = conn.prepareStatement(query);
+    preparedStatement.setInt(1, countryId);
     ResultSet resultSet = preparedStatement.executeQuery();
     ObservableList<KeyValuePair> firstLevelDivisionsList = FXCollections.observableArrayList();
     while (resultSet.next()) {
