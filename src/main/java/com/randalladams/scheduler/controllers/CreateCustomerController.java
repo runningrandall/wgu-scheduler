@@ -1,23 +1,17 @@
 package com.randalladams.scheduler.controllers;
 
 import com.randalladams.scheduler.model.Customer;
-import com.randalladams.scheduler.model.FirstLevelDivision;
 import com.randalladams.scheduler.services.CountryService;
 import com.randalladams.scheduler.services.CustomerService;
 import com.randalladams.scheduler.services.FirstLevelDivisionsService;
-import com.randalladams.scheduler.util.Database;
 import com.randalladams.scheduler.util.KeyValuePair;
-import javafx.animation.KeyValue;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 
 import java.net.URL;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
@@ -28,6 +22,19 @@ public class CreateCustomerController implements Initializable {
 
   @FXML
   private ChoiceBox<KeyValuePair> countriesChoiceBox;
+
+  @FXML
+  private TextField customerName;
+
+  @FXML
+  private TextField customerAddress;
+
+  @FXML
+  private TextField customerPostalcode;
+
+  @FXML
+  private TextField customerPhone;
+
 
   private static final FirstLevelDivisionsService fldService = new FirstLevelDivisionsService();
   private static final CountryService countryService = new CountryService();
@@ -60,7 +67,14 @@ public class CreateCustomerController implements Initializable {
     firstLevelDivisionChoiceBox.setItems(firstLevelDivisions);
   }
 
-  public void submitCustomer() {
-    System.out.println("submit");
+  public void submitCustomer() throws SQLException {
+    Customer newCustomer = CustomerService.createCustomer(
+      customerName.getText(),
+      customerAddress.getText(),
+      customerPostalcode.getText(),
+      customerPhone.getText(),
+      Integer.parseInt(firstLevelDivisionChoiceBox.getValue().getKey())
+    );
+    System.out.println(newCustomer.getName());
   }
 }

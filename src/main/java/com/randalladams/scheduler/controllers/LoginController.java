@@ -16,6 +16,7 @@ import com.randalladams.scheduler.services.LoginService;
 import com.randalladams.scheduler.util.Lang;
 import com.randalladams.scheduler.util.SceneManager;
 
+import com.randalladams.scheduler.util.UserSession;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -90,6 +91,7 @@ public class LoginController implements Initializable {
       // valid login path
     if (isValidLogin) {
       sm.setScene(nextFxmlScene, nextSceneTitle, 800, 500);
+      UserSession.getInstance(usernameText);
       owner.hide();
     } else { // if login fails we show an error
       SceneManager.showAlert(Alert.AlertType.ERROR, owner, Lang.getString("login.invalid_credentials"),
