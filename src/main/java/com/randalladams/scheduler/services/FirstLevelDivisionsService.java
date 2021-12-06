@@ -23,6 +23,19 @@ public class FirstLevelDivisionsService {
     }
   }
 
+  public class KeyValuePair {
+    private final String key;
+    private final String value;
+    public KeyValuePair(String key, String value) {
+      this.key = key;
+      this.value = value;
+    }
+
+    public String getKey()   {    return key;    }
+
+    public String toString() {    return value;  }
+  }
+
   public ObservableList<FirstLevelDivision> getAllFirstLevelDivisions() throws SQLException {
     String query = "SELECT * FROM " + DATABASE_TABLE + " ORDER BY Division DESC";
     PreparedStatement preparedStatement = conn.prepareStatement(query);
@@ -39,6 +52,20 @@ public class FirstLevelDivisionsService {
         resultSet.getString("Last_Updated_By"),
         resultSet.getInt("Country_ID"));
       firstLevelDivisionsList.add(fld);
+    }
+    return firstLevelDivisionsList;
+  }
+
+  public ObservableList<KeyValuePair> getFirstLevelDivisionsKeyValuePairs() throws SQLException {
+    String query = "SELECT * FROM " + DATABASE_TABLE + " ORDER BY Division DESC";
+    PreparedStatement preparedStatement = conn.prepareStatement(query);
+    ResultSet resultSet = preparedStatement.executeQuery();
+    ObservableList<KeyValuePair> firstLevelDivisionsList = FXCollections.observableArrayList();
+    while (resultSet.next()) {
+      String divisionId = resultSet.getString("Division_ID");
+      String division = resultSet.getString("Division");
+      KeyValuePair fldKeyValuePair = new KeyValuePair(divisionId, division);
+      firstLevelDivisionsList.add(fldKeyValuePair);
     }
     return firstLevelDivisionsList;
   }

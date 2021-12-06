@@ -5,6 +5,7 @@ import com.randalladams.scheduler.model.FirstLevelDivision;
 import com.randalladams.scheduler.services.CustomerService;
 import com.randalladams.scheduler.services.FirstLevelDivisionsService;
 import com.randalladams.scheduler.util.Database;
+import javafx.animation.KeyValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -19,7 +20,7 @@ import java.util.ResourceBundle;
 public class CreateCustomerController implements Initializable {
 
   @FXML
-  private ChoiceBox<FirstLevelDivision> firstLevelDivisionChoiceBox;
+  private ChoiceBox<FirstLevelDivisionsService.KeyValuePair> firstLevelDivisionChoiceBox;
 
   /**
    * Initializer for create customer modal
@@ -29,7 +30,7 @@ public class CreateCustomerController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     FirstLevelDivisionsService fldService = new FirstLevelDivisionsService();
     try {
-      ObservableList<FirstLevelDivision> firstLevelDivisions = fldService.getAllFirstLevelDivisions();
+      ObservableList<FirstLevelDivisionsService.KeyValuePair> firstLevelDivisions = fldService.getFirstLevelDivisionsKeyValuePairs();
       firstLevelDivisionChoiceBox.setItems(firstLevelDivisions);
     } catch (SQLException throwables) {
       throwables.printStackTrace();
