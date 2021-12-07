@@ -19,6 +19,7 @@ public class CustomerService {
   private static Connection conn;
   private static final String DATABASE_TABLE = "customers";
   private static final FirstLevelDivisionsService fldService = new FirstLevelDivisionsService();
+  private static final CountryService countryService = new CountryService();
 
   /**
    * constructor to create connection to the database
@@ -54,10 +55,12 @@ public class CustomerService {
           resultSet.getDate("c.Last_Update"),
           resultSet.getString("c.Last_Updated_By"),
           resultSet.getInt("c.Division_ID"),
-          CountryService.getCountryById(resultSet.getInt("fld.Country_ID")),
+          countryService.getCountryById(resultSet.getInt("fld.Country_ID")),
           fldService.getFirstLevelDivisionById(resultSet.getInt("c.Division_ID")));
           customerList.add(customer);
-      } catch (Exception e) {
+      } catch (SQLException e) {
+        System.out.println(e.getMessage());
+      } catch(Exception e) {
         System.out.println(e.getMessage());
       }
     }
@@ -65,23 +68,27 @@ public class CustomerService {
   }
 
   public static Customer getCustomerById(int customerId) throws SQLException {
-    String sql = "SELECT * FROM " + DATABASE_TABLE + " WHERE Customer_ID = ?";
+    String sql = "SELECT * FROM " + DATABASE_TABLE + " c " +
+      "LEFT JOIN first_level_divisions fld " +
+      "ON fld.Division_ID = c.Division_ID " +
+      "WHERE c.Customer_ID = ? " +
+      "ORDER BY c.Create_date DESC";
     PreparedStatement preparedStatement = conn.prepareStatement(sql);
     preparedStatement.setInt(1, customerId);
     ResultSet resultSet = preparedStatement.executeQuery();
     resultSet.next();
     return new Customer(
       customerId,
-      resultSet.getString("Customer_Name"),
-      resultSet.getString("Address"),
-      resultSet.getString("Postal_Code"),
-      resultSet.getString("Phone"),
-      resultSet.getDate("Create_Date"),
-      resultSet.getString("Created_By"),
-      resultSet.getDate("Last_Update"),
-      resultSet.getString("Last_Updated_By"),
-      resultSet.getInt("Division_ID"),
-      CountryService.getCountryById(resultSet.getInt("fld.Country_ID")),
+      resultSet.getString("c.Customer_Name"),
+      resultSet.getString("c.Address"),
+      resultSet.getString("c.Postal_Code"),
+      resultSet.getString("c.Phone"),
+      resultSet.getDate("c.Create_Date"),
+      resultSet.getString("c.Created_By"),
+      resultSet.getDate("c.Last_Update"),
+      resultSet.getString("c.Last_Updated_By"),
+      resultSet.getInt("c.Division_ID"),
+      countryService.getCountryById(resultSet.getInt("fld.Country_ID")),
       fldService.getFirstLevelDivisionById(resultSet.getInt("c.Division_ID"))
     );
   }
@@ -92,14 +99,15 @@ public class CustomerService {
       "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
     PreparedStatement preparedStatement = conn.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
     Date currentDate = new Date();
+    java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
 
     preparedStatement.setString(1, name);
     preparedStatement.setString(2, address);
     preparedStatement.setString(3, postalCode);
     preparedStatement.setString(4, phone);
-    preparedStatement.setDate(5, (java.sql.Date) currentDate);
+    preparedStatement.setDate(5, sqlDate);
     preparedStatement.setString(6, UserSession.getUserName());
-    preparedStatement.setDate(7, (java.sql.Date) currentDate);
+    preparedStatement.setDate(7, sqlDate);
     preparedStatement.setString(8, UserSession.getUserName());
     preparedStatement.setInt(9, divisionId);
 
