@@ -55,6 +55,7 @@ public class CustomerService {
           resultSet.getDate("c.Last_Update"),
           resultSet.getString("c.Last_Updated_By"),
           resultSet.getInt("c.Division_ID"),
+          resultSet.getInt("fld.Country_ID"),
           countryService.getCountryById(resultSet.getInt("fld.Country_ID")),
           fldService.getFirstLevelDivisionById(resultSet.getInt("c.Division_ID")));
           customerList.add(customer);
@@ -88,6 +89,7 @@ public class CustomerService {
       resultSet.getDate("c.Last_Update"),
       resultSet.getString("c.Last_Updated_By"),
       resultSet.getInt("c.Division_ID"),
+      resultSet.getInt("fld.Country_ID"),
       countryService.getCountryById(resultSet.getInt("fld.Country_ID")),
       fldService.getFirstLevelDivisionById(resultSet.getInt("c.Division_ID"))
     );

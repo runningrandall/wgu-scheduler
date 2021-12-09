@@ -10,6 +10,7 @@ import com.randalladams.scheduler.model.Customer;
 import com.randalladams.scheduler.services.CustomerService;
 import com.randalladams.scheduler.util.Database;
 import com.randalladams.scheduler.util.SceneManager;
+import com.randalladams.scheduler.util.UserSession;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,7 +25,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import java.io.IOException;
 import java.net.URL;
@@ -37,6 +37,7 @@ public class CustomerController implements Initializable {
 
   private static final String customerForm = "/fxml/customerForm.fxml";
   private static ResourceBundle resourceBundle = null;
+  private static ResourceBundle langBundle = null;
 
   @FXML
   private TableView<Customer> customersTable;
@@ -48,7 +49,10 @@ public class CustomerController implements Initializable {
    */
   public void initialize(URL url, ResourceBundle resourceBundle) {
     CustomerService customerService = new CustomerService();
-    this.resourceBundle = resourceBundle;
+    CustomerController.resourceBundle = resourceBundle;
+    String lang = System.getProperty("user.language");
+    Locale locale = new Locale(lang, lang.toUpperCase());
+    langBundle = ResourceBundle.getBundle("i18n", locale);
     try {
       ObservableList<Customer> allCustomers = customerService.getCustomers();
       setupCustomersTable(allCustomers, resourceBundle);
@@ -123,29 +127,30 @@ public class CustomerController implements Initializable {
     // TODO: move to service
     try {
       Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
+      UserSession.setCurrentCustomerSelected(selectedCustomer.getId());
+      System.out.println(UserSession.getCurrentCustomerSelected());
       Stage stage = new Stage();
       Parent root = FXMLLoader.load(
-        CustomerController.class.getResource(customerForm));
+        CustomerController.class.getResource(customerForm), resourceBundle);
       stage.setScene(new Scene(root, 820, 520));
-      stage.setTitle("Edit Customer");
+      stage.setTitle(langBundle.getString("customer_form.edit_title"));
       stage.initModality(Modality.WINDOW_MODAL);
       stage.initOwner(
         ((Node)actionEvent.getSource()).getScene().getWindow() );
       stage.show();
     } catch (Exception e) {
-      Window owner = customersTable.getScene().getWindow();
-      SceneManager.showAlert(Alert.AlertType.ERROR, owner, "Contacts Error!",
-        "Could not edit contact: " + e.getMessage());
+      SceneManager.showAlert(Alert.AlertType.ERROR, customersTable.getScene().getWindow(), langBundle.getString("errors.missing_customer_selection.title"),
+        langBundle.getString("error.missing_customer.text") + e.getMessage());
     }
   }
 
   public void createCustomer(ActionEvent actionEvent) throws IOException {
-
+    UserSession.setCurrentCustomerSelected(0);
     Stage stage = new Stage();
     Parent root = FXMLLoader.load(
       CustomerController.class.getResource(customerForm), resourceBundle);
     stage.setScene(new Scene(root, 820, 520));
-    stage.setTitle("New Customer");
+    stage.setTitle(langBundle.getString("customer_form.title"));
     stage.initModality(Modality.WINDOW_MODAL);
     stage.initOwner(
       ((Node)actionEvent.getSource()).getScene().getWindow() );

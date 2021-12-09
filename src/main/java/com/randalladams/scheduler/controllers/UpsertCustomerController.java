@@ -5,6 +5,7 @@ import com.randalladams.scheduler.services.CountryService;
 import com.randalladams.scheduler.services.CustomerService;
 import com.randalladams.scheduler.services.FirstLevelDivisionsService;
 import com.randalladams.scheduler.util.KeyValuePair;
+import com.randalladams.scheduler.util.UserSession;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,7 +16,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
-public class CreateCustomerController implements Initializable {
+public class UpsertCustomerController implements Initializable {
 
   @FXML
   private ChoiceBox<KeyValuePair> firstLevelDivisionChoiceBox;
@@ -35,7 +36,8 @@ public class CreateCustomerController implements Initializable {
   @FXML
   private TextField customerPhone;
 
-
+  private static Customer customer;
+  private static Boolean isNewCustomer;
   private static final FirstLevelDivisionsService fldService = new FirstLevelDivisionsService();
   private static final CountryService countryService = new CountryService();
 
@@ -46,6 +48,9 @@ public class CreateCustomerController implements Initializable {
    */
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
+      // if 0 we are going to new
+      isNewCustomer = UserSession.getCurrentCustomerSelected() == 0;
+
       ObservableList<KeyValuePair> countries = countryService.getCountriesKeyValuePairs();
       countriesChoiceBox.setItems(countries);
       // lambda here
@@ -56,6 +61,23 @@ public class CreateCustomerController implements Initializable {
           throwables.printStackTrace();
         }
       });
+
+      // populate form if editing
+      if (!isNewCustomer) {
+        customer = CustomerService.getCustomerById(UserSession.getCurrentCustomerSelected());
+        KeyValuePair countryKvP = new KeyValuePair(String.valueOf(customer.getCountryId()), customer.getCountry());
+        KeyValuePair fldKvp = new KeyValuePair(String.valueOf(customer.getDivisionId()), customer.getDivision());
+        System.out.println(customer.getName());
+        customerName.setText(customer.getName());
+        customerAddress.setText(customer.getAddress());
+        customerPhone.setText(customer.getPhone());
+        customerPostalcode.setText(customer.getPostalCode());
+        countriesChoiceBox.setValue(countryKvP);
+        filterFirstLevelDivisionsByCountry(countryKvP);
+        firstLevelDivisionChoiceBox.setValue(fldKvp);
+      }
+
+
 
     } catch (SQLException throwables) {
       throwables.printStackTrace();

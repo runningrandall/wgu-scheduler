@@ -14,10 +14,11 @@ public class Customer {
   private Date lastUpdateDate;
   private String lastUpdatedBy;
   private int divisionId;
+  private int countryId;
   private String country;
   private String division;
 
-  public Customer(int customer_id, String customer_name, String address, String postal_code, String phone, java.sql.Date create_date, String created_by, java.sql.Date last_update, String last_updated_by, int division_id, String country, String division) {
+  public Customer(int customer_id, String customer_name, String address, String postal_code, String phone, java.sql.Date create_date, String created_by, java.sql.Date last_update, String last_updated_by, int division_id, int country_id, String country, String division) {
     this.setId(customer_id);
     this.setName(customer_name);
     this.setAddress(address);
@@ -28,6 +29,7 @@ public class Customer {
     this.setLastUpdateDate(last_update);
     this.setLastUpdatedBy(last_updated_by);
     this.setDivisionId(division_id);
+    this.setCountryId(country_id);
     this.setCountry(country);
     this.setDivision(division);
   }
@@ -118,6 +120,14 @@ public class Customer {
 
   public void setDivisionId(int divisionId) {
     this.divisionId = divisionId;
+  }
+
+  private void setCountryId(int countryId) {
+    this.countryId = countryId;
+  }
+
+  public int getCountryId() {
+    return countryId;
   }
 
   private void setCountry(String country) {
