@@ -4,28 +4,30 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.randalladams.scheduler.controllers.UpsertCustomerController">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.randalladams.scheduler.controllers.UpsertCustomerController">
    <children>
-      <Pane layoutX="6.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Pane layoutX="6.0" prefHeight="468.0" prefWidth="600.0" AnchorPane.bottomAnchor="-68.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Text layoutX="14.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%customer_form.title">
                <font>
                   <Font size="24.0" />
                </font>
             </Text>
-            <Label layoutX="14.0" layoutY="50.0" text="%customer_form.name.label" />
-            <TextField fx:id="customerName" layoutX="14.0" layoutY="64.0" prefHeight="32.0" prefWidth="300.0" promptText="%customer_form.name.prompt" />
-            <Label layoutX="14.0" layoutY="105.0" text="%customer_form.address.label" />
-            <TextField fx:id="customerAddress" layoutX="14.0" layoutY="119.0" prefHeight="32.0" prefWidth="300.0" promptText="%customer_form.address.prompt" />
-            <Label layoutX="14.0" layoutY="160.0" text="%customer_form.postal.label" />
-            <TextField fx:id="customerPostalcode" layoutX="14.0" layoutY="174.0" prefHeight="32.0" prefWidth="300.0" promptText="%customer_form.postal.prompt" />
-            <Label layoutX="14.0" layoutY="215.0" text="%customer_form.phone.label" />
-            <TextField fx:id="customerPhone" layoutX="14.0" layoutY="229.0" prefHeight="32.0" prefWidth="300.0" promptText="%customer_form.phone.prompt" />
-            <Button fx:id="customerSubmitBtn" layoutX="455.0" layoutY="361.0" mnemonicParsing="false" onAction="#submitCustomer" text="%shared.submit_btn" />
-            <ChoiceBox fx:id="firstLevelDivisionChoiceBox" layoutX="15.0" layoutY="341.0" prefWidth="150.0" />
-            <Label layoutX="15.0" layoutY="317.0" text="%customers_form.state.label" />
-            <ChoiceBox fx:id="countriesChoiceBox" layoutX="14.0" layoutY="287.0" prefWidth="150.0" />
-            <Label layoutX="15.0" layoutY="270.0" text="%customers_form.country.label" />
+            <Label layoutX="14.0" layoutY="94.0" text="%customer_form.name.label" />
+            <TextField fx:id="customerName" layoutX="14.0" layoutY="108.0" prefHeight="32.0" prefWidth="300.0" promptText="%customer_form.name.prompt" />
+            <Label layoutX="14.0" layoutY="149.0" text="%customer_form.address.label" />
+            <TextField fx:id="customerAddress" layoutX="14.0" layoutY="163.0" prefHeight="32.0" prefWidth="300.0" promptText="%customer_form.address.prompt" />
+            <Label layoutX="14.0" layoutY="204.0" text="%customer_form.postal.label" />
+            <TextField fx:id="customerPostalcode" layoutX="14.0" layoutY="218.0" prefHeight="32.0" prefWidth="300.0" promptText="%customer_form.postal.prompt" />
+            <Label layoutX="14.0" layoutY="259.0" text="%customer_form.phone.label" />
+            <TextField fx:id="customerPhone" layoutX="14.0" layoutY="273.0" prefHeight="32.0" prefWidth="300.0" promptText="%customer_form.phone.prompt" />
+            <Button fx:id="customerSubmitBtn" layoutX="662.0" layoutY="565.0" mnemonicParsing="false" onAction="#submitCustomer" text="%shared.submit_btn" />
+            <ChoiceBox fx:id="firstLevelDivisionChoiceBox" layoutX="15.0" layoutY="385.0" prefWidth="150.0" />
+            <Label layoutX="15.0" layoutY="361.0" text="%customers_form.state.label" />
+            <ChoiceBox fx:id="countriesChoiceBox" layoutX="14.0" layoutY="331.0" prefWidth="150.0" />
+            <Label layoutX="15.0" layoutY="314.0" text="%customers_form.country.label" />
+            <Label layoutX="15.0" layoutY="43.0" text="%customer_form.id.label" />
+            <TextField fx:id="customerId" disable="true" layoutX="16.0" layoutY="60.0" />
          </children>
       </Pane>
    </children>

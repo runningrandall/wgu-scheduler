@@ -19,6 +19,9 @@ import java.util.ResourceBundle;
 public class UpsertCustomerController implements Initializable {
 
   @FXML
+  private TextField customerId;
+
+  @FXML
   private ChoiceBox<KeyValuePair> firstLevelDivisionChoiceBox;
 
   @FXML
@@ -67,7 +70,7 @@ public class UpsertCustomerController implements Initializable {
         customer = CustomerService.getCustomerById(UserSession.getCurrentCustomerSelected());
         KeyValuePair countryKvP = new KeyValuePair(String.valueOf(customer.getCountryId()), customer.getCountry());
         KeyValuePair fldKvp = new KeyValuePair(String.valueOf(customer.getDivisionId()), customer.getDivision());
-        System.out.println(customer.getName());
+        customerId.setText(String.valueOf(customer.getId()));
         customerName.setText(customer.getName());
         customerAddress.setText(customer.getAddress());
         customerPhone.setText(customer.getPhone());
