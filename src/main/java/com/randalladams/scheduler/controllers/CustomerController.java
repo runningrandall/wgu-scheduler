@@ -38,6 +38,7 @@ public class CustomerController implements Initializable {
   private static final String customerForm = "/fxml/customerForm.fxml";
   private static ResourceBundle resourceBundle = null;
   private static ResourceBundle langBundle = null;
+  private static CustomerService customerService;
 
   @FXML
   private TableView<Customer> customersTable;
@@ -48,7 +49,7 @@ public class CustomerController implements Initializable {
    * @param resourceBundle - the resource bundle for the scene
    */
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    CustomerService customerService = new CustomerService();
+    customerService = new CustomerService();
     CustomerController.resourceBundle = resourceBundle;
     String lang = System.getProperty("user.language");
     Locale locale = new Locale(lang, lang.toUpperCase());
@@ -128,7 +129,6 @@ public class CustomerController implements Initializable {
     try {
       Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
       UserSession.setCurrentCustomerSelected(selectedCustomer.getId());
-      System.out.println(UserSession.getCurrentCustomerSelected());
       Stage stage = new Stage();
       Parent root = FXMLLoader.load(
         CustomerController.class.getResource(customerForm), resourceBundle);
@@ -137,6 +137,15 @@ public class CustomerController implements Initializable {
       stage.initModality(Modality.WINDOW_MODAL);
       stage.initOwner(
         ((Node)actionEvent.getSource()).getScene().getWindow() );
+      stage.setOnCloseRequest(e -> {
+        ObservableList<Customer> allCustomers = null;
+        try {
+          allCustomers = customerService.getCustomers();
+        } catch (SQLException throwables) {
+          throwables.printStackTrace();
+        }
+        setupCustomersTable(allCustomers, resourceBundle);
+      });
       stage.show();
     } catch (Exception e) {
       SceneManager.showAlert(Alert.AlertType.ERROR, customersTable.getScene().getWindow(), langBundle.getString("errors.missing_customer_selection.title"),
@@ -153,7 +162,16 @@ public class CustomerController implements Initializable {
     stage.setTitle(langBundle.getString("customer_form.title"));
     stage.initModality(Modality.WINDOW_MODAL);
     stage.initOwner(
-      ((Node)actionEvent.getSource()).getScene().getWindow() );
+      ((Node)actionEvent.getSource()).getScene().getWindow());
+    stage.setOnCloseRequest(e -> {
+      ObservableList<Customer> allCustomers = null;
+      try {
+        allCustomers = customerService.getCustomers();
+      } catch (SQLException throwables) {
+        throwables.printStackTrace();
+      }
+      setupCustomersTable(allCustomers, resourceBundle);
+    });
     stage.show();
   }
 }

@@ -6,17 +6,17 @@ import com.randalladams.scheduler.services.CustomerService;
 import com.randalladams.scheduler.services.FirstLevelDivisionsService;
 import com.randalladams.scheduler.util.KeyValuePair;
 import com.randalladams.scheduler.util.Lang;
-import com.randalladams.scheduler.util.SceneManager;
 import com.randalladams.scheduler.util.UserSession;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class UpsertCustomerController implements Initializable {
@@ -43,6 +43,8 @@ public class UpsertCustomerController implements Initializable {
   private TextField customerPhone;
 
   @FXML
+  private Button customerSubmitBtn;
+  @FXML
   private Button deleteBtn;
 
   private static Customer customer;
@@ -50,7 +52,6 @@ public class UpsertCustomerController implements Initializable {
   private static final FirstLevelDivisionsService fldService = new FirstLevelDivisionsService();
   private static final CountryService countryService = new CountryService();
   private static Alert confirmationAlert;
-  private static final SceneManager sm = new SceneManager();
 
   /**
    * Initializer for create customer modal
@@ -112,21 +113,22 @@ public class UpsertCustomerController implements Initializable {
       try {
         CustomerService.deleteCustomer(customer.getId());
         Stage stage = (Stage) deleteBtn.getScene().getWindow();
-        stage.close();
+        stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
       } catch (Exception e) {
         System.out.println("Error deleting customer" + e.getMessage());
       }
     }
   }
 
-  public void submitCustomer() throws SQLException {
-    Customer newCustomer = CustomerService.createCustomer(
+  public void submitCustomer(ActionEvent event) throws SQLException {
+    CustomerService.createCustomer(
       customerName.getText(),
       customerAddress.getText(),
       customerPostalcode.getText(),
       customerPhone.getText(),
       Integer.parseInt(firstLevelDivisionChoiceBox.getValue().getKey())
     );
-    System.out.println(newCustomer.getName());
+    Stage stage = (Stage) customerSubmitBtn.getScene().getWindow();
+    stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
   }
 }
