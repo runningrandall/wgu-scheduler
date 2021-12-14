@@ -5,15 +5,18 @@ import com.randalladams.scheduler.services.CountryService;
 import com.randalladams.scheduler.services.CustomerService;
 import com.randalladams.scheduler.services.FirstLevelDivisionsService;
 import com.randalladams.scheduler.util.KeyValuePair;
+import com.randalladams.scheduler.util.Lang;
+import com.randalladams.scheduler.util.SceneManager;
 import com.randalladams.scheduler.util.UserSession;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class UpsertCustomerController implements Initializable {
@@ -39,10 +42,15 @@ public class UpsertCustomerController implements Initializable {
   @FXML
   private TextField customerPhone;
 
+  @FXML
+  private Button deleteBtn;
+
   private static Customer customer;
   private static Boolean isNewCustomer;
   private static final FirstLevelDivisionsService fldService = new FirstLevelDivisionsService();
   private static final CountryService countryService = new CountryService();
+  private static Alert confirmationAlert;
+  private static final SceneManager sm = new SceneManager();
 
   /**
    * Initializer for create customer modal
@@ -78,6 +86,8 @@ public class UpsertCustomerController implements Initializable {
         countriesChoiceBox.setValue(countryKvP);
         filterFirstLevelDivisionsByCountry(countryKvP);
         firstLevelDivisionChoiceBox.setValue(fldKvp);
+      } else {
+        deleteBtn.setVisible(false);
       }
 
 
@@ -90,6 +100,23 @@ public class UpsertCustomerController implements Initializable {
   public void filterFirstLevelDivisionsByCountry(KeyValuePair selectedCountry) throws SQLException {
     ObservableList<KeyValuePair> firstLevelDivisions = fldService.getFirstLevelDivisionsByCountryId(Integer.parseInt(selectedCountry.getKey()));
     firstLevelDivisionChoiceBox.setItems(firstLevelDivisions);
+  }
+
+  // TODO: figure out how to refresh table view after delete
+  public void confirmCustomerDelete() throws SQLException {
+    confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+    confirmationAlert.setTitle(Lang.getString("customer_form.delete.title"));
+    confirmationAlert.setContentText(Lang.getString("customer_form.delete.text"));
+    confirmationAlert.showAndWait();
+    if (confirmationAlert.getResult() == ButtonType.OK) {
+      try {
+        CustomerService.deleteCustomer(customer.getId());
+        Stage stage = (Stage) deleteBtn.getScene().getWindow();
+        stage.close();
+      } catch (Exception e) {
+        System.out.println("Error deleting customer" + e.getMessage());
+      }
+    }
   }
 
   public void submitCustomer() throws SQLException {

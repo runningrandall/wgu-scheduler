@@ -94,6 +94,7 @@ public class CustomerService {
       fldService.getFirstLevelDivisionById(resultSet.getInt("c.Division_ID"))
     );
   }
+
   public static Customer createCustomer(String name, String address, String postalCode, String phone, int divisionId) throws SQLException {
     Customer newCustomer;
     String insertQuery = "INSERT INTO " + DATABASE_TABLE +
@@ -129,5 +130,12 @@ public class CustomerService {
       }
     }
     return newCustomer;
+  }
+
+  public static void deleteCustomer(int customerId) throws SQLException {
+    String deleteQuery = "DELETE FROM " + DATABASE_TABLE + " WHERE Customer_ID = ?";
+    PreparedStatement preparedStatement = conn.prepareStatement(deleteQuery);
+    preparedStatement.setInt(1, customerId);
+    preparedStatement.executeUpdate();
   }
 }
