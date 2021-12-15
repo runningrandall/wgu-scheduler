@@ -137,6 +137,7 @@ public class CustomerController implements Initializable {
       stage.initModality(Modality.WINDOW_MODAL);
       stage.initOwner(
         ((Node)actionEvent.getSource()).getScene().getWindow() );
+      // TODO: make this reusable
       stage.setOnCloseRequest(e -> {
         ObservableList<Customer> allCustomers = null;
         try {
@@ -163,6 +164,7 @@ public class CustomerController implements Initializable {
     stage.initModality(Modality.WINDOW_MODAL);
     stage.initOwner(
       ((Node)actionEvent.getSource()).getScene().getWindow());
+    // TODO: make this resusable
     stage.setOnCloseRequest(e -> {
       ObservableList<Customer> allCustomers = null;
       try {
