@@ -81,4 +81,13 @@ public class FirstLevelDivisionsService {
     resultSet.next();
     return resultSet.getString("Division");
   }
+
+  public String getCountryStringFromFirstLevelDivisionId (int divisionId) throws SQLException {
+    String query = "SELECT c.Country FROM first_level_divisions fld LEFT join countries c ON c.Country_ID = fld.Country_ID WHERE Division_ID = ?";
+    PreparedStatement preparedStatement = conn.prepareStatement(query);
+    preparedStatement.setInt(1, divisionId);
+    ResultSet resultSet = preparedStatement.executeQuery();
+    resultSet.next();
+    return resultSet.getString("c.Country");
+  }
 }

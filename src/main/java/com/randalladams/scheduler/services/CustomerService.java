@@ -14,12 +14,14 @@ import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 public class CustomerService {
   private static Connection conn;
   private static final String DATABASE_TABLE = "customers";
   private static final FirstLevelDivisionsService fldService = new FirstLevelDivisionsService();
   private static final CountryService countryService = new CountryService();
+  private static final String uk = "UK";
 
   /**
    * constructor to create connection to the database
@@ -95,6 +97,29 @@ public class CustomerService {
     );
   }
 
+  public static Customer editCustomer(int customerId, String name, String address, String postalCode, String phone, int divisionId) throws SQLException {
+    Customer editCustomer;
+    String updateQuery = "UPDATE " + DATABASE_TABLE + " " +
+      "SET Customer_Name = ?, Address = ?, Postal_Code = ?, Phone = ?, Last_Update = ?, Last_Updated_By = ?, Division_ID = ? " +
+      "WHERE Customer_ID = ?";
+    PreparedStatement preparedStatement = conn.prepareStatement(updateQuery);
+    Date currentDate = new Date();
+    java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
+
+    preparedStatement.setString(1, name);
+    preparedStatement.setString(2, address);
+    preparedStatement.setString(3, postalCode);
+    preparedStatement.setString(4, phone);
+    preparedStatement.setDate(5, sqlDate);
+    preparedStatement.setString(6, UserSession.getUserName());
+    preparedStatement.setInt(7, divisionId);
+    preparedStatement.setInt(8, customerId);
+
+    preparedStatement.executeUpdate();
+
+    return getCustomerById(customerId);
+  }
+
   public static Customer createCustomer(String name, String address, String postalCode, String phone, int divisionId) throws SQLException {
     Customer newCustomer;
     String insertQuery = "INSERT INTO " + DATABASE_TABLE +
@@ -132,7 +157,39 @@ public class CustomerService {
     return newCustomer;
   }
 
+  public static boolean validateCustomer(String name, String address, String postalCode, String phoneNumber, int firstLevelDivisionId) throws SQLException {
+    boolean isAnyEmpty = name.isEmpty() || address.isEmpty() || postalCode.isEmpty() || phoneNumber.isEmpty() || firstLevelDivisionId == 0;
+    if (isAnyEmpty) {
+      return false;
+    }
+
+    boolean isValidAddress;
+    FirstLevelDivisionsService fldService = new FirstLevelDivisionsService();
+    String usAndCaAddressPattern = "(\\d)* ([a-zA-Z ])*, ([a-zA-Z ])*";
+    String ukAddressPattern = "(\\d)* ([a-zA-Z ])*, ([a-zA-Z ])*, ([a-zA-Z ])*";
+    String phonePattern = "((\\d)*-)*(\\d)*";
+    String country = fldService.getCountryStringFromFirstLevelDivisionId(firstLevelDivisionId);
+
+    // TODO: not hard code this...db can change and break this
+    switch(country) {
+      case uk:
+        isValidAddress = Pattern.matches(ukAddressPattern, address);
+        break;
+      default:
+        isValidAddress = Pattern.matches(usAndCaAddressPattern, address);
+        break;
+    }
+
+    boolean isValidPhone = Pattern.matches(phonePattern, phoneNumber);
+
+    return isValidAddress && isValidPhone;
+  }
+
   public static void deleteCustomer(int customerId) throws SQLException {
+    // first delete all appointments
+    AppointmentService appointmentService = new AppointmentService();
+    appointmentService.deleteAllAppointmentsByCustomerId(customerId);
+    // now delete the customer
     String deleteQuery = "DELETE FROM " + DATABASE_TABLE + " WHERE Customer_ID = ?";
     PreparedStatement preparedStatement = conn.prepareStatement(deleteQuery);
     preparedStatement.setInt(1, customerId);

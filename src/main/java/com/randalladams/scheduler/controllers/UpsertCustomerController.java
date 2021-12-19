@@ -6,6 +6,7 @@ import com.randalladams.scheduler.services.CustomerService;
 import com.randalladams.scheduler.services.FirstLevelDivisionsService;
 import com.randalladams.scheduler.util.KeyValuePair;
 import com.randalladams.scheduler.util.Lang;
+import com.randalladams.scheduler.util.SceneManager;
 import com.randalladams.scheduler.util.UserSession;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -52,6 +53,7 @@ public class UpsertCustomerController implements Initializable {
   private static final FirstLevelDivisionsService fldService = new FirstLevelDivisionsService();
   private static final CountryService countryService = new CountryService();
   private static Alert confirmationAlert;
+  private static Alert errorAlert;
 
   /**
    * Initializer for create customer modal
@@ -121,14 +123,39 @@ public class UpsertCustomerController implements Initializable {
   }
 
   public void submitCustomer(ActionEvent event) throws SQLException {
-    CustomerService.createCustomer(
+    Boolean isCustomerValid = CustomerService.validateCustomer(
       customerName.getText(),
       customerAddress.getText(),
       customerPostalcode.getText(),
       customerPhone.getText(),
       Integer.parseInt(firstLevelDivisionChoiceBox.getValue().getKey())
     );
-    Stage stage = (Stage) customerSubmitBtn.getScene().getWindow();
-    stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
+    if (isCustomerValid) {
+      if (isNewCustomer) {
+        CustomerService.createCustomer(
+          customerName.getText(),
+          customerAddress.getText(),
+          customerPostalcode.getText(),
+          customerPhone.getText(),
+          Integer.parseInt(firstLevelDivisionChoiceBox.getValue().getKey())
+        );
+      } else {
+        CustomerService.editCustomer(
+          Integer.parseInt(customerId.getText()),
+          customerName.getText(),
+          customerAddress.getText(),
+          customerPostalcode.getText(),
+          customerPhone.getText(),
+          Integer.parseInt(firstLevelDivisionChoiceBox.getValue().getKey())
+        );
+      }
+      Stage stage = (Stage) customerSubmitBtn.getScene().getWindow();
+      stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
+    } else {
+      errorAlert = new Alert(Alert.AlertType.ERROR);
+      errorAlert.setTitle(Lang.getString("customer_form.error.title"));
+      errorAlert.setContentText(Lang.getString("customer_form.error.text"));
+      errorAlert.show();
+    }
   }
 }
