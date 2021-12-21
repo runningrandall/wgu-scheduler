@@ -6,7 +6,6 @@ import com.randalladams.scheduler.services.CustomerService;
 import com.randalladams.scheduler.services.FirstLevelDivisionsService;
 import com.randalladams.scheduler.util.KeyValuePair;
 import com.randalladams.scheduler.util.Lang;
-import com.randalladams.scheduler.util.SceneManager;
 import com.randalladams.scheduler.util.UserSession;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

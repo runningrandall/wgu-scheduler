@@ -29,7 +29,7 @@ import javafx.stage.Window;
 public class LoginController implements Initializable {
 
   private static LoginService loginService;
-  private static final String nextFxmlScene = "/fxml/customers.fxml";
+  private static final String nextFxmlScene = "/fxml/appointments.fxml";
   private static final SceneManager sm = new SceneManager();
   private static final String nextSceneTitle = Lang.getString("login.header");
 
@@ -91,7 +91,6 @@ public class LoginController implements Initializable {
       // valid login path
     if (isValidLogin) {
       sm.setScene(nextFxmlScene, nextSceneTitle, 800, 500);
-      UserSession.getInstance(usernameText);
       owner.hide();
     } else { // if login fails we show an error
       SceneManager.showAlert(Alert.AlertType.ERROR, owner, Lang.getString("login.invalid_credentials"),

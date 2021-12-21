@@ -7,6 +7,8 @@ package com.randalladams.scheduler.services;
  */
 
 import com.randalladams.scheduler.util.Database;
+import com.randalladams.scheduler.util.UserSession;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
@@ -44,7 +46,11 @@ public class LoginService {
     preparedStatement.setString(2, encryptPassword(password));
     // Execute the query
     ResultSet resultSet = preparedStatement.executeQuery();
-    return resultSet.next();
+    while (resultSet.next()) {
+      UserSession.getInstance(resultSet.getString("User_Name"), resultSet.getInt("User_ID"));
+      return true;
+    }
+    return false;
   }
 
   /**
