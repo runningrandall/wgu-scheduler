@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.randalladams.scheduler.controllers.HomeController">
+   <children>
+      <TabPane prefHeight="768.0" prefWidth="1024.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="%tabs.customers">
+            <content>
+                <fx:include fx:id="customerTabPage" source="customers.fxml"/>
+            </content>
+          </Tab>
+          <Tab text="%tabs.appointments">
+            <content>
+                <fx:include fx:id="appointmentTabPage" source="appointments.fxml"/>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>

@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class AppointmentsController implements Initializable {
+public class AppointmentController implements Initializable {
 
   private static ResourceBundle resourceBundle = null;
   private static ResourceBundle langBundle = null;
@@ -32,7 +32,7 @@ public class AppointmentsController implements Initializable {
    */
   public void initialize(URL url, ResourceBundle resourceBundle) {
     appointmentService = new AppointmentService();
-    AppointmentsController.resourceBundle = resourceBundle;
+    AppointmentController.resourceBundle = resourceBundle;
     String lang = System.getProperty("user.language");
     Locale locale = new Locale(lang, lang.toUpperCase());
     langBundle = ResourceBundle.getBundle("i18n", locale);

@@ -29,7 +29,7 @@ import javafx.stage.Window;
 public class LoginController implements Initializable {
 
   private static LoginService loginService;
-  private static final String nextFxmlScene = "/fxml/appointments.fxml";
+  private static final String nextFxmlScene = "/fxml/home.fxml";
   private static final SceneManager sm = new SceneManager();
   private static final String nextSceneTitle = Lang.getString("login.header");
 
