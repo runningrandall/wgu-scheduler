@@ -1,6 +1,17 @@
 package com.randalladams.scheduler.model;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.time.format.TextStyle;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
+import java.util.Locale;
 
 public class Appointment {
   private int appointmentId;
@@ -11,6 +22,8 @@ public class Appointment {
   private String contactName;
   private Date start;
   private Date end;
+  private Timestamp startTimestamp;
+  private Timestamp endTimestamp;
   private Date createDate;
   private String createdBy;
   private Date lastUpdate;
@@ -18,8 +31,10 @@ public class Appointment {
   private int customerId;
   private int userId;
   private int contactId;
+  private String monthYear;
+  private String weekYear;
 
-  public Appointment(int appointmentId, String title, String description, String location, String type, String contactName, Date start, Date end, Date createDate, String createdBy, Date lastUpdate, String lastUpdatedBy, int customerId, int userId, int contactId) {
+  public Appointment(int appointmentId, String title, String description, String location, String type, String contactName, Date start, Timestamp startTimestamp, Date end, Timestamp endTimestamp, Date createDate, String createdBy, Date lastUpdate, String lastUpdatedBy, int customerId, int userId, int contactId) {
     this.appointmentId = appointmentId;
     this.title = title;
     this.description = description;
@@ -27,6 +42,8 @@ public class Appointment {
     this.type = type;
     this.contactName = contactName;
     this.start = start;
+    this.startTimestamp = startTimestamp;
+    this.endTimestamp = endTimestamp;
     this.end = end;
     this.createDate = createDate;
     this.createdBy = createdBy;
@@ -35,6 +52,8 @@ public class Appointment {
     this.customerId = customerId;
     this.userId = userId;
     this.contactId = contactId;
+    setAppointmentMonthYear(startTimestamp);
+    setAppointmentWeekYear(startTimestamp);
   }
 
   public int getAppointmentId() {
@@ -155,5 +174,24 @@ public class Appointment {
 
   public void setContactId(int contactId) {
     this.contactId = contactId;
+  }
+
+  public void setAppointmentMonthYear(Timestamp startTimestamp) {
+    LocalDate localStartDate = startTimestamp.toLocalDateTime().toLocalDate();
+    this.monthYear = localStartDate.format(DateTimeFormatter.ofPattern("MM-yyyy"));
+  }
+
+  public String getAppointmentMonth() {
+    return monthYear;
+  }
+
+  public void setAppointmentWeekYear(Timestamp startTimestamp) {
+    LocalDate localStartDate = startTimestamp.toLocalDateTime().toLocalDate();
+    LocalDate previousOrSameSunday = localStartDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+    this.weekYear = previousOrSameSunday.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+  }
+
+  public String getAppointmentWeekYear() {
+    return weekYear;
   }
 }

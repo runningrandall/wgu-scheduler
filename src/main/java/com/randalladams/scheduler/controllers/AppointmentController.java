@@ -45,6 +45,7 @@ public class AppointmentController implements Initializable {
   }
 
   private void setupAppointmentsTable(ObservableList<Appointment> appointments, ResourceBundle resourceBundle) {
+
     TableColumn<Appointment, String> idCol = new TableColumn<>(resourceBundle.getString("appointment_table.columns.id"));
     idCol.setMinWidth(10);
     idCol.setCellValueFactory(
