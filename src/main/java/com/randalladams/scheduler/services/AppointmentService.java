@@ -1,7 +1,6 @@
 package com.randalladams.scheduler.services;
 
 import com.randalladams.scheduler.model.Appointment;
-import com.randalladams.scheduler.model.Customer;
 import com.randalladams.scheduler.util.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,6 +21,33 @@ public class AppointmentService {
     } catch (SQLException e) {
       Database.printSQLException(e);
     }
+  }
+
+  public static Appointment getAppointmentById(int appointmentId) throws SQLException {
+    String selectQuery = "SELECT * FROM " + DATABASE_TABLE + " a LEFT JOIN contacts c ON c.Contact_ID = a.Contact_ID WHERE a.Appointment_ID = ?";
+    PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
+    preparedStatement.setInt(1, appointmentId);
+    ResultSet resultSet = preparedStatement.executeQuery();
+    resultSet.next();
+    return new Appointment(
+      resultSet.getInt("a.Appointment_ID"),
+      resultSet.getString("a.Title"),
+      resultSet.getString("a.Description"),
+      resultSet.getString("a.Location"),
+      resultSet.getString("a.Type"),
+      resultSet.getString("c.Contact_Name"),
+      resultSet.getDate("a.Start"),
+      resultSet.getTimestamp("a.Start"),
+      resultSet.getDate("a.End"),
+      resultSet.getTimestamp("a.End"),
+      resultSet.getDate("a.Create_Date"),
+      resultSet.getString("a.Created_By"),
+      resultSet.getDate("a.Last_Update"),
+      resultSet.getString("a.Last_Updated_By"),
+      resultSet.getInt("a.Customer_ID"),
+      resultSet.getInt("a.User_ID"),
+      resultSet.getInt("a.Contact_ID")
+    );
   }
 
   public void deleteAllAppointmentsByCustomerId (int customerId) throws SQLException {

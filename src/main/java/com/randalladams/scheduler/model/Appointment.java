@@ -194,4 +194,21 @@ public class Appointment {
   public String getAppointmentWeekYear() {
     return weekYear;
   }
+
+  public Timestamp getStartTimestamp() {
+    return startTimestamp;
+  }
+
+  public void setStartTimestamp(Timestamp startTimestamp) {
+    this.startTimestamp = startTimestamp;
+  }
+
+  public Timestamp getEndTimestamp() {
+    return endTimestamp;
+  }
+
+  public void setEndTimestamp(Timestamp endTimestamp) {
+    this.endTimestamp = endTimestamp;
+  }
+
 }

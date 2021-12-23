@@ -5,6 +5,7 @@ public class UserSession {
   private static String userName;
   private static int userId;
   private static int currentCustomerIdSelected;
+  private static int currentAppointmentIdSelected;
 
   private UserSession(String userName, int userId) {
     UserSession.userName = userName;
@@ -24,6 +25,9 @@ public class UserSession {
 
   public static void setCurrentCustomerSelected(int customerIdSelected) { currentCustomerIdSelected = customerIdSelected; }
   public static int getCurrentCustomerSelected() { return currentCustomerIdSelected; }
+
+  public static void setCurrentAppointmentSelected(int appointIdSelected) { currentAppointmentIdSelected = appointIdSelected; }
+  public static int getCurrentAppointmentSelected() { return currentAppointmentIdSelected; }
 
   public void cleanUserSession() {
     userName = "";
