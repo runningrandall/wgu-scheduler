@@ -4,15 +4,17 @@ import com.randalladams.scheduler.model.Appointment;
 import com.randalladams.scheduler.model.Customer;
 import com.randalladams.scheduler.services.AppointmentService;
 import com.randalladams.scheduler.services.ContactService;
+import com.randalladams.scheduler.services.CustomerService;
 import com.randalladams.scheduler.util.KeyValuePair;
 import com.randalladams.scheduler.util.UserSession;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -50,6 +52,9 @@ public class UpsertAppointmentController implements Initializable {
   @FXML
   private ChoiceBox<KeyValuePair> contactsChoiceBox;
 
+  @FXML
+  private Button submitButton;
+
   private static Appointment appointment;
   private static Boolean isNewAppointment;
   private static final ContactService contactService = new ContactService();
@@ -85,6 +90,30 @@ public class UpsertAppointmentController implements Initializable {
     } catch (SQLException throwables) {
       throwables.printStackTrace();
     }
+  }
 
+  public void submitAppointment(ActionEvent event) throws SQLException {
+    // TODO: add logic
+    Boolean isAppointmentValid = AppointmentService.validateAppointment();
+    if (!isNewAppointment) {
+      // edit
+      Appointment appointment = AppointmentService.updateAppointment(
+        Integer.parseInt(appointmentId.getText()),
+        appointmentTitle.getText(),
+        appointmentDescription.getText(),
+        appointmentLocation.getText(),
+        appointmentType.getText(),
+        java.sql.Date.valueOf(appointmentStart.getValue()),
+        java.sql.Date.valueOf(appointmentEnd.getValue()),
+        Integer.parseInt(appointmentCustomerId.getText()),
+        Integer.parseInt(appointmentUserId.getText()),
+        Integer.parseInt(contactsChoiceBox.getValue().getKey())
+      );
+      Stage stage = (Stage) submitButton.getScene().getWindow();
+      stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
+    } else {
+      // create
+      // Appointment = AppointmentService.createAppointment()
+    }
   }
 }

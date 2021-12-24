@@ -2,13 +2,12 @@ package com.randalladams.scheduler.services;
 
 import com.randalladams.scheduler.model.Appointment;
 import com.randalladams.scheduler.util.Database;
+import com.randalladams.scheduler.util.UserSession;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Date;
 
 public class AppointmentService {
   private static Connection conn;
@@ -86,5 +85,46 @@ public class AppointmentService {
       appointmentList.add(appointment);
     }
     return appointmentList;
+  }
+
+  public static Boolean validateAppointment() {
+    return true;
+  }
+
+  public static Appointment updateAppointment (int appointmentId, String title, String description, String location, String type, Date start, Date end, int customerId, int userId, int contactId) throws SQLException {
+    String updateQuery = "UPDATE `client_schedule`.`appointments`\n" +
+      "SET\n" +
+      "`Title` = ?,\n" +
+      "`Description` = ?,\n" +
+      "`Location` = ?,\n" +
+      "`Type` = ?,\n" +
+      "`Start` = ?,\n" +
+      "`End` = ?,\n" +
+      "`Last_Update` = ?,\n" +
+      "`Last_Updated_By` = ?,\n" +
+      "`Customer_ID` = ?,\n" +
+      "`User_ID` = ?,\n" +
+      "`Contact_ID` = ?\n" +
+      "WHERE `Appointment_ID` = ?";
+    PreparedStatement preparedStatement = conn.prepareStatement(updateQuery);
+    Date currentDate = new Date();
+    java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
+
+    preparedStatement.setString(1, title);
+    preparedStatement.setString(2, description);
+    preparedStatement.setString(3, location);
+    preparedStatement.setString(4, type);
+    preparedStatement.setDate(5, (java.sql.Date) start);
+    preparedStatement.setDate(6, (java.sql.Date) end);
+    preparedStatement.setDate(7, sqlDate);
+    preparedStatement.setString(8, UserSession.getUserName());
+    preparedStatement.setInt(9, customerId);
+    preparedStatement.setInt(10, userId);
+    preparedStatement.setInt(11, contactId);
+    preparedStatement.setInt(12, appointmentId);
+
+    preparedStatement.executeUpdate();
+
+    return getAppointmentById(appointmentId);
   }
 }
