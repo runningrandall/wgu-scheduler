@@ -155,12 +155,12 @@ public class AppointmentController implements Initializable {
     TableColumn<Appointment, String> startCol = new TableColumn<>(resourceBundle.getString("appointment_table.columns.start"));
     startCol.setMinWidth(10);
     startCol.setCellValueFactory(
-      new PropertyValueFactory<>("start"));
+      new PropertyValueFactory<>("startTimestamp"));
 
     TableColumn<Appointment, String> endCol = new TableColumn<>(resourceBundle.getString("appointment_table.columns.end"));
     endCol.setMinWidth(10);
     endCol.setCellValueFactory(
-      new PropertyValueFactory<>("end"));
+      new PropertyValueFactory<>("endTimestamp"));
 
     TableColumn<Appointment, String> customerIdCol = new TableColumn<>(resourceBundle.getString("appointment_table.columns.customer_id"));
     customerIdCol.setMinWidth(10);

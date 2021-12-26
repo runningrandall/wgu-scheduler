@@ -1,17 +1,13 @@
 package com.randalladams.scheduler.model;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.Month;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.time.format.TextStyle;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
-import java.util.Locale;
+
+import com.randalladams.scheduler.util.Database;
 
 public class Appointment {
   private int appointmentId;
@@ -42,8 +38,8 @@ public class Appointment {
     this.type = type;
     this.contactName = contactName;
     this.start = start;
-    this.startTimestamp = startTimestamp;
-    this.endTimestamp = endTimestamp;
+    this.startTimestamp = Database.getLocalTimestampFromUtcTimestamp(startTimestamp);
+    this.endTimestamp = Database.getLocalTimestampFromUtcTimestamp(endTimestamp);
     this.end = end;
     this.createDate = createDate;
     this.createdBy = createdBy;

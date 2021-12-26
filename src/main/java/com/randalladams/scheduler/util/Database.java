@@ -10,12 +10,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.text.SimpleDateFormat;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.TimeZone;
 
 public class Database {
 
@@ -83,5 +84,12 @@ public class Database {
     ZonedDateTime localDateTime = date.atZone(ZoneId.systemDefault());
     ZonedDateTime utcDateTime = localDateTime.withZoneSameInstant(ZoneId.of("UTC"));
     return utcDateTime.format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
+  }
+
+  public static java.sql.Timestamp getLocalTimestampFromUtcTimestamp(Timestamp utcTs) {
+    LocalDateTime localDateTime = utcTs.toLocalDateTime();
+    LocalDateTime adjustedTime = localDateTime.minusMinutes(utcTs.getTimezoneOffset());
+
+    return Timestamp.valueOf(adjustedTime);
   }
 }

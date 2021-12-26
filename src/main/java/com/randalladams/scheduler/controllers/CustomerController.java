@@ -68,7 +68,6 @@ public class CustomerController implements Initializable {
    * @param allCustomers - all the customers in the database
    */
   private void setupCustomersTable(ObservableList<Customer> allCustomers, ResourceBundle resourceBundle) {
-
     customersTable.getColumns().clear();
     // TODO: get labels from i18n
     TableColumn<Customer, String> idCol = new TableColumn<>(resourceBundle.getString("customers_table.columns.id"));

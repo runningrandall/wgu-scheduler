@@ -6,6 +6,7 @@ import com.randalladams.scheduler.services.ContactService;
 import com.randalladams.scheduler.util.KeyValuePair;
 import com.randalladams.scheduler.util.Lang;
 import com.randalladams.scheduler.util.UserSession;
+import com.randalladams.scheduler.util.Validator;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -64,6 +65,7 @@ public class UpsertAppointmentController implements Initializable {
   private static Boolean isNewAppointment;
   private static final ContactService contactService = new ContactService();
   private static Alert confirmationAlert;
+  private static Alert errorAlert;
   private static AppointmentService as = new AppointmentService();
 
   /**
@@ -102,12 +104,9 @@ public class UpsertAppointmentController implements Initializable {
   }
 
   public void submitAppointment(ActionEvent event) throws SQLException {
-    // TODO: add logic
-    Boolean isAppointmentValid = as.validateAppointment();
-    if (!isNewAppointment) {
-      // edit
-      as.updateAppointment(
-        Integer.parseInt(appointmentId.getText()),
+    Validator appointValidity = null;
+    try {
+      appointValidity = as.validateAppointment(
         appointmentTitle.getText(),
         appointmentDescription.getText(),
         appointmentLocation.getText(),
@@ -118,19 +117,49 @@ public class UpsertAppointmentController implements Initializable {
         Integer.parseInt(appointmentUserId.getText()),
         Integer.parseInt(contactsChoiceBox.getValue().getKey())
       );
-    } else {
-      as.createAppointment(
-        appointmentTitle.getText(),
-        appointmentDescription.getText(),
-        appointmentLocation.getText(),
-        appointmentType.getText(),
-        appointmentStart.getDateTimeValue(),
-        appointmentEnd.getDateTimeValue(),
-        Integer.parseInt(appointmentCustomerId.getText()),
-        Integer.parseInt(appointmentUserId.getText()),
-        Integer.parseInt(contactsChoiceBox.getValue().getKey())
-      );
+    } catch (Exception e) {
+      errorAlert = new Alert(Alert.AlertType.ERROR);
+      errorAlert.setTitle(Lang.getString("appointment_form.error.title"));
+      errorAlert.setContentText(e.getMessage());
+      errorAlert.show();
+      return;
     }
+
+    if (appointValidity.getValid()) {
+      if (!isNewAppointment) {
+        // edit
+        as.updateAppointment(
+          Integer.parseInt(appointmentId.getText()),
+          appointmentTitle.getText(),
+          appointmentDescription.getText(),
+          appointmentLocation.getText(),
+          appointmentType.getText(),
+          appointmentStart.getDateTimeValue(),
+          appointmentEnd.getDateTimeValue(),
+          Integer.parseInt(appointmentCustomerId.getText()),
+          Integer.parseInt(appointmentUserId.getText()),
+          Integer.parseInt(contactsChoiceBox.getValue().getKey())
+        );
+      } else {
+        as.createAppointment(
+          appointmentTitle.getText(),
+          appointmentDescription.getText(),
+          appointmentLocation.getText(),
+          appointmentType.getText(),
+          appointmentStart.getDateTimeValue(),
+          appointmentEnd.getDateTimeValue(),
+          Integer.parseInt(appointmentCustomerId.getText()),
+          Integer.parseInt(appointmentUserId.getText()),
+          Integer.parseInt(contactsChoiceBox.getValue().getKey())
+        );
+      }
+    } else {
+      errorAlert = new Alert(Alert.AlertType.ERROR);
+      errorAlert.setTitle(Lang.getString("appointment_form.error.title"));
+      errorAlert.setContentText(appointValidity.getMessage());
+      errorAlert.show();
+    }
+
     Stage stage = (Stage) submitButton.getScene().getWindow();
     stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
   }

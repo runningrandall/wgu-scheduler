@@ -3,6 +3,7 @@ package com.randalladams.scheduler.services;
 import com.randalladams.scheduler.model.Appointment;
 import com.randalladams.scheduler.util.Database;
 import com.randalladams.scheduler.util.UserSession;
+import com.randalladams.scheduler.util.Validator;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -13,7 +14,9 @@ import java.util.Date;
 public class AppointmentService {
   private static Connection conn;
   private static final String DATABASE_TABLE = "appointments";
-  Database db;
+  private static final int VALID_START_HOUR_ET = 7; // 8am eastern
+  private static final int VALID_END_HOUR_ET = 19; // 10pm eastern
+  private Database db;
 
   public AppointmentService() {
     try {
@@ -89,8 +92,58 @@ public class AppointmentService {
     return appointmentList;
   }
 
-  public static Boolean validateAppointment() {
-    return true;
+  private Boolean isValidAppointmentTime(LocalDateTime appointmentDate) {
+    ZoneId easternZoneId = ZoneId.of("America/New_York");
+    int appointmentHour = appointmentDate.atZone(easternZoneId).getHour();
+    int appointmentMinute = appointmentDate.atZone(easternZoneId).getMinute();
+    Boolean isValidHour = appointmentHour >= VALID_START_HOUR_ET && appointmentHour <= VALID_END_HOUR_ET;
+    Boolean isValidMinute = appointmentHour != VALID_END_HOUR_ET || appointmentMinute == 0;
+    return isValidHour && isValidMinute;
+  }
+
+  private Boolean customerHasOverlappingAppointment(int customerId, LocalDateTime start, LocalDateTime end) throws SQLException {
+    String selectQuery = "SELECT * FROM " + DATABASE_TABLE + " " +
+      "WHERE ((Start BETWEEN ? AND ?) OR (End BETWEEN ? AND ?)) AND Customer_ID = ?";
+    PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
+
+    preparedStatement.setString(1, db.getDbStringFromLocalDateTime(start));
+    preparedStatement.setString(2, db.getDbStringFromLocalDateTime(end));
+    preparedStatement.setString(3, db.getDbStringFromLocalDateTime(start));
+    preparedStatement.setString(4, db.getDbStringFromLocalDateTime(end));
+    preparedStatement.setInt(5, customerId);
+
+    ResultSet resultSet = preparedStatement.executeQuery();
+    while (resultSet.next()) {
+      return true;
+    }
+    return false;
+  }
+
+  public Validator validateAppointment(String title, String description, String location, String type, LocalDateTime start, LocalDateTime end, int customerId, int userId, int contactId) throws SQLException {
+    boolean isAnyEmpty = title.isEmpty() || description.isEmpty() || location.isEmpty() || type.isEmpty() || start == null || end == null || customerId == 0 || userId == 0 || contactId == 0;
+
+    // TODO: i18n
+    if (isAnyEmpty) {
+      return new Validator(false, "Missing one or more required fields");
+    }
+
+    if (start.isAfter(end)) {
+      return new Validator(false, "Start time cannot come before end time");
+    }
+
+    if(!this.isValidAppointmentTime(start)) {
+      return new Validator(false, "The start time must be between 8am and 10pm ET");
+    }
+
+    if (!this.isValidAppointmentTime(end)) {
+      return new Validator(false, "The end time must be between 8am and 10pm ET");
+    }
+
+    if (this.customerHasOverlappingAppointment(customerId, start, end)) {
+      return new Validator(false, "The customer already has an appointment during this time.");
+    }
+
+    return new Validator(true, "");
   }
 
   public Appointment createAppointment(String title, String description, String location, String type, LocalDateTime start, LocalDateTime end, int customerId, int userId, int contactId) throws SQLException {
