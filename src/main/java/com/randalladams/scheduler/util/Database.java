@@ -1,6 +1,6 @@
 package com.randalladams.scheduler.util;
 /*
- * Database class is our class for managing database connections and printing exceptions
+ * Database class is our class for managing database connections, managing dates, and printing exceptions
  * @author Randall Adams
  * @version 1.0.0
  * @since 06/01/2020
@@ -10,6 +10,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -19,6 +23,7 @@ public class Database {
   private static String DATABASE_USERNAME;
   private static String DATABASE_PASSWORD;
   private static String DATABASE_SCHEMA;
+  private static final String DB_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
   /**
    * database constructor creates connection
@@ -72,5 +77,11 @@ public class Database {
         }
       }
     }
+  }
+
+  public String getDbStringFromLocalDateTime(LocalDateTime date) {
+    ZonedDateTime localDateTime = date.atZone(ZoneId.systemDefault());
+    ZonedDateTime utcDateTime = localDateTime.withZoneSameInstant(ZoneId.of("UTC"));
+    return utcDateTime.format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
   }
 }

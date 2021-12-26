@@ -14,24 +14,24 @@
       </Label>
       <Label fx:id="appointmentIdLabel" layoutX="17.0" layoutY="49.0" text="%appointment_form.id.label" />
       <TextField fx:id="appointmentId" layoutX="17.0" layoutY="69.0" />
-       <Label layoutX="17.0" layoutY="99.0" text="%appointment_form.title.label" />
-       <TextField fx:id="appointmentTitle" layoutX="17.0" layoutY="119.0" prefHeight="25.0" prefWidth="369.0" promptText="%appointment_form.title.prompt" />
-       <Label layoutX="17.0" layoutY="149.0" text="%appointment_form.description.label" />
-       <TextArea fx:id="appointmentDescription" layoutX="17.0" layoutY="169.0" prefHeight="107.0" prefWidth="369.0" promptText="%appointment_form.description.prompt" />
-       <Label layoutX="14.0" layoutY="281.0" text="%appointment_form.location.label" />
-       <TextField fx:id="appointmentLocation" layoutX="15.0" layoutY="304.0" prefHeight="25.0" prefWidth="219.0" promptText="%appointment_form.location.prompt" />
-       <Label layoutX="16.0" layoutY="344.0" text="%appointment_form.contact.label" />
+      <Label layoutX="17.0" layoutY="99.0" text="%appointment_form.title.label" />
+      <TextField fx:id="appointmentTitle" layoutX="17.0" layoutY="119.0" prefHeight="25.0" prefWidth="369.0" promptText="%appointment_form.title.prompt" />
+      <Label layoutX="17.0" layoutY="149.0" text="%appointment_form.description.label" />
+      <TextArea fx:id="appointmentDescription" layoutX="17.0" layoutY="169.0" prefHeight="107.0" prefWidth="369.0" promptText="%appointment_form.description.prompt" />
+      <Label layoutX="14.0" layoutY="281.0" text="%appointment_form.location.label" />
+      <TextField fx:id="appointmentLocation" layoutX="15.0" layoutY="304.0" prefHeight="25.0" prefWidth="219.0" promptText="%appointment_form.location.prompt" />
+      <Label layoutX="16.0" layoutY="344.0" text="%appointment_form.contact.label" />
       <ChoiceBox fx:id="contactsChoiceBox" layoutX="18.0" layoutY="363.0" prefHeight="25.0" prefWidth="369.0" />
-       <Label layoutX="245.0" layoutY="281.0" text="%appointment_form.type.label" />
-       <TextField fx:id="appointmentType" layoutX="245.0" layoutY="304.0" promptText="%appointment_form.type.prompt" />
-       <Label layoutX="245.0" layoutY="401.0" text="%appointment_form.start.label" />
-       <DateTimePicker fx:id="appointmentStart" layoutX="245.0" layoutY="422.0" />
-       <Label layoutX="15.0" layoutY="401.0" text="%appointment_form.end.label" />
-       <DateTimePicker fx:id="appointmentEnd" layoutX="16.0" layoutY="422.0" />
-       <Label layoutX="18.0" layoutY="463.0" text="%appointment_form.customer_id.label" />
-       <TextField fx:id="appointmentCustomerId" layoutX="15.0" layoutY="482.0" prefHeight="25.0" prefWidth="219.0" promptText="%appointment_form.customer_id.prompt" />
-       <Label layoutX="246.0" layoutY="463.0" text="%appointment_form.user_id.label" />
-       <TextField fx:id="appointmentUserId" layoutX="245.0" layoutY="482.0" promptText="%appointment_form.user_id.prompt" />
+      <Label layoutX="245.0" layoutY="281.0" text="%appointment_form.type.label" />
+      <TextField fx:id="appointmentType" layoutX="245.0" layoutY="304.0" promptText="%appointment_form.type.prompt" />
+      <Label layoutX="18.0" layoutY="404.0" text="%appointment_form.start.label" />
+      <DateTimePicker fx:id="appointmentStart" layoutX="18.0" layoutY="425.0" />
+      <Label layoutX="246.0" layoutY="404.0" text="%appointment_form.end.label" />
+      <DateTimePicker fx:id="appointmentEnd" layoutX="247.0" layoutY="425.0" />
+      <Label layoutX="18.0" layoutY="463.0" text="%appointment_form.customer_id.label" />
+      <TextField fx:id="appointmentCustomerId" layoutX="15.0" layoutY="482.0" prefHeight="25.0" prefWidth="219.0" promptText="%appointment_form.customer_id.prompt" />
+      <Label layoutX="246.0" layoutY="463.0" text="%appointment_form.user_id.label" />
+      <TextField fx:id="appointmentUserId" layoutX="245.0" layoutY="482.0" promptText="%appointment_form.user_id.prompt" />
       <Button fx:id="submitButton" layoutX="16.0" layoutY="520.0" mnemonicParsing="false" onAction="#submitAppointment" text="%shared.submit_btn" />
       <Button fx:id="deleteButton" layoutX="334.0" layoutY="19.0" mnemonicParsing="false" onAction="#confirmAppointmentDelete" text="%shared.delete_btn" textFill="#e80b0b" />
    </children>

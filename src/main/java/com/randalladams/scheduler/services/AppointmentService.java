@@ -8,17 +8,16 @@ import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class AppointmentService {
   private static Connection conn;
   private static final String DATABASE_TABLE = "appointments";
-  private static final String DB_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+  Database db;
 
   public AppointmentService() {
     try {
-      Database db = new Database();
+      db = new Database();
       conn = db.getConnection();
     } catch (SQLException e) {
       Database.printSQLException(e);
@@ -94,12 +93,6 @@ public class AppointmentService {
     return true;
   }
 
-  private String getDbStringFromLocalDateTime(LocalDateTime date) {
-    ZonedDateTime localDateTime = date.atZone(ZoneId.systemDefault());
-    ZonedDateTime utcDateTime = localDateTime.withZoneSameInstant(ZoneId.of("UTC"));
-    return utcDateTime.format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
-  }
-
   public Appointment createAppointment(String title, String description, String location, String type, LocalDateTime start, LocalDateTime end, int customerId, int userId, int contactId) throws SQLException {
     String insertQuery = "INSERT INTO `client_schedule`.`appointments`\n" +
       "(`Title`,\n" +
@@ -127,8 +120,8 @@ public class AppointmentService {
     preparedStatement.setString(2, description);
     preparedStatement.setString(3, location);
     preparedStatement.setString(4, type);
-    preparedStatement.setString(5, this.getDbStringFromLocalDateTime(start));
-    preparedStatement.setString(6, this.getDbStringFromLocalDateTime(end));
+    preparedStatement.setString(5, db.getDbStringFromLocalDateTime(start));
+    preparedStatement.setString(6, db.getDbStringFromLocalDateTime(end));
     preparedStatement.setDate(7, createDate);
     preparedStatement.setString(8, createUserName);
     preparedStatement.setDate(9, lateUpdateDate);
@@ -180,8 +173,8 @@ public class AppointmentService {
     preparedStatement.setString(2, description);
     preparedStatement.setString(3, location);
     preparedStatement.setString(4, type);
-    preparedStatement.setString(5, this.getDbStringFromLocalDateTime(start));
-    preparedStatement.setString(6, this.getDbStringFromLocalDateTime(end));
+    preparedStatement.setString(5, db.getDbStringFromLocalDateTime(start));
+    preparedStatement.setString(6, db.getDbStringFromLocalDateTime(end));
     preparedStatement.setDate(7, sqlDate);
     preparedStatement.setString(8, UserSession.getUserName());
     preparedStatement.setInt(9, customerId);
