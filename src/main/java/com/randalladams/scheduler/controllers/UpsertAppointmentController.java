@@ -23,6 +23,8 @@ import java.util.ResourceBundle;
 public class UpsertAppointmentController implements Initializable {
 
   @FXML
+  private Label appointmentIdLabel;
+  @FXML
   private TextField appointmentId;
 
   @FXML
@@ -55,6 +57,9 @@ public class UpsertAppointmentController implements Initializable {
   @FXML
   private Button submitButton;
 
+  @FXML
+  private Button deleteButton;
+
   private static Appointment appointment;
   private static Boolean isNewAppointment;
   private static final ContactService contactService = new ContactService();
@@ -85,7 +90,9 @@ public class UpsertAppointmentController implements Initializable {
         appointmentUserId.setText(String.valueOf(appointment.getUserId()));
         contactsChoiceBox.setValue(contactKvp);
       } else {
+        appointmentIdLabel.setVisible(false);
         appointmentId.setVisible(false);
+        deleteButton.setVisible(false);
       }
     } catch (SQLException throwables) {
       throwables.printStackTrace();
@@ -97,7 +104,7 @@ public class UpsertAppointmentController implements Initializable {
     Boolean isAppointmentValid = AppointmentService.validateAppointment();
     if (!isNewAppointment) {
       // edit
-      Appointment appointment = AppointmentService.updateAppointment(
+      AppointmentService.updateAppointment(
         Integer.parseInt(appointmentId.getText()),
         appointmentTitle.getText(),
         appointmentDescription.getText(),
@@ -109,11 +116,24 @@ public class UpsertAppointmentController implements Initializable {
         Integer.parseInt(appointmentUserId.getText()),
         Integer.parseInt(contactsChoiceBox.getValue().getKey())
       );
-      Stage stage = (Stage) submitButton.getScene().getWindow();
-      stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
     } else {
-      // create
-      // Appointment = AppointmentService.createAppointment()
+      AppointmentService.createAppointment(
+        appointmentTitle.getText(),
+        appointmentDescription.getText(),
+        appointmentLocation.getText(),
+        appointmentType.getText(),
+        java.sql.Date.valueOf(appointmentStart.getValue()),
+        java.sql.Date.valueOf(appointmentEnd.getValue()),
+        Integer.parseInt(appointmentCustomerId.getText()),
+        Integer.parseInt(appointmentUserId.getText()),
+        Integer.parseInt(contactsChoiceBox.getValue().getKey())
+      );
     }
+    Stage stage = (Stage) submitButton.getScene().getWindow();
+    stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
+  }
+
+  public void deleteAppointment(ActionEvent event) {
+    System.out.println("delete");
   }
 }

@@ -1,7 +1,6 @@
 package com.randalladams.scheduler.controllers;
 
 import com.randalladams.scheduler.model.Appointment;
-import com.randalladams.scheduler.model.Customer;
 import com.randalladams.scheduler.services.AppointmentService;
 import com.randalladams.scheduler.util.Database;
 import com.randalladams.scheduler.util.SceneManager;
@@ -21,7 +20,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Locale;
@@ -36,6 +34,9 @@ public class AppointmentController implements Initializable {
 
   @FXML
   private TableView<Appointment> appointmentsTable;
+
+  private static final int MODAL_WIDTH = 800;
+  private static final int MODAL_HEIGHT = 600;
 
   /**
    * Initializer for login scene
@@ -64,7 +65,7 @@ public class AppointmentController implements Initializable {
       Stage stage = new Stage();
       Parent root = FXMLLoader.load(
         AppointmentController.class.getResource(appointmentForm), resourceBundle);
-      stage.setScene(new Scene(root, 820, 520));
+      stage.setScene(new Scene(root, MODAL_WIDTH, MODAL_HEIGHT));
       stage.setTitle(langBundle.getString("appointment_form.edit_title"));
       stage.initModality(Modality.WINDOW_MODAL);
       stage.initOwner(
@@ -87,7 +88,33 @@ public class AppointmentController implements Initializable {
   }
 
   public void createAppointment(ActionEvent actionEvent) {
-    System.out.println("create");
+    try {
+      UserSession.setCurrentAppointmentSelected(0);
+      Stage stage = new Stage();
+      Parent root = FXMLLoader.load(
+        AppointmentController.class.getResource(appointmentForm), resourceBundle);
+      stage.setScene(new Scene(root, MODAL_WIDTH, MODAL_HEIGHT));
+      stage.setTitle(langBundle.getString("appointment_form.create_title"));
+      stage.initModality(Modality.WINDOW_MODAL);
+      stage.initOwner(
+        ((Node) actionEvent.getSource()).getScene().getWindow());
+      stage.setOnCloseRequest(e -> {
+        ObservableList<Appointment> allAppointments = null;
+        try {
+          allAppointments = appointmentService.getAppointmentsByUserId(UserSession.getUserId());
+        } catch (SQLException throwables) {
+          throwables.printStackTrace();
+        }
+        setupAppointmentsTable(allAppointments, resourceBundle);
+      });
+      stage.show();
+    } catch (Exception e) {
+      SceneManager.showAlert(
+        Alert.AlertType.ERROR, appointmentsTable.getScene().getWindow(),
+        langBundle.getString("Error creating new appointment"),
+        langBundle.getString(e.getMessage())
+      );
+    }
   }
 
   private void setupAppointmentsTable(ObservableList<Appointment> appointments, ResourceBundle resourceBundle) {

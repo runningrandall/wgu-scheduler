@@ -91,9 +91,6 @@ public class UpsertCustomerController implements Initializable {
       } else {
         deleteBtn.setVisible(false);
       }
-
-
-
     } catch (SQLException throwables) {
       throwables.printStackTrace();
     }
@@ -157,4 +154,5 @@ public class UpsertCustomerController implements Initializable {
       errorAlert.show();
     }
   }
+
 }

@@ -91,6 +91,63 @@ public class AppointmentService {
     return true;
   }
 
+  public static Appointment createAppointment (String title, String description, String location, String type, Date start, Date end, int customerId, int userId, int contactId) throws SQLException {
+    String insertQuery = "INSERT INTO `client_schedule`.`appointments`\n" +
+      "(`Title`,\n" +
+      "`Description`,\n" +
+      "`Location`,\n" +
+      "`Type`,\n" +
+      "`Start`,\n" +
+      "`End`,\n" +
+      "`Create_Date`,\n" +
+      "`Created_By`,\n" +
+      "`Last_Update`,\n" +
+      "`Last_Updated_By`,\n" +
+      "`Customer_ID`,\n" +
+      "`User_ID`,\n" +
+      "`Contact_ID`)\n" +
+      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    PreparedStatement preparedStatement = conn.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
+    Date currentDate = new Date();
+    java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
+    java.sql.Date createDate = sqlDate;
+    java.sql.Date lateUpdateDate = sqlDate;
+    String createUserName = UserSession.getUserName();
+
+    preparedStatement.setString(1, title);
+    preparedStatement.setString(2, description);
+    preparedStatement.setString(3, location);
+    preparedStatement.setString(4, type);
+    preparedStatement.setDate(5, (java.sql.Date) start);
+    preparedStatement.setDate(6, (java.sql.Date) end);
+    preparedStatement.setDate(7, createDate);
+    preparedStatement.setString(8, createUserName);
+    preparedStatement.setDate(9, lateUpdateDate);
+    preparedStatement.setString(10, createUserName);
+    preparedStatement.setInt(11, customerId);
+    preparedStatement.setInt(12, userId);
+    preparedStatement.setInt(13, contactId);
+
+    int affectedRows = preparedStatement.executeUpdate();
+
+    if (affectedRows == 0) {
+      throw new SQLException("Creating appointment failed");
+    }
+
+    Appointment newAppointment;
+    try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+      if (generatedKeys.next()) {
+        int newAppointmentId = generatedKeys.getInt(1);
+        newAppointment = getAppointmentById(newAppointmentId);
+      }
+      else {
+        throw new SQLException("Creating customer failed, missing id");
+      }
+    }
+
+    return newAppointment;
+  }
+
   public static Appointment updateAppointment (int appointmentId, String title, String description, String location, String type, Date start, Date end, int customerId, int userId, int contactId) throws SQLException {
     String updateQuery = "UPDATE `client_schedule`.`appointments`\n" +
       "SET\n" +
