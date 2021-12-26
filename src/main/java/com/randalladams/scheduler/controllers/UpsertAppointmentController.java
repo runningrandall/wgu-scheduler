@@ -6,6 +6,7 @@ import com.randalladams.scheduler.services.AppointmentService;
 import com.randalladams.scheduler.services.ContactService;
 import com.randalladams.scheduler.services.CustomerService;
 import com.randalladams.scheduler.util.KeyValuePair;
+import com.randalladams.scheduler.util.Lang;
 import com.randalladams.scheduler.util.UserSession;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -63,6 +64,7 @@ public class UpsertAppointmentController implements Initializable {
   private static Appointment appointment;
   private static Boolean isNewAppointment;
   private static final ContactService contactService = new ContactService();
+  private static Alert confirmationAlert;
 
   /**
    * Initializer for create customer modal
@@ -133,7 +135,19 @@ public class UpsertAppointmentController implements Initializable {
     stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
   }
 
-  public void deleteAppointment(ActionEvent event) {
-    System.out.println("delete");
+  public void confirmAppointmentDelete(ActionEvent event) {
+    confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+    confirmationAlert.setTitle(Lang.getString("appointment_form.delete.title"));
+    confirmationAlert.setContentText(Lang.getString("appointment_form.delete.text"));
+    confirmationAlert.showAndWait();
+    if (confirmationAlert.getResult() == ButtonType.OK) {
+      try {
+        AppointmentService.deleteAppointmentById(UserSession.getCurrentAppointmentSelected());
+        Stage stage = (Stage) deleteButton.getScene().getWindow();
+        stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
+      } catch (Exception e) {
+        System.out.println("Error deleting appointment" + e.getMessage());
+      }
+    }
   }
 }

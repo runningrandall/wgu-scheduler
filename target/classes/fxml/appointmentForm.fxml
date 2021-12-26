@@ -32,6 +32,6 @@
        <Label layoutX="212.0" layoutY="463.0" text="%appointment_form.user_id.label" />
        <TextField fx:id="appointmentUserId" layoutX="213.0" layoutY="482.0" promptText="%appointment_form.user_id.prompt" />
       <Button fx:id="submitButton" layoutX="16.0" layoutY="520.0" mnemonicParsing="false" onAction="#submitAppointment" text="%shared.submit_btn" />
-      <Button fx:id="deleteButton" layoutX="334.0" layoutY="19.0" mnemonicParsing="false" onAction="#deleteAppointment" text="%shared.delete_btn" textFill="#e80b0b" />
+      <Button fx:id="deleteButton" layoutX="334.0" layoutY="19.0" mnemonicParsing="false" onAction="#confirmAppointmentDelete" text="%shared.delete_btn" textFill="#e80b0b" />
    </children>
 </AnchorPane>

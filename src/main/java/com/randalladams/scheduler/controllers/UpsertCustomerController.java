@@ -61,7 +61,6 @@ public class UpsertCustomerController implements Initializable {
    */
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
-      // if 0 we are going to new
       isNewCustomer = UserSession.getCurrentCustomerSelected() == 0;
 
       ObservableList<KeyValuePair> countries = countryService.getCountriesKeyValuePairs();
@@ -75,7 +74,6 @@ public class UpsertCustomerController implements Initializable {
         }
       });
 
-      // populate form if editing
       if (!isNewCustomer) {
         customer = CustomerService.getCustomerById(UserSession.getCurrentCustomerSelected());
         KeyValuePair countryKvP = new KeyValuePair(String.valueOf(customer.getCountryId()), customer.getCountry());
@@ -101,7 +99,6 @@ public class UpsertCustomerController implements Initializable {
     firstLevelDivisionChoiceBox.setItems(firstLevelDivisions);
   }
 
-  // TODO: figure out how to refresh table view after delete
   public void confirmCustomerDelete() throws SQLException {
     confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
     confirmationAlert.setTitle(Lang.getString("customer_form.delete.title"));

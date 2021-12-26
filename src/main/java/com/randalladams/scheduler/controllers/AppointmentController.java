@@ -82,8 +82,11 @@ public class AppointmentController implements Initializable {
       });
       stage.show();
     } catch (Exception e) {
-      SceneManager.showAlert(Alert.AlertType.ERROR, appointmentsTable.getScene().getWindow(), langBundle.getString("errors.missing_appointment_selection.text"),
-        langBundle.getString("errors.missing_appointment_selection.text") + e.getMessage());
+      SceneManager.showAlert(
+        Alert.AlertType.ERROR, appointmentsTable.getScene().getWindow(),
+        langBundle.getString("errors.missing_appointment_selection.title"),
+        langBundle.getString("errors.missing_appointment_selection.text") + e.getMessage()
+      );
     }
   }
 

@@ -184,4 +184,11 @@ public class AppointmentService {
 
     return getAppointmentById(appointmentId);
   }
+
+  public static void deleteAppointmentById(int appointmentId) throws SQLException {
+    String deleteQuery = "DELETE FROM " + DATABASE_TABLE + " WHERE Appointment_ID = ?";
+    PreparedStatement preparedStatement = conn.prepareStatement(deleteQuery);
+    preparedStatement.setInt(1, appointmentId);
+    preparedStatement.executeUpdate();
+  }
 }
