@@ -1,24 +1,23 @@
 package com.randalladams.scheduler.controllers;
 
 import com.randalladams.scheduler.model.Appointment;
-import com.randalladams.scheduler.model.Customer;
 import com.randalladams.scheduler.services.AppointmentService;
 import com.randalladams.scheduler.services.ContactService;
-import com.randalladams.scheduler.services.CustomerService;
 import com.randalladams.scheduler.util.KeyValuePair;
 import com.randalladams.scheduler.util.Lang;
 import com.randalladams.scheduler.util.UserSession;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import tornadofx.control.DateTimePicker;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class UpsertAppointmentController implements Initializable {
@@ -41,10 +40,10 @@ public class UpsertAppointmentController implements Initializable {
   private TextField appointmentType;
 
   @FXML
-  private DatePicker appointmentStart;
+  private DateTimePicker appointmentStart;
 
   @FXML
-  private DatePicker appointmentEnd;
+  private DateTimePicker appointmentEnd;
 
   @FXML
   private TextField appointmentCustomerId;
@@ -65,6 +64,7 @@ public class UpsertAppointmentController implements Initializable {
   private static Boolean isNewAppointment;
   private static final ContactService contactService = new ContactService();
   private static Alert confirmationAlert;
+  private static AppointmentService as = new AppointmentService();
 
   /**
    * Initializer for create customer modal
@@ -78,7 +78,7 @@ public class UpsertAppointmentController implements Initializable {
       contactsChoiceBox.setItems(contacts);
 
       if (!isNewAppointment) {
-        appointment = AppointmentService.getAppointmentById(UserSession.getCurrentAppointmentSelected());
+        appointment = as.getAppointmentById(UserSession.getCurrentAppointmentSelected());
         KeyValuePair contactKvp = new KeyValuePair(String.valueOf(appointment.getContactId()), appointment.getContactName());
         appointmentId.setText(String.valueOf(appointment.getAppointmentId()));
         appointmentId.setDisable(true);
@@ -86,8 +86,8 @@ public class UpsertAppointmentController implements Initializable {
         appointmentDescription.setText(appointment.getDescription());
         appointmentLocation.setText(appointment.getLocation());
         appointmentType.setText(appointment.getType());
-        appointmentStart.setValue(appointment.getStartTimestamp().toLocalDateTime().toLocalDate());
-        appointmentEnd.setValue(appointment.getEndTimestamp().toLocalDateTime().toLocalDate());
+        appointmentStart.setValue(LocalDate.from(appointment.getStartTimestamp().toLocalDateTime()));
+        appointmentEnd.setValue(LocalDate.from(appointment.getEndTimestamp().toLocalDateTime()));
         appointmentCustomerId.setText(String.valueOf(appointment.getCustomerId()));
         appointmentUserId.setText(String.valueOf(appointment.getUserId()));
         contactsChoiceBox.setValue(contactKvp);
@@ -103,29 +103,29 @@ public class UpsertAppointmentController implements Initializable {
 
   public void submitAppointment(ActionEvent event) throws SQLException {
     // TODO: add logic
-    Boolean isAppointmentValid = AppointmentService.validateAppointment();
+    Boolean isAppointmentValid = as.validateAppointment();
     if (!isNewAppointment) {
       // edit
-      AppointmentService.updateAppointment(
+      as.updateAppointment(
         Integer.parseInt(appointmentId.getText()),
         appointmentTitle.getText(),
         appointmentDescription.getText(),
         appointmentLocation.getText(),
         appointmentType.getText(),
-        java.sql.Date.valueOf(appointmentStart.getValue()),
-        java.sql.Date.valueOf(appointmentEnd.getValue()),
+        appointmentStart.getDateTimeValue(),
+        appointmentEnd.getDateTimeValue(),
         Integer.parseInt(appointmentCustomerId.getText()),
         Integer.parseInt(appointmentUserId.getText()),
         Integer.parseInt(contactsChoiceBox.getValue().getKey())
       );
     } else {
-      AppointmentService.createAppointment(
+      as.createAppointment(
         appointmentTitle.getText(),
         appointmentDescription.getText(),
         appointmentLocation.getText(),
         appointmentType.getText(),
-        java.sql.Date.valueOf(appointmentStart.getValue()),
-        java.sql.Date.valueOf(appointmentEnd.getValue()),
+        appointmentStart.getDateTimeValue(),
+        appointmentEnd.getDateTimeValue(),
         Integer.parseInt(appointmentCustomerId.getText()),
         Integer.parseInt(appointmentUserId.getText()),
         Integer.parseInt(contactsChoiceBox.getValue().getKey())
@@ -142,7 +142,7 @@ public class UpsertAppointmentController implements Initializable {
     confirmationAlert.showAndWait();
     if (confirmationAlert.getResult() == ButtonType.OK) {
       try {
-        AppointmentService.deleteAppointmentById(UserSession.getCurrentAppointmentSelected());
+        as.deleteAppointmentById(UserSession.getCurrentAppointmentSelected());
         Stage stage = (Stage) deleteButton.getScene().getWindow();
         stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
       } catch (Exception e) {

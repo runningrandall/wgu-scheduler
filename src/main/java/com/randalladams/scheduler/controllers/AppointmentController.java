@@ -114,8 +114,8 @@ public class AppointmentController implements Initializable {
     } catch (Exception e) {
       SceneManager.showAlert(
         Alert.AlertType.ERROR, appointmentsTable.getScene().getWindow(),
-        langBundle.getString("Error creating new appointment"),
-        langBundle.getString(e.getMessage())
+        langBundle.getString("appointments_table.errors.create"),
+        e.getMessage()
       );
     }
   }
