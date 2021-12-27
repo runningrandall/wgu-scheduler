@@ -7,6 +7,7 @@ import com.randalladams.scheduler.util.KeyValuePair;
 import com.randalladams.scheduler.util.Lang;
 import com.randalladams.scheduler.util.UserSession;
 import com.randalladams.scheduler.util.Validator;
+import com.randalladams.scheduler.util.DateTimePicker;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,7 +15,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import tornadofx.control.DateTimePicker;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -124,6 +124,10 @@ public class UpsertAppointmentController implements Initializable {
       errorAlert.show();
       return;
     }
+
+    System.out.println("Start: " + appointmentStart.getDateTimeValue());
+    System.out.println("End: " + appointmentEnd.getDateTimeValue());
+    System.out.println(appointmentEnd.getPromptText());
 
     if (appointValidity.getValid()) {
       if (!isNewAppointment) {

@@ -17,9 +17,11 @@ C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\schedul
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\util\Database.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\util\SceneManager.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\controllers\LoginController.java
+C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\util\Validator.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\controllers\AppointmentController.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\model\Country.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\controllers\FirstLevelDivisionsController.java
+C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\util\DateTimePicker.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\util\Lang.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\services\ContactService.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\model\Appointment.java
