@@ -128,7 +128,7 @@ public class AppointmentService {
     }
 
     if (start.isAfter(end)) {
-      return new Validator(false, "Start time cannot come before end time");
+      return new Validator(false, "Invalid start/end times. Start time cannot be after end time");
     }
 
     if(!this.isValidAppointmentTime(start)) {

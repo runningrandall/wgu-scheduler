@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.randalladams.scheduler.util.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<?import com.randalladams.scheduler.util.DateTimePicker?>
 
 <AnchorPane prefHeight="900.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.randalladams.scheduler.controllers.UpsertAppointmentController">
    <children>

@@ -23,7 +23,8 @@ public class DateTimePicker extends DatePicker {
   public static final String DefaultFormat = "yyyy-MM-dd HH:mm";
 
   private DateTimeFormatter formatter;
-  private final ObjectProperty<LocalDateTime> dateTimeValue = new SimpleObjectProperty<>(LocalDateTime.now());
+  // private final ObjectProperty<LocalDateTime> dateTimeValue = new SimpleObjectProperty<>(LocalDateTime.now());
+  private final ObjectProperty<LocalDateTime> dateTimeValue = new SimpleObjectProperty<>(null);
   private final ObjectProperty<String> format = new SimpleObjectProperty<String>() {
     public void set(String newValue) {
       super.set(newValue);
@@ -48,8 +49,8 @@ public class DateTimePicker extends DatePicker {
       } else {
         if (dateTimeValue.get() == null) {
           dateTimeValue.set(LocalDateTime.of(newValue, LocalTime.now()));
-        } else {
-          LocalTime time = dateTimeValue.get().toLocalTime();
+        } else if (!this.getEditor().getText().isEmpty()) {
+          LocalTime time = LocalDateTime.parse(this.getEditor().getText(), formatter).toLocalTime();
           dateTimeValue.set(LocalDateTime.of(newValue, time));
         }
       }
@@ -70,8 +71,9 @@ public class DateTimePicker extends DatePicker {
 
     // Persist changes onblur
     getEditor().focusedProperty().addListener((observable, oldValue, newValue) -> {
-      if (!newValue)
+      if (!newValue) {
         simulateEnterPressed();
+      }
     });
 
     // fixes bug in getting datetime values
@@ -119,7 +121,6 @@ public class DateTimePicker extends DatePicker {
         dateTimeValue.set(null);
         return null;
       }
-
       dateTimeValue.set(LocalDateTime.parse(value, formatter));
       return dateTimeValue.get().toLocalDate();
     }

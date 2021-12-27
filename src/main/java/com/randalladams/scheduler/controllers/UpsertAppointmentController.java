@@ -3,11 +3,7 @@ package com.randalladams.scheduler.controllers;
 import com.randalladams.scheduler.model.Appointment;
 import com.randalladams.scheduler.services.AppointmentService;
 import com.randalladams.scheduler.services.ContactService;
-import com.randalladams.scheduler.util.KeyValuePair;
-import com.randalladams.scheduler.util.Lang;
-import com.randalladams.scheduler.util.UserSession;
-import com.randalladams.scheduler.util.Validator;
-import com.randalladams.scheduler.util.DateTimePicker;
+import com.randalladams.scheduler.util.*;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,7 +14,7 @@ import javafx.stage.WindowEvent;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
 public class UpsertAppointmentController implements Initializable {
@@ -78,41 +74,50 @@ public class UpsertAppointmentController implements Initializable {
       isNewAppointment = UserSession.getCurrentAppointmentSelected() == 0;
       ObservableList<KeyValuePair> contacts = contactService.getContactKeyValuePairs();
       contactsChoiceBox.setItems(contacts);
-
       if (!isNewAppointment) {
-        appointment = as.getAppointmentById(UserSession.getCurrentAppointmentSelected());
-        KeyValuePair contactKvp = new KeyValuePair(String.valueOf(appointment.getContactId()), appointment.getContactName());
-        appointmentId.setText(String.valueOf(appointment.getAppointmentId()));
-        appointmentId.setDisable(true);
-        appointmentTitle.setText(appointment.getTitle());
-        appointmentDescription.setText(appointment.getDescription());
-        appointmentLocation.setText(appointment.getLocation());
-        appointmentType.setText(appointment.getType());
-        appointmentStart.setValue(LocalDate.from(appointment.getStartTimestamp().toLocalDateTime()));
-        appointmentEnd.setValue(LocalDate.from(appointment.getEndTimestamp().toLocalDateTime()));
-        appointmentCustomerId.setText(String.valueOf(appointment.getCustomerId()));
-        appointmentUserId.setText(String.valueOf(appointment.getUserId()));
-        contactsChoiceBox.setValue(contactKvp);
+        populateAppointment();
       } else {
-        appointmentIdLabel.setVisible(false);
-        appointmentId.setVisible(false);
-        deleteButton.setVisible(false);
+        hideNewFields();
       }
     } catch (SQLException throwables) {
       throwables.printStackTrace();
     }
   }
 
+  private void hideNewFields() {
+    appointmentIdLabel.setVisible(false);
+    appointmentId.setVisible(false);
+    deleteButton.setVisible(false);
+  }
+
+  private void populateAppointment() throws SQLException {
+    appointment = as.getAppointmentById(UserSession.getCurrentAppointmentSelected());
+    KeyValuePair contactKvp = new KeyValuePair(String.valueOf(appointment.getContactId()), appointment.getContactName());
+    appointmentId.setText(String.valueOf(appointment.getAppointmentId()));
+    appointmentId.setDisable(true);
+    appointmentTitle.setText(appointment.getTitle());
+    appointmentDescription.setText(appointment.getDescription());
+    appointmentLocation.setText(appointment.getLocation());
+    appointmentType.setText(appointment.getType());
+    appointmentStart.setDateTimeValue(appointment.getStartTimestamp().toLocalDateTime());
+    appointmentEnd.setDateTimeValue(appointment.getEndTimestamp().toLocalDateTime());
+    appointmentCustomerId.setText(String.valueOf(appointment.getCustomerId()));
+    appointmentUserId.setText(String.valueOf(appointment.getUserId()));
+    contactsChoiceBox.setValue(contactKvp);
+  }
+
   public void submitAppointment(ActionEvent event) throws SQLException {
     Validator appointValidity = null;
+    LocalDateTime startDateTime = appointmentStart.getDateTimeValue();
+    LocalDateTime endDateTime = appointmentEnd.getDateTimeValue();
     try {
       appointValidity = as.validateAppointment(
         appointmentTitle.getText(),
         appointmentDescription.getText(),
         appointmentLocation.getText(),
         appointmentType.getText(),
-        appointmentStart.getDateTimeValue(),
-        appointmentEnd.getDateTimeValue(),
+        startDateTime,
+        endDateTime,
         Integer.parseInt(appointmentCustomerId.getText()),
         Integer.parseInt(appointmentUserId.getText()),
         Integer.parseInt(contactsChoiceBox.getValue().getKey())
@@ -125,21 +130,16 @@ public class UpsertAppointmentController implements Initializable {
       return;
     }
 
-    System.out.println("Start: " + appointmentStart.getDateTimeValue());
-    System.out.println("End: " + appointmentEnd.getDateTimeValue());
-    System.out.println(appointmentEnd.getPromptText());
-
     if (appointValidity.getValid()) {
       if (!isNewAppointment) {
-        // edit
         as.updateAppointment(
           Integer.parseInt(appointmentId.getText()),
           appointmentTitle.getText(),
           appointmentDescription.getText(),
           appointmentLocation.getText(),
           appointmentType.getText(),
-          appointmentStart.getDateTimeValue(),
-          appointmentEnd.getDateTimeValue(),
+          startDateTime,
+          endDateTime,
           Integer.parseInt(appointmentCustomerId.getText()),
           Integer.parseInt(appointmentUserId.getText()),
           Integer.parseInt(contactsChoiceBox.getValue().getKey())
@@ -150,8 +150,8 @@ public class UpsertAppointmentController implements Initializable {
           appointmentDescription.getText(),
           appointmentLocation.getText(),
           appointmentType.getText(),
-          appointmentStart.getDateTimeValue(),
-          appointmentEnd.getDateTimeValue(),
+          startDateTime,
+          endDateTime,
           Integer.parseInt(appointmentCustomerId.getText()),
           Integer.parseInt(appointmentUserId.getText()),
           Integer.parseInt(contactsChoiceBox.getValue().getKey())
@@ -162,6 +162,7 @@ public class UpsertAppointmentController implements Initializable {
       errorAlert.setTitle(Lang.getString("appointment_form.error.title"));
       errorAlert.setContentText(appointValidity.getMessage());
       errorAlert.show();
+      return;
     }
 
     Stage stage = (Stage) submitButton.getScene().getWindow();
