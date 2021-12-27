@@ -93,7 +93,7 @@ public class Appointment {
   }
 
   public String getContactName() {
-    return type;
+    return contactName;
   }
 
   public void setContactName(String contactName) {

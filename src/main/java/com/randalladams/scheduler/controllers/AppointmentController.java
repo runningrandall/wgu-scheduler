@@ -60,7 +60,6 @@ public class AppointmentController implements Initializable {
   public void editAppointment(ActionEvent actionEvent) {
     try {
       Appointment selectedAppointment = appointmentsTable.getSelectionModel().getSelectedItem();
-      System.out.println(selectedAppointment.getAppointmentId());
       UserSession.setCurrentAppointmentSelected(selectedAppointment.getAppointmentId());
       Stage stage = new Stage();
       Parent root = FXMLLoader.load(

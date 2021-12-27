@@ -18,6 +18,8 @@ import javafx.stage.WindowEvent;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 public class UpsertCustomerController implements Initializable {
 
@@ -44,11 +46,14 @@ public class UpsertCustomerController implements Initializable {
 
   @FXML
   private Button customerSubmitBtn;
+
   @FXML
   private Button deleteBtn;
 
   private static Customer customer;
   private static Boolean isNewCustomer;
+  private static ObservableList<KeyValuePair> countries = null;
+  private static ObservableList<KeyValuePair> firstLevelDivisions = null;
   private static final FirstLevelDivisionsService fldService = new FirstLevelDivisionsService();
   private static final CountryService countryService = new CountryService();
   private static Alert confirmationAlert;
@@ -62,40 +67,57 @@ public class UpsertCustomerController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
       isNewCustomer = UserSession.getCurrentCustomerSelected() == 0;
-
-      ObservableList<KeyValuePair> countries = countryService.getCountriesKeyValuePairs();
+      countries = countryService.getCountriesKeyValuePairs();
       countriesChoiceBox.setItems(countries);
-      // lambda here
       countriesChoiceBox.setOnAction(event -> {
         try {
           filterFirstLevelDivisionsByCountry(countriesChoiceBox.getValue());
-        } catch (SQLException throwables) {
-          throwables.printStackTrace();
+        } catch (SQLException e) {
+          errorAlert = new Alert(Alert.AlertType.ERROR);
+          errorAlert.setTitle(Lang.getString("customer_form.error.title"));
+          errorAlert.setContentText(Lang.getString(e.getMessage()));
+          errorAlert.show();
         }
       });
 
       if (!isNewCustomer) {
-        customer = CustomerService.getCustomerById(UserSession.getCurrentCustomerSelected());
-        KeyValuePair countryKvP = new KeyValuePair(String.valueOf(customer.getCountryId()), customer.getCountry());
-        KeyValuePair fldKvp = new KeyValuePair(String.valueOf(customer.getDivisionId()), customer.getDivision());
-        customerId.setText(String.valueOf(customer.getId()));
-        customerName.setText(customer.getName());
-        customerAddress.setText(customer.getAddress());
-        customerPhone.setText(customer.getPhone());
-        customerPostalcode.setText(customer.getPostalCode());
-        countriesChoiceBox.setValue(countryKvP);
-        filterFirstLevelDivisionsByCountry(countryKvP);
-        firstLevelDivisionChoiceBox.setValue(fldKvp);
+        populateCustomerForm();
       } else {
         deleteBtn.setVisible(false);
       }
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
+    } catch (SQLException e) {
+      errorAlert = new Alert(Alert.AlertType.ERROR);
+      errorAlert.setTitle(Lang.getString("customer_form.error.title"));
+      errorAlert.setContentText(Lang.getString(e.getMessage()));
+      errorAlert.show();
+    }
+  }
+
+  private void populateCustomerForm() {
+    try {
+      customer = CustomerService.getCustomerById(UserSession.getCurrentCustomerSelected());
+      KeyValuePair countryKvP = new KeyValuePair(String.valueOf(customer.getCountryId()), customer.getCountry());
+      KeyValuePair fldKvp = new KeyValuePair(String.valueOf(customer.getDivisionId()), customer.getDivision());
+      customerId.setText(String.valueOf(customer.getId()));
+      customerName.setText(customer.getName());
+      customerAddress.setText(customer.getAddress());
+      customerPhone.setText(customer.getPhone());
+      customerPostalcode.setText(customer.getPostalCode());
+      countriesChoiceBox.setValue(countryKvP);
+      countriesChoiceBox.getSelectionModel().select(getSelectedCountryIndex(countryKvP));
+      filterFirstLevelDivisionsByCountry(countryKvP);
+      firstLevelDivisionChoiceBox.setValue(fldKvp);
+      firstLevelDivisionChoiceBox.getSelectionModel().select(getSelectedFldIndex(fldKvp));
+    } catch (Exception e) {
+      errorAlert = new Alert(Alert.AlertType.ERROR);
+      errorAlert.setTitle(Lang.getString("customer_form.error.title"));
+      errorAlert.setContentText(Lang.getString(e.getMessage()));
+      errorAlert.show();
     }
   }
 
   public void filterFirstLevelDivisionsByCountry(KeyValuePair selectedCountry) throws SQLException {
-    ObservableList<KeyValuePair> firstLevelDivisions = fldService.getFirstLevelDivisionsByCountryId(Integer.parseInt(selectedCountry.getKey()));
+    firstLevelDivisions = fldService.getFirstLevelDivisionsByCountryId(Integer.parseInt(selectedCountry.getKey()));
     firstLevelDivisionChoiceBox.setItems(firstLevelDivisions);
   }
 
@@ -113,6 +135,26 @@ public class UpsertCustomerController implements Initializable {
         System.out.println("Error deleting customer" + e.getMessage());
       }
     }
+  }
+
+  private int getSelectedCountryIndex(KeyValuePair countryKvp) {
+    AtomicInteger foundIndex = new AtomicInteger(-1);
+    IntStream.range(0, countries.size()).forEach(i -> {
+      if (countries.get(i).getKey().equals(countryKvp.getKey())) {
+        foundIndex.set(i);
+      }
+    });
+    return foundIndex.get();
+  }
+
+  private int getSelectedFldIndex(KeyValuePair fldKvp) {
+    AtomicInteger foundIndex = new AtomicInteger(-1);
+    IntStream.range(0, firstLevelDivisions.size()).forEach(i -> {
+      if (firstLevelDivisions.get(i).getKey().equals(fldKvp.getKey())) {
+        foundIndex.set(i);
+      }
+    });
+    return foundIndex.get();
   }
 
   public void submitCustomer(ActionEvent event) throws SQLException {

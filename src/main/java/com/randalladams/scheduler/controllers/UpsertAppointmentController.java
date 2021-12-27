@@ -16,6 +16,8 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 public class UpsertAppointmentController implements Initializable {
 
@@ -63,6 +65,7 @@ public class UpsertAppointmentController implements Initializable {
   private static Alert confirmationAlert;
   private static Alert errorAlert;
   private static AppointmentService as = new AppointmentService();
+  private static ObservableList<KeyValuePair> contacts;
 
   /**
    * Initializer for create customer modal
@@ -72,7 +75,7 @@ public class UpsertAppointmentController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
       isNewAppointment = UserSession.getCurrentAppointmentSelected() == 0;
-      ObservableList<KeyValuePair> contacts = contactService.getContactKeyValuePairs();
+      contacts = contactService.getContactKeyValuePairs();
       contactsChoiceBox.setItems(contacts);
       if (!isNewAppointment) {
         populateAppointment();
@@ -104,6 +107,17 @@ public class UpsertAppointmentController implements Initializable {
     appointmentCustomerId.setText(String.valueOf(appointment.getCustomerId()));
     appointmentUserId.setText(String.valueOf(appointment.getUserId()));
     contactsChoiceBox.setValue(contactKvp);
+    contactsChoiceBox.getSelectionModel().select(getSelectedContactIndex(contactKvp));
+  }
+
+  private int getSelectedContactIndex(KeyValuePair contactKvp) {
+    AtomicInteger foundIndex = new AtomicInteger(-1);
+    IntStream.range(0, contacts.size()).forEach(i -> {
+      if (contacts.get(i).getKey().equals(contactKvp.getKey())) {
+        foundIndex.set(i);
+      }
+    });
+    return foundIndex.get();
   }
 
   public void submitAppointment(ActionEvent event) throws SQLException {
