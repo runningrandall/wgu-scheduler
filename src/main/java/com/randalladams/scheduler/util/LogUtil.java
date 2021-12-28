@@ -14,7 +14,7 @@ public class LogUtil {
   public LogUtil(String logfile) {
     SimpleFormatter formatter = new SimpleFormatter();
     try {
-      fh = new FileHandler(logfile);
+      fh = new FileHandler(logfile, true);
     } catch (Exception e) {
       e.printStackTrace();
     }

@@ -19,7 +19,7 @@ public class LoginService {
 
   private static Connection conn;
   private static final String DATABASE_TABLE = "client_schedule.users";
-  private static final String LOG_FILE = "logins.log";
+  private static final String LOG_FILE = "login_activity.txt";
 
   /**
    * constructor to create connection to the database
