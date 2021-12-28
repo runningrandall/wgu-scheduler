@@ -185,6 +185,38 @@ public class AppointmentService {
     return resultList;
   }
 
+  public ObservableList<Appointment> getContactsAppointmentSchedule() throws SQLException {
+    String selectQuery = "SELECT * FROM " + DATABASE_TABLE +" a " +
+      "LEFT JOIN contacts c ON c.Contact_ID = a.Contact_ID " +
+      "WHERE start >= curdate() " +
+      "ORDER BY c.Contact_Name, Start";
+    PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
+    ResultSet resultSet = preparedStatement.executeQuery();
+    ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
+    while (resultSet.next()) {
+      Appointment appointment = new Appointment(
+        resultSet.getInt("a.Appointment_ID"),
+        resultSet.getString("a.Title"),
+        resultSet.getString("a.Description"),
+        resultSet.getString("a.Location"),
+        resultSet.getString("a.Type"),
+        resultSet.getString("c.Contact_Name"),
+        resultSet.getDate("a.Start"),
+        resultSet.getTimestamp("a.Start"),
+        resultSet.getDate("a.End"),
+        resultSet.getTimestamp("a.End"),
+        resultSet.getDate("a.Create_Date"),
+        resultSet.getString("a.Created_By"),
+        resultSet.getDate("a.Last_Update"),
+        resultSet.getString("a.Last_Updated_By"),
+        resultSet.getInt("a.Customer_ID"),
+        resultSet.getInt("a.User_ID"),
+        resultSet.getInt("a.Contact_ID")
+      );
+      appointmentList.add(appointment);
+    }
+    return appointmentList;
+  }
   public Appointment getAppointmentWithinFifteenMinutes(int userId) throws SQLException {
 
     String currentDateTime = LocalDateTime.now(ZoneOffset.UTC)

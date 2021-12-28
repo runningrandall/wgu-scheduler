@@ -1,5 +1,6 @@
 package com.randalladams.scheduler.controllers;
 
+import com.randalladams.scheduler.model.Appointment;
 import com.randalladams.scheduler.model.ReportAppointmentType;
 import com.randalladams.scheduler.services.AppointmentService;
 import com.randalladams.scheduler.util.KeyValuePair;
@@ -29,6 +30,12 @@ public class ReportController implements Initializable {
   @FXML
   private TableView<ReportAppointmentType> reportAppointmentTypeTable;
 
+  @FXML
+  private TableView<Appointment> reportContactSchedule;
+
+  @FXML
+  private TableView<ReportAppointmentType> reportLoginActivity;
+
   private ResourceBundle langBundle;
   private AppointmentService appointmentService = new AppointmentService();
   private static Alert errorAlert;
@@ -39,7 +46,13 @@ public class ReportController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     langBundle = ResourceBundle.getBundle("i18n", locale);
     setupReportsChoiceBox();
+    hideAllTables();
+  }
+
+  private void hideAllTables() {
     reportAppointmentTypeTable.setVisible(false);
+    reportContactSchedule.setVisible(false);
+    reportLoginActivity.setVisible(false);
   }
 
   private void setupReportsChoiceBox() {
@@ -54,12 +67,13 @@ public class ReportController implements Initializable {
 
   @FXML
   private void runReport(ActionEvent event) {
+    hideAllTables();
     switch(reportsChoiceBox.getSelectionModel().getSelectedIndex()) {
       case 0:
         printAppointmentsByTypeAndMonth();
         break;
       case 1:
-        System.out.println("bar");
+        printContactSchedule();
         break;
       case 2:
         System.out.println("baz");
@@ -99,6 +113,59 @@ public class ReportController implements Initializable {
     }
   }
 
+  private void printContactSchedule() {
+    reportContactSchedule.setVisible(true);
+    try {
+      ObservableList<Appointment> reportList = appointmentService.getContactsAppointmentSchedule();
+
+      TableColumn<Appointment, String> contactNameCol = new TableColumn<>(langBundle.getString("reports_table.columns.contact_name"));
+      contactNameCol.setCellValueFactory(
+        new PropertyValueFactory<>("contactName"));
+
+      TableColumn<Appointment, String> appointmentIdCol = new TableColumn<>(langBundle.getString("reports_table.columns.appointment_id"));
+      appointmentIdCol.setCellValueFactory(
+        new PropertyValueFactory<>("appointmentId"));
+
+      TableColumn<Appointment, String> titleCol = new TableColumn<>(langBundle.getString("reports_table.columns.title"));
+      titleCol.setCellValueFactory(
+        new PropertyValueFactory<>("title"));
+
+      TableColumn<Appointment, String> typeCol = new TableColumn<>(langBundle.getString("reports_table.columns.type"));
+      typeCol.setCellValueFactory(
+        new PropertyValueFactory<>("type"));
+
+      TableColumn<Appointment, String> descriptionCol = new TableColumn<>(langBundle.getString("reports_table.columns.description"));
+      descriptionCol.setCellValueFactory(
+        new PropertyValueFactory<>("description"));
+
+      TableColumn<Appointment, String> startCol = new TableColumn<>(langBundle.getString("reports_table.columns.start"));
+      startCol.setCellValueFactory(
+        new PropertyValueFactory<>("startTimestamp"));
+
+      TableColumn<Appointment, String> endCol = new TableColumn<>(langBundle.getString("reports_table.columns.end"));
+      endCol.setCellValueFactory(
+        new PropertyValueFactory<>("endTimestamp"));
+
+      TableColumn<Appointment, String> customerIdCol = new TableColumn<>(langBundle.getString("reports_table.columns.customer_id"));
+      customerIdCol.setCellValueFactory(
+        new PropertyValueFactory<>("customerId"));
+
+      reportContactSchedule.setItems(reportList);
+      reportContactSchedule.getColumns().addAll(
+        contactNameCol,
+        appointmentIdCol,
+        titleCol,
+        typeCol,
+        descriptionCol,
+        startCol,
+        endCol,
+        customerIdCol
+      );
+    } catch (Exception e) {
+      showErrorAlert(e.getMessage());
+    }
+
+  }
   private void showErrorAlert(String message) {
     errorAlert = new Alert(Alert.AlertType.ERROR);
     errorAlert.setTitle(Lang.getString("reports.error.title"));
