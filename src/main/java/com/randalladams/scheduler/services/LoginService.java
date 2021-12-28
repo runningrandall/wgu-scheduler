@@ -7,6 +7,7 @@ package com.randalladams.scheduler.services;
  */
 
 import com.randalladams.scheduler.util.Database;
+import com.randalladams.scheduler.util.LogUtil;
 import com.randalladams.scheduler.util.UserSession;
 
 import java.security.MessageDigest;
@@ -18,6 +19,7 @@ public class LoginService {
 
   private static Connection conn;
   private static final String DATABASE_TABLE = "client_schedule.users";
+  private static final String LOG_FILE = "logins.log";
 
   /**
    * constructor to create connection to the database
@@ -46,11 +48,13 @@ public class LoginService {
     preparedStatement.setString(2, encryptPassword(password));
     // Execute the query
     ResultSet resultSet = preparedStatement.executeQuery();
+    boolean isValid = false;
     while (resultSet.next()) {
       UserSession.getInstance(resultSet.getString("User_Name"), resultSet.getInt("User_ID"));
-      return true;
+      isValid = true;
     }
-    return false;
+    logLoginMessage(username, isValid);
+    return isValid;
   }
 
   /**
@@ -77,5 +81,11 @@ public class LoginService {
     StringBuilder sb = new StringBuilder();
     for (byte byteDatum : byteData) sb.append(Integer.toString((byteDatum & 0xff) + 0x100, 16).substring(1));
     return sb.toString();
+  }
+
+  private void logLoginMessage(String username, boolean isSuccessful) {
+    LogUtil logUtil = new LogUtil(LOG_FILE);
+    String successString = isSuccessful ? "Successful" : "Failed";
+    logUtil.logInfo("username=" + username + " action=Login status=" + successString);
   }
 }

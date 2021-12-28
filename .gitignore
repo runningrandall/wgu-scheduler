@@ -26,3 +26,7 @@ hs_err_pid*
 
 # config
 application.properties
+
+# logs
+/logins.log
+/logins.log.lck
