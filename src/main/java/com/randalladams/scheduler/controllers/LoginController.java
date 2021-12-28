@@ -1,10 +1,4 @@
 package com.randalladams.scheduler.controllers;
-/*
- * LoginController is responsible for controlling our login operations
- * @author Randall Adams
- * @version 1.0.0
- * @since 06/01/2021
- */
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,7 +10,6 @@ import com.randalladams.scheduler.services.LoginService;
 import com.randalladams.scheduler.util.Lang;
 import com.randalladams.scheduler.util.SceneManager;
 
-import com.randalladams.scheduler.util.UserSession;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -26,6 +19,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
 import javafx.stage.Window;
 
+/**
+ * Login controller class for handling the login scene
+ * @author Randall Adams
+ * @version 1.0.0
+ * @since 12/01/2021
+ */
 public class LoginController implements Initializable {
 
   private static LoginService loginService;

@@ -1,10 +1,4 @@
 package com.randalladams.scheduler.util;
-/*
- * SceneManager is a class for managing presentation of scenes
- * @author Randall Adams
- * @version 1.0.0
- * @since 06/01/2021
- */
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,6 +11,12 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * SceneManager is a class for managing presentation of scenes
+ * @author Randall Adams
+ * @version 1.0.0
+ * @since 12/01/2021
+ */
 public class SceneManager {
 
   private static final int defaultWidth = 800;
@@ -30,7 +30,7 @@ public class SceneManager {
    * @param width - width of our new scene
    * @param height - height of our scene
    * @throws IOException - thrown when we can't get the xml file
-   * @return
+   * @return Parent scene
    */
   public Parent setScene(String fxml, String title, int width, int height) throws IOException {
 
@@ -54,11 +54,12 @@ public class SceneManager {
 
   /**
    * method to get the current stage
-   * @return
+   * @return Stage
    */
   public static final Stage getCurrentStage() {
     return stage;
   }
+
   /**
    * Method to show a standard alert to the user
    * @param alertType - the type of alert we want to show

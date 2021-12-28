@@ -3,7 +3,7 @@ package com.randalladams.scheduler;
  * MainApp is the initializer/starting point of Javafx app
  * @author Randall Adams
  * @version 1.0.0
- * @since 06/01/2020
+ * @since 12/01/2021
  */
 
 import com.randalladams.scheduler.util.SceneManager;

@@ -3,13 +3,17 @@ C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\schedul
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\util\UserSession.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\model\Customer.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\model\FirstLevelDivision.java
+C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\util\LogUtil.java
+C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\controllers\ReportController.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\controllers\UpsertAppointmentController.java
+C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\model\Login.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\services\CustomerService.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\controllers\UpsertCustomerController.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\controllers\HomeController.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\util\KeyValuePair.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\MainApp.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\services\LoginService.java
+C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\model\ReportAppointmentType.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\controllers\CountryController.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\services\CountryService.java
 C:\Users\Adams\IdeaProjects\wgu-scheduler\src\main\java\com\randalladams\scheduler\services\AppointmentService.java

@@ -1,10 +1,4 @@
 package com.randalladams.scheduler.services;
-/*
- * CustomersService is the service for managing CRUD operations on the Customers table
- * @author Randall Adams
- * @version 1.0.0
- * @since 06/01/2020
- */
 
 import com.randalladams.scheduler.model.Customer;
 import com.randalladams.scheduler.util.Database;
@@ -16,6 +10,12 @@ import java.sql.*;
 import java.util.Date;
 import java.util.regex.Pattern;
 
+/**
+ * Service class for managing customers
+ * @author Randall Adams
+ * @version 1.0.0
+ * @since 12/01/2021
+ */
 public class CustomerService {
   private static Connection conn;
   private static final String DATABASE_TABLE = "customers";
@@ -35,6 +35,11 @@ public class CustomerService {
     }
   }
 
+  /**
+   * Method to get all customers
+   * @return ObservableList of Customers
+   * @throws SQLException
+   */
   public ObservableList<Customer> getCustomers() throws SQLException {
     String customersQuery = "SELECT * FROM " + DATABASE_TABLE + " c " +
       "LEFT JOIN first_level_divisions fld " +
@@ -70,6 +75,12 @@ public class CustomerService {
     return customerList;
   }
 
+  /**
+   * Gets a customer based on customer id
+   * @param customerId int
+   * @return Customer
+   * @throws SQLException
+   */
   public static Customer getCustomerById(int customerId) throws SQLException {
     String sql = "SELECT * FROM " + DATABASE_TABLE + " c " +
       "LEFT JOIN first_level_divisions fld " +
@@ -97,6 +108,17 @@ public class CustomerService {
     );
   }
 
+  /**
+   * Method to update a customer based on id
+   * @param customerId int
+   * @param name string
+   * @param address string
+   * @param postalCode string
+   * @param phone string
+   * @param divisionId int
+   * @return Customer
+   * @throws SQLException
+   */
   public static Customer editCustomer(int customerId, String name, String address, String postalCode, String phone, int divisionId) throws SQLException {
     Customer editCustomer;
     String updateQuery = "UPDATE " + DATABASE_TABLE + " " +
@@ -120,6 +142,16 @@ public class CustomerService {
     return getCustomerById(customerId);
   }
 
+  /**
+   * Method to insert a customer in to the database
+   * @param name string
+   * @param address string
+   * @param postalCode string
+   * @param phone string
+   * @param divisionId int
+   * @return Customer
+   * @throws SQLException
+   */
   public static Customer createCustomer(String name, String address, String postalCode, String phone, int divisionId) throws SQLException {
     Customer newCustomer;
     String insertQuery = "INSERT INTO " + DATABASE_TABLE +
@@ -157,6 +189,16 @@ public class CustomerService {
     return newCustomer;
   }
 
+  /**
+   * method to validate a customer before creating/updating
+   * @param name string
+   * @param address string
+   * @param postalCode string
+   * @param phoneNumber string
+   * @param firstLevelDivisionId int
+   * @return bool
+   * @throws SQLException
+   */
   public static boolean validateCustomer(String name, String address, String postalCode, String phoneNumber, int firstLevelDivisionId) throws SQLException {
     boolean isAnyEmpty = name.isEmpty() || address.isEmpty() || postalCode.isEmpty() || phoneNumber.isEmpty() || firstLevelDivisionId == 0;
     if (isAnyEmpty) {
@@ -185,6 +227,12 @@ public class CustomerService {
     return isValidAddress && isValidPhone;
   }
 
+  /**
+   * method to delete a customer by id
+   * must first delete all appointments
+   * @param customerId int
+   * @throws SQLException
+   */
   public static void deleteCustomer(int customerId) throws SQLException {
     // first delete all appointments
     AppointmentService appointmentService = new AppointmentService();

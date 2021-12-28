@@ -9,6 +9,12 @@ import java.util.Date;
 
 import com.randalladams.scheduler.util.Database;
 
+/**
+ * model class for Appointments
+ * @author Randall Adams
+ * @version 1.0.0
+ * @since 12/01/2021
+ */
 public class Appointment {
   private int appointmentId;
   private String title;
@@ -30,6 +36,26 @@ public class Appointment {
   private String monthYear;
   private String weekYear;
 
+  /**
+   * Constructor for setting up appointments
+   * @param appointmentId - appointment id
+   * @param title - appointment title
+   * @param description - appointment description
+   * @param location - appointment location
+   * @param type - appointment type
+   * @param contactName - appointment contact name
+   * @param start - appointment start datetime
+   * @param startTimestamp - appointment start timestamp
+   * @param end - appointment end datetime
+   * @param endTimestamp - appointment end timestamp
+   * @param createDate - appointment created date
+   * @param createdBy - appointment who created it
+   * @param lastUpdate - appointment last updated datetime
+   * @param lastUpdatedBy - appointment who updated the appoinment last
+   * @param customerId - appointment customer id
+   * @param userId - appointment user id
+   * @param contactId - appointment contact id
+   */
   public Appointment(int appointmentId, String title, String description, String location, String type, String contactName, Date start, Timestamp startTimestamp, Date end, Timestamp endTimestamp, Date createDate, String createdBy, Date lastUpdate, String lastUpdatedBy, int customerId, int userId, int contactId) {
     this.appointmentId = appointmentId;
     this.title = title;
@@ -52,159 +78,142 @@ public class Appointment {
     setAppointmentWeekYear(startTimestamp);
   }
 
+  /**
+   * getter for appointment id
+   * @return int
+   */
   public int getAppointmentId() {
     return appointmentId;
   }
 
-  public void setAppointmentId(int appointmentId) {
-    this.appointmentId = appointmentId;
-  }
-
+  /**
+   * getter for title
+   * @return int
+   */
   public String getTitle() {
     return title;
   }
 
+  /**
+   * setter for title
+   * @param title - title
+   */
   public void setTitle(String title) {
     this.title = title;
   }
 
+  /**
+   * getter for description
+   * @return string
+   */
   public String getDescription() {
     return description;
   }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
+  /**
+   * getter for location
+   * @return string
+   */
   public String getLocation() {
     return location;
   }
 
-  public void setLocation(String location) {
-    this.location = location;
-  }
-
+  /**
+   * getter for type
+   * @return string
+   */
   public String getType() {
     return type;
   }
 
+  /**
+   * setter for type
+   * @param type type
+   */
   public void setType(String type) {
     this.type = type;
   }
 
+  /**
+   * getter for contact name
+   * @return string
+   */
   public String getContactName() {
     return contactName;
   }
 
+  /**
+   * setter for contact name
+   * @param contactName contactName
+   */
   public void setContactName(String contactName) {
     this.contactName = contactName;
   }
 
-  public Date getStart() {
-    return start;
-  }
-
-  public void setStart(Date start) {
-    this.start = start;
-  }
-
-  public Date getEnd() {
-    return end;
-  }
-
-  public void setEnd(Date end) {
-    this.end = end;
-  }
-
-  public Date getCreateDate() {
-    return createDate;
-  }
-
-  public void setCreateDate(Date createDate) {
-    this.createDate = createDate;
-  }
-
-  public String getCreatedBy() {
-    return createdBy;
-  }
-
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
-
-  public Date getLastUpdate() {
-    return lastUpdate;
-  }
-
-  public void setLastUpdate(Date lastUpdate) {
-    this.lastUpdate = lastUpdate;
-  }
-
-  public String getLastUpdatedBy() {
-    return lastUpdatedBy;
-  }
-
-  public void setLastUpdatedBy(String lastUpdatedBy) {
-    this.lastUpdatedBy = lastUpdatedBy;
-  }
-
+  /**
+   * getter for customer id
+   * @return int
+   */
   public int getCustomerId() {
     return customerId;
   }
 
+  /**
+   * setter for customer id
+   * @param customerId int
+   */
   public void setCustomerId(int customerId) {
     this.customerId = customerId;
   }
 
+  /**
+   * getter for user id
+   * @return int
+   */
   public int getUserId() {
     return userId;
   }
 
-  public void setUserId(int userId) {
-    this.userId = userId;
-  }
-
+  /**
+   * getter for contact id
+   * @return int
+   */
   public int getContactId() {
     return contactId;
   }
 
-  public void setContactId(int contactId) {
-    this.contactId = contactId;
-  }
-
+  /**
+   * method to set the month year for an appointment
+   * @param startTimestamp timestamp
+   */
   public void setAppointmentMonthYear(Timestamp startTimestamp) {
     LocalDate localStartDate = startTimestamp.toLocalDateTime().toLocalDate();
     this.monthYear = localStartDate.format(DateTimeFormatter.ofPattern("MM-yyyy"));
   }
 
-  public String getAppointmentMonth() {
-    return monthYear;
-  }
-
+  /**
+   * method to set the week year based on start
+   * @param startTimestamp timestamp
+   */
   public void setAppointmentWeekYear(Timestamp startTimestamp) {
     LocalDate localStartDate = startTimestamp.toLocalDateTime().toLocalDate();
     LocalDate previousOrSameSunday = localStartDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
     this.weekYear = previousOrSameSunday.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
   }
 
-  public String getAppointmentWeekYear() {
-    return weekYear;
-  }
-
+  /**
+   * getter for startTimestamp
+   * @return timestamp
+   */
   public Timestamp getStartTimestamp() {
     return startTimestamp;
   }
 
-  public void setStartTimestamp(Timestamp startTimestamp) {
-    this.startTimestamp = startTimestamp;
-  }
-
+  /**
+   * getter for endtimestamp
+   * @return timestamp
+   */
   public Timestamp getEndTimestamp() {
     return endTimestamp;
   }
-
-  public void setEndTimestamp(Timestamp endTimestamp) {
-    this.endTimestamp = endTimestamp;
-  }
-
 }

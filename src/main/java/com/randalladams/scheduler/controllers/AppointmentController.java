@@ -24,6 +24,12 @@ import java.sql.SQLException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * Appointment controller adds the functionality for interacting with the appointment list
+ * @author Randall Adams
+ * @version 1.0.0
+ * @since 12/01/2021
+ */
 public class AppointmentController implements Initializable {
 
   private static ResourceBundle resourceBundle = null;
@@ -42,7 +48,7 @@ public class AppointmentController implements Initializable {
   private static final int MODAL_HEIGHT = 600;
 
   /**
-   * Initializer for login scene
+   * Initializer for appointment table
    * @param url - the url (required for all initializers)
    * @param resourceBundle - the resource bundle for the scene
    */
@@ -61,6 +67,13 @@ public class AppointmentController implements Initializable {
     }
   }
 
+  /**
+   * Method to load the edit appointment form
+   * <p>
+   * if the appointment cannot load an alert error will appear
+   * </p>
+   * @param actionEvent
+   */
   public void editAppointment(ActionEvent actionEvent) {
     try {
       Appointment selectedAppointment = appointmentsTable.getSelectionModel().getSelectedItem();
@@ -78,8 +91,8 @@ public class AppointmentController implements Initializable {
         ObservableList<Appointment> allAppointments = null;
         try {
           allAppointments = appointmentService.getAppointmentsByUserId(UserSession.getUserId());
-        } catch (SQLException throwables) {
-          throwables.printStackTrace();
+        } catch (SQLException ex) {
+          showErrorAlert(ex.getMessage());
         }
         setupAppointmentsTable(allAppointments, resourceBundle);
       });
@@ -89,6 +102,15 @@ public class AppointmentController implements Initializable {
     }
   }
 
+  /**
+   * method to load the create appointment form
+   * <p>lambda expression</p>
+   * <p>
+   *   the lambda expression used here adds an event listener with the form closes
+   *   so that the table can be redrawn
+   * </p>
+   * @param actionEvent
+   */
   public void createAppointment(ActionEvent actionEvent) {
     try {
       UserSession.setCurrentAppointmentSelected(0);
@@ -111,14 +133,16 @@ public class AppointmentController implements Initializable {
       });
       stage.show();
     } catch (Exception e) {
-      SceneManager.showAlert(
-        Alert.AlertType.ERROR, appointmentsTable.getScene().getWindow(),
-        langBundle.getString("appointments_table.errors.create"),
-        e.getMessage()
-      );
+      showErrorAlert(e.getMessage());
     }
   }
 
+  /**
+   * method to setup the appointments table
+   * the appointments table setup is taking appointment data and constructing a table view
+   * @param appointments
+   * @param resourceBundle
+   */
   private void setupAppointmentsTable(ObservableList<Appointment> appointments, ResourceBundle resourceBundle) {
     appointmentsTable.getColumns().clear();
     TableColumn<Appointment, String> idCol = new TableColumn<>(resourceBundle.getString("appointment_table.columns.id"));
@@ -187,6 +211,11 @@ public class AppointmentController implements Initializable {
     );
   }
 
+  /**
+   * the setup filter menu method creates the menu items for filtering the appointments table
+   * <p>Lambda Expression</p>
+   * <p>There are lambdas in here to add event listeners for detecting menu filter changes</p>
+   */
   private void setupFilterMenu() {
     MenuItem allAppointments = new MenuItem(langBundle.getString("appointment_form.filter.all"));
     MenuItem monthAppointments = new MenuItem(langBundle.getString("appointment_form.filter.month"));
@@ -219,6 +248,10 @@ public class AppointmentController implements Initializable {
     });
   }
 
+  /**
+   * Generic method to show an alert when something goes wrong
+   * @param message
+   */
   private void showErrorAlert(String message) {
     errorAlert = new Alert(Alert.AlertType.ERROR);
     errorAlert.setTitle(Lang.getString("appointments_table.error.title"));

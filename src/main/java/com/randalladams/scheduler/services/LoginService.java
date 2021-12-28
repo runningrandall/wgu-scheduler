@@ -1,10 +1,4 @@
 package com.randalladams.scheduler.services;
-/*
- * LoginService is service for processing the login scene
- * @author Randall Adams
- * @version 1.0.0
- * @since 06/01/2020
- */
 
 import com.randalladams.scheduler.model.Login;
 import com.randalladams.scheduler.util.Database;
@@ -14,7 +8,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -22,6 +15,12 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.time.ZoneId;
 
+/**
+ * Service class for handling logins
+ * @author Randall Adams
+ * @version 1.0.0
+ * @since 12/01/2021
+ */
 public class LoginService {
 
   private static Connection conn;
@@ -74,10 +73,10 @@ public class LoginService {
   }
 
   /**
-   * function to encrypt the password text
-   * @param password - the user's password
-   * @return string - the md5 hashed password
-   * @throws NoSuchAlgorithmException - thrown when we are missing md5
+   * helper method to encrypt the password
+   * @param password string
+   * @return string
+   * @throws NoSuchAlgorithmException
    */
   public static String encryptPassword(String password) throws NoSuchAlgorithmException {
     MessageDigest md = MessageDigest.getInstance("MD5");
@@ -90,12 +89,22 @@ public class LoginService {
     return sb.toString();
   }
 
+  /**
+   * method to log the login attempt to a file
+   * @param username string
+   * @param isSuccessful bool
+   */
   private void logLoginMessage(String username, boolean isSuccessful) {
     LogUtil logUtil = new LogUtil(LOG_FILE);
     String successString = isSuccessful ? "Successful" : "Failed";
     logUtil.logInfo("username=" + username + " action=Login status=" + successString);
   }
 
+  /**
+   * method to parse the login activity log and return in a list
+   * @return ObservableList of Logins
+   * @throws IOException
+   */
   public ObservableList<Login> getLoginReport() throws IOException {
     ObservableList<Login> logins = FXCollections.observableArrayList();
     BufferedReader reader = new BufferedReader(new FileReader(LOG_FILE));

@@ -1,23 +1,21 @@
 package com.randalladams.scheduler.util;
-/*
- * Database class is our class for managing database connections, managing dates, and printing exceptions
- * @author Randall Adams
- * @version 1.0.0
- * @since 06/01/2020
- */
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
-import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.TimeZone;
 
+/**
+ * Database class is our class for managing database connections, managing dates, and printing exceptions
+ * @author Randall Adams
+ * @version 1.0.0
+ * @since 12/01/2021
+ */
 public class Database {
 
   private static String DATABASE_HOST;
@@ -27,7 +25,7 @@ public class Database {
   private static final String DB_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
   /**
-   * database constructor creates connection
+   * Database constructor creates connection and filereader for loading of application properties
    */
   public Database() {
     try {
@@ -80,13 +78,23 @@ public class Database {
     }
   }
 
+  /**
+   * method for getting the db datetime string from a localdatetime
+   * @param date LocalDateTime
+   * @return String
+   */
   public String getDbStringFromLocalDateTime(LocalDateTime date) {
     ZonedDateTime localDateTime = date.atZone(ZoneId.systemDefault());
     ZonedDateTime utcDateTime = localDateTime.withZoneSameInstant(ZoneId.of("UTC"));
     return utcDateTime.format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
   }
 
-  public static java.sql.Timestamp getLocalTimestampFromUtcTimestamp(Timestamp utcTs) {
+  /**
+   * method to get a timestamp in local time from a utc timestamp
+   * @param utcTs timestamp
+   * @return Timestamp
+   */
+  public static Timestamp getLocalTimestampFromUtcTimestamp(Timestamp utcTs) {
     LocalDateTime localDateTime = utcTs.toLocalDateTime();
     LocalDateTime adjustedTime = localDateTime.minusMinutes(utcTs.getTimezoneOffset());
 

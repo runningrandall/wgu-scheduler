@@ -12,6 +12,16 @@ import java.sql.SQLException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * Home controller for controlling the home scene
+ * The home scene is the default upon login. It has a tab view for each core app function
+ * @param <CustomerTabPage>
+ * @param <AppointmentTabPage>
+ * @param <ReportTabPage>
+ * @author Randall Adams
+ * @version 1.0.0
+ * @since 12/01/2021
+ */
 public class HomeController<CustomerTabPage, AppointmentTabPage, ReportTabPage> implements Initializable {
   @FXML
   private CustomerTabPage customerTabPage;
@@ -36,6 +46,11 @@ public class HomeController<CustomerTabPage, AppointmentTabPage, ReportTabPage> 
   private static Alert appointmentAlert;
   private static ResourceBundle langBundle = null;
 
+  /**
+   * initializer
+   * @param url
+   * @param resourceBundle
+   */
   public void initialize(URL url, ResourceBundle resourceBundle) {
     appointmentService = new AppointmentService();
     String lang = System.getProperty("user.language");
@@ -50,6 +65,10 @@ public class HomeController<CustomerTabPage, AppointmentTabPage, ReportTabPage> 
     }
   }
 
+  /**
+   * shows our appointment alert in a JavaFX Alert
+   * @param appointmentAlertText
+   */
   public void setupAndShowAppointmentAlert(String appointmentAlertText) {
     appointmentAlert = new Alert(Alert.AlertType.INFORMATION);
     appointmentAlert.setTitle(langBundle.getString("appointment_alert.title"));
@@ -57,6 +76,10 @@ public class HomeController<CustomerTabPage, AppointmentTabPage, ReportTabPage> 
     appointmentAlert.showAndWait();
   }
 
+  /**
+   * Generic method to show an alert error when something goes wrong
+   * @param alertText
+   */
   public void showErrorAlert(String alertText) {
     errorAlert = new Alert(Alert.AlertType.ERROR);
     errorAlert.setTitle(langBundle.getString("appointment_alert.error"));
@@ -64,6 +87,11 @@ public class HomeController<CustomerTabPage, AppointmentTabPage, ReportTabPage> 
     errorAlert.show();
   }
 
+  /**
+   * Method to get the appointment alert text (when there is and isn't an appointment)
+   * @param appointment
+   * @return String
+   */
   public String getAppointmentAlertText(Appointment appointment) {
     String appointmentAlertText = "";
     if (appointment != null) {

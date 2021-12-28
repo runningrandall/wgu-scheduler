@@ -2,6 +2,12 @@ package com.randalladams.scheduler.model;
 
 import java.util.Date;
 
+/**
+ * model class for creating a country
+ * @author Randall Adams
+ * @version 1.0.0
+ * @since 12/01/2021
+ */
 public class Country {
   private int countryId;
   private String country;
@@ -10,7 +16,15 @@ public class Country {
   private Date lastUpdate;
   private String lastUpdateBy;
 
-
+  /**
+   * constructor for creating a country
+   * @param countryId countryId
+   * @param country country
+   * @param createDate createDate
+   * @param createdBy createdBy
+   * @param lastUpdate lastUpdate
+   * @param lastUpdateBy lastUpdatedBy
+   */
   public Country(int countryId, String country, Date createDate, String createdBy, Date lastUpdate, String lastUpdateBy) {
     this.countryId = countryId;
     this.country = country;
@@ -20,27 +34,12 @@ public class Country {
     this.lastUpdateBy = lastUpdateBy;
   }
 
-  public int getCountryId() {
-    return countryId;
-  }
-
+  /**
+   * getter for country
+   * @return string
+   */
   public String getCountry() {
     return country;
   }
 
-  public Date getCreateDate() {
-    return createDate;
-  }
-
-  public String getCreatedBy() {
-    return createdBy;
-  }
-
-  public Date getLastUpdate() {
-    return lastUpdate;
-  }
-
-  public String getLastUpdateBy() {
-    return lastUpdateBy;
-  }
 }

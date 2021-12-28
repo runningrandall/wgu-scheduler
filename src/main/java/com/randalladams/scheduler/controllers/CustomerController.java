@@ -1,10 +1,4 @@
 package com.randalladams.scheduler.controllers;
-/*
- * CustomersController is the controller for CRUD operations on Customers
- * @author Randall Adams
- * @version 1.0.0
- * @since 06/01/2020
- */
 
 import com.randalladams.scheduler.model.Customer;
 import com.randalladams.scheduler.services.CustomerService;
@@ -33,6 +27,12 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * CustomerController class to handle operations with customer tableview
+ * @author Randall Adams
+ * @version 1.0.0
+ * @since 12/01/2021
+ */
 public class CustomerController implements Initializable {
 
   private static final String customerForm = "/fxml/customerForm.fxml";
@@ -44,7 +44,7 @@ public class CustomerController implements Initializable {
   private TableView<Customer> customersTable;
 
   /**
-   * Initializer for login scene
+   * Initializer for customer scene
    * @param url - the url (required for all initializers)
    * @param resourceBundle - the resource bundle for the scene
    */
@@ -64,8 +64,9 @@ public class CustomerController implements Initializable {
   }
 
   /**
-   * method to print all the customer data
+   * method to print all the customer data in a table view
    * @param allCustomers - all the customers in the database
+   * @param resourceBundle - resource bundle for lang translations
    */
   private void setupCustomersTable(ObservableList<Customer> allCustomers, ResourceBundle resourceBundle) {
     customersTable.getColumns().clear();
@@ -124,8 +125,13 @@ public class CustomerController implements Initializable {
       countryCol);
   }
 
+  /**
+   * method to show the edit customer form
+   * <p>Lambda Expression</p>
+   * <p>Lambda used here to add event listener when the form closes</p>
+   * @param actionEvent
+   */
   public void editCustomer(ActionEvent actionEvent) {
-    // TODO: move to service
     try {
       Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
       UserSession.setCurrentCustomerSelected(selectedCustomer.getId());
@@ -137,7 +143,7 @@ public class CustomerController implements Initializable {
       stage.initModality(Modality.WINDOW_MODAL);
       stage.initOwner(
         ((Node)actionEvent.getSource()).getScene().getWindow() );
-      // TODO: make this reusable
+
       stage.setOnCloseRequest(e -> {
         ObservableList<Customer> allCustomers = null;
         try {
@@ -154,6 +160,13 @@ public class CustomerController implements Initializable {
     }
   }
 
+  /**
+   * Method to show the create customer form
+   * <p>Lambda Expression</p>
+   * <p>Lambda used here to add event listener when the form closes</p>
+   * @param actionEvent
+   * @throws IOException
+   */
   public void createCustomer(ActionEvent actionEvent) throws IOException {
     UserSession.setCurrentCustomerSelected(0);
     Stage stage = new Stage();

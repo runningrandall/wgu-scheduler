@@ -3,10 +3,13 @@ com\randalladams\scheduler\util\SceneManager.class
 com\randalladams\scheduler\controllers\AppointmentController.class
 com\randalladams\scheduler\services\CustomerService.class
 com\randalladams\scheduler\util\DateTimePicker$1.class
+com\randalladams\scheduler\util\LogUtil.class
 com\randalladams\scheduler\services\ContactService.class
 com\randalladams\scheduler\util\Lang.class
+com\randalladams\scheduler\model\Login.class
 com\randalladams\scheduler\services\LoginService.class
 com\randalladams\scheduler\model\Country.class
+com\randalladams\scheduler\controllers\ReportController.class
 com\randalladams\scheduler\controllers\CustomerController.class
 com\randalladams\scheduler\util\Database.class
 com\randalladams\scheduler\MainApp.class
@@ -17,6 +20,7 @@ com\randalladams\scheduler\services\AppointmentService.class
 com\randalladams\scheduler\util\Validator.class
 com\randalladams\scheduler\services\CountryService.class
 com\randalladams\scheduler\util\DateTimePicker$InternalConverter.class
+com\randalladams\scheduler\model\ReportAppointmentType.class
 com\randalladams\scheduler\services\FirstLevelDivisionsService.class
 com\randalladams\scheduler\controllers\UpsertAppointmentController.class
 com\randalladams\scheduler\model\Contact.class

@@ -21,6 +21,12 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
+/**
+ * UpsertCustomer controller for managing customer form scene
+ * @author Randall Adams
+ * @version 1.0.0
+ * @since 06/01/2021
+ */
 public class UpsertCustomerController implements Initializable {
 
   @FXML
@@ -60,7 +66,9 @@ public class UpsertCustomerController implements Initializable {
   private static Alert errorAlert;
 
   /**
-   * Initializer for create customer modal
+   * Initializer for create customer scene
+   * <p>Lambda Expression</p>
+   * <p>Labmda used here to trigger action for selecting a country and filtering first level divisions</p>
    * @param url - the url (required for all initializers)
    * @param resourceBundle - the resource bundle for the scene
    */
@@ -93,6 +101,9 @@ public class UpsertCustomerController implements Initializable {
     }
   }
 
+  /**
+   * method to populate the customer form when editing
+   */
   private void populateCustomerForm() {
     try {
       customer = CustomerService.getCustomerById(UserSession.getCurrentCustomerSelected());
@@ -116,12 +127,20 @@ public class UpsertCustomerController implements Initializable {
     }
   }
 
+  /**
+   * method to filter fld by country
+   * @param selectedCountry
+   * @throws SQLException
+   */
   public void filterFirstLevelDivisionsByCountry(KeyValuePair selectedCountry) throws SQLException {
     firstLevelDivisions = fldService.getFirstLevelDivisionsByCountryId(Integer.parseInt(selectedCountry.getKey()));
     firstLevelDivisionChoiceBox.setItems(firstLevelDivisions);
   }
 
-  public void confirmCustomerDelete() throws SQLException {
+  /**
+   * method to confirm users want to delete a customer before actually deleting
+   */
+  public void confirmCustomerDelete() {
     confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
     confirmationAlert.setTitle(Lang.getString("customer_form.delete.title"));
     confirmationAlert.setContentText(Lang.getString("customer_form.delete.text"));
@@ -132,11 +151,19 @@ public class UpsertCustomerController implements Initializable {
         Stage stage = (Stage) deleteBtn.getScene().getWindow();
         stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
       } catch (Exception e) {
-        System.out.println("Error deleting customer" + e.getMessage());
+        errorAlert = new Alert(Alert.AlertType.ERROR);
+        errorAlert.setTitle(Lang.getString("customer_form.error.title"));
+        errorAlert.setContentText("Error deleting customer" + e.getMessage());
+        errorAlert.show();
       }
     }
   }
 
+  /**
+   * method to get the right country index when loading an existing contact
+   * @param countryKvp
+   * @return int
+   */
   private int getSelectedCountryIndex(KeyValuePair countryKvp) {
     AtomicInteger foundIndex = new AtomicInteger(-1);
     IntStream.range(0, countries.size()).forEach(i -> {
@@ -147,6 +174,11 @@ public class UpsertCustomerController implements Initializable {
     return foundIndex.get();
   }
 
+  /**
+   * method to get the right first level division index based on loaded customer
+   * @param fldKvp
+   * @return in
+   */
   private int getSelectedFldIndex(KeyValuePair fldKvp) {
     AtomicInteger foundIndex = new AtomicInteger(-1);
     IntStream.range(0, firstLevelDivisions.size()).forEach(i -> {
@@ -157,6 +189,12 @@ public class UpsertCustomerController implements Initializable {
     return foundIndex.get();
   }
 
+  /**
+   * method to submit the customer to apply updates/creates
+   * the method first validatest the customer before saving and shows an alert if something goes wrong
+   * @param event
+   * @throws SQLException
+   */
   public void submitCustomer(ActionEvent event) throws SQLException {
     Boolean isCustomerValid = CustomerService.validateCustomer(
       customerName.getText(),

@@ -32,10 +32,16 @@ public class DateTimePicker extends DatePicker {
     }
   };
 
+  /**
+   * method to align the columns
+   */
   public void alignColumnCountWithFormat() {
     getEditor().setPrefColumnCount(getFormat().length());
   }
 
+  /**
+   * Constructor for setting up the datetimepicker
+   */
   public DateTimePicker() {
     getStyleClass().add("datetime-picker");
     setFormat(DefaultFormat);
@@ -81,41 +87,73 @@ public class DateTimePicker extends DatePicker {
 
   }
 
+  /**
+   * simulate enter when bluring a field
+   */
   private void simulateEnterPressed() {
     getEditor().commitValue();
   }
 
+  /**
+   * getter for getting the datetime value
+   * @return LocalDateTime
+   */
   public LocalDateTime getDateTimeValue() {
     return dateTimeValue.get();
   }
 
+  /**
+   * setter for the datetime value
+   * @param dateTimeValue LocalDateTime
+   */
   public void setDateTimeValue(LocalDateTime dateTimeValue) {
     this.dateTimeValue.set(dateTimeValue);
   }
 
+  /**
+   * getter for the object property of localdatetime
+   * @return ObjectProperty
+   */
   public ObjectProperty<LocalDateTime> dateTimeValueProperty() {
     return dateTimeValue;
   }
 
+  /**
+   * getter for format
+   * @return String
+   */
   public String getFormat() {
     return format.get();
   }
 
-  public ObjectProperty<String> formatProperty() {
-    return format;
-  }
-
+  /**
+   * setter for format
+   * @param format String
+   */
   public void setFormat(String format) {
     this.format.set(format);
     alignColumnCountWithFormat();
   }
 
+  /**
+   * internal converter class for converting the datetime to a string
+   */
   class InternalConverter extends StringConverter<LocalDate> {
+    /**
+     * classic toSttring on the localdate object
+     * @param object LocalDate
+     * @return String
+     */
     public String toString(LocalDate object) {
       LocalDateTime value = getDateTimeValue();
       return (value != null) ? value.format(formatter) : "";
     }
 
+    /**
+     * Setter from a string to datetime
+     * @param value string
+     * @return datetime
+     */
     public LocalDate fromString(String value) {
       if (value == null || value.isEmpty()) {
         dateTimeValue.set(null);

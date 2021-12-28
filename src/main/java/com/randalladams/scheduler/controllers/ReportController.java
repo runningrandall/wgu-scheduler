@@ -22,8 +22,12 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-
-
+/**
+ * Report controller for handling the report scene
+ * @author Randall Adams
+ * @version 1.0.0
+ * @since 12/01/2021
+ */
 public class ReportController implements Initializable {
 
   @FXML
@@ -45,19 +49,29 @@ public class ReportController implements Initializable {
   private String lang = System.getProperty("user.language");
   private Locale locale = new Locale(lang, lang.toUpperCase());
 
-  @Override
+  /**
+   * initializer
+   * @param url
+   * @param resourceBundle
+   */
   public void initialize(URL url, ResourceBundle resourceBundle) {
     langBundle = ResourceBundle.getBundle("i18n", locale);
     setupReportsChoiceBox();
     hideAllTables();
   }
 
+  /**
+   * Method to hide all of our reports by default
+   */
   private void hideAllTables() {
     reportAppointmentTypeTable.setVisible(false);
     reportContactSchedule.setVisible(false);
     reportLoginActivity.setVisible(false);
   }
 
+  /**
+   * method to setup the various reports to be selected in a choice box
+   */
   private void setupReportsChoiceBox() {
     ObservableList availableReports = FXCollections.observableArrayList(
       new KeyValuePair("1", langBundle.getString("reports.report_1")),
@@ -68,6 +82,13 @@ public class ReportController implements Initializable {
     reportsChoiceBox.setItems(availableReports);
   }
 
+  /**
+   * method to handle the run report button click
+   * based on what report was selected the method will call
+   * the proper report gather/setup method
+   * and show an alert otherwise
+   * @param event
+   */
   @FXML
   private void runReport(ActionEvent event) {
     hideAllTables();
@@ -87,6 +108,10 @@ public class ReportController implements Initializable {
     }
   }
 
+  /**
+   * Method to get a report of appointments by type and month
+   * show the proper table and then print the appointments in table form
+   */
   private void printAppointmentsByTypeAndMonth() {
     reportAppointmentTypeTable.setVisible(true);
     try {
@@ -116,6 +141,9 @@ public class ReportController implements Initializable {
     }
   }
 
+  /**
+   * method to print a schedule for each contact
+   */
   private void printContactSchedule() {
     reportContactSchedule.setVisible(true);
     try {
@@ -170,6 +198,9 @@ public class ReportController implements Initializable {
 
   }
 
+  /**
+   * method to print the login activity in a table
+   */
   private void printLoginActivity() {
     reportLoginActivity.setVisible(true);
     try {
@@ -198,6 +229,11 @@ public class ReportController implements Initializable {
       showErrorAlert(e.getMessage());
     }
   }
+
+  /**
+   * generic method to show an alert if something goes wrong
+   * @param message
+   */
   private void showErrorAlert(String message) {
     errorAlert = new Alert(Alert.AlertType.ERROR);
     errorAlert.setTitle(Lang.getString("reports.error.title"));

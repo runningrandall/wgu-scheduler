@@ -19,6 +19,12 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
+/**
+ * UpsertAppointment controller that handles interactions for adding and/or updating appointments
+ * @author Randall Adams
+ * @version 1.0.0
+ * @since 12/01/2021
+ */
 public class UpsertAppointmentController implements Initializable {
 
   @FXML
@@ -68,7 +74,7 @@ public class UpsertAppointmentController implements Initializable {
   private static ObservableList<KeyValuePair> contacts;
 
   /**
-   * Initializer for create customer modal
+   * Initializer for create/update customer scene
    * @param url - the url (required for all initializers)
    * @param resourceBundle - the resource bundle for the scene
    */
@@ -87,12 +93,19 @@ public class UpsertAppointmentController implements Initializable {
     }
   }
 
+  /**
+   * method to hide fields not used when creating
+   */
   private void hideNewFields() {
     appointmentIdLabel.setVisible(false);
     appointmentId.setVisible(false);
     deleteButton.setVisible(false);
   }
 
+  /**
+   * Method to populate the appointment form when updating
+   * @throws SQLException
+   */
   private void populateAppointment() throws SQLException {
     appointment = as.getAppointmentById(UserSession.getCurrentAppointmentSelected());
     KeyValuePair contactKvp = new KeyValuePair(String.valueOf(appointment.getContactId()), appointment.getContactName());
@@ -110,6 +123,11 @@ public class UpsertAppointmentController implements Initializable {
     contactsChoiceBox.getSelectionModel().select(getSelectedContactIndex(contactKvp));
   }
 
+  /**
+   * method to get the proper index for selecting the right contact when updating
+   * @param contactKvp
+   * @return int
+   */
   private int getSelectedContactIndex(KeyValuePair contactKvp) {
     AtomicInteger foundIndex = new AtomicInteger(-1);
     IntStream.range(0, contacts.size()).forEach(i -> {
@@ -120,12 +138,19 @@ public class UpsertAppointmentController implements Initializable {
     return foundIndex.get();
   }
 
+  /**
+   * method to submit the appointment for creating/updating
+   * the method first checks for appointment validity and then updates/creates
+   * @param event
+   * @throws SQLException
+   */
   public void submitAppointment(ActionEvent event) throws SQLException {
     Validator appointValidity = null;
     LocalDateTime startDateTime = appointmentStart.getDateTimeValue();
     LocalDateTime endDateTime = appointmentEnd.getDateTimeValue();
     try {
       appointValidity = as.validateAppointment(
+        isNewAppointment,
         appointmentTitle.getText(),
         appointmentDescription.getText(),
         appointmentLocation.getText(),
@@ -183,6 +208,12 @@ public class UpsertAppointmentController implements Initializable {
     stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
   }
 
+  /**
+   * method to confirm the delete request
+   * users must confirm before deleting so appointments
+   * are not deleted by accident
+   * @param event
+   */
   public void confirmAppointmentDelete(ActionEvent event) {
     confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
     confirmationAlert.setTitle(Lang.getString("appointment_form.delete.title"));
