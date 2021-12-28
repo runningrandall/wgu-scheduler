@@ -1,6 +1,7 @@
 package com.randalladams.scheduler.services;
 
 import com.randalladams.scheduler.model.Appointment;
+import com.randalladams.scheduler.model.ReportAppointmentType;
 import com.randalladams.scheduler.util.Database;
 import com.randalladams.scheduler.util.UserSession;
 import com.randalladams.scheduler.util.Validator;
@@ -10,7 +11,9 @@ import javafx.collections.ObservableList;
 import java.sql.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class AppointmentService {
   private static Connection conn;
@@ -161,6 +164,25 @@ public class AppointmentService {
       appointmentList.add(appointment);
     }
     return appointmentList;
+  }
+
+  public ObservableList<ReportAppointmentType> getAppointmentsByTypeAndMonth() throws SQLException {
+
+    String selectQuery = "SELECT EXTRACT( YEAR_MONTH FROM `Start` ) as `Year_Month`, Type, COUNT(*) as `Total` FROM " + DATABASE_TABLE + " GROUP BY Type";
+    PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
+
+    ResultSet resultSet = preparedStatement.executeQuery();
+    ObservableList<ReportAppointmentType> resultList = FXCollections.observableArrayList();
+
+    while (resultSet.next()) {
+      ReportAppointmentType rat = new ReportAppointmentType(
+        resultSet.getString("Type"),
+        resultSet.getString("Year_Month"),
+        resultSet.getInt("Total")
+      );
+      resultList.add(rat);
+    }
+    return resultList;
   }
 
   public Appointment getAppointmentWithinFifteenMinutes(int userId) throws SQLException {
