@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class AppointmentService {
@@ -16,6 +17,8 @@ public class AppointmentService {
   private static final String DATABASE_TABLE = "appointments";
   private static final int VALID_START_HOUR_ET = 7; // 8am eastern
   private static final int VALID_END_HOUR_ET = 19; // 10pm eastern
+  private static final int APPOINTMENT_START_ALERT_IN_MINUTES = 15;
+  private static final String DB_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
   private Database db;
 
   public AppointmentService() {
@@ -90,6 +93,45 @@ public class AppointmentService {
       appointmentList.add(appointment);
     }
     return appointmentList;
+  }
+
+  public Appointment getAppointmentWithinFifteenMinutes(int userId) throws SQLException {
+    String currentDateTime = LocalDateTime.now(ZoneOffset.UTC)
+      .format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
+    String dateTimePlusFifteen = LocalDateTime.now(ZoneOffset.UTC)
+      .plusMinutes(APPOINTMENT_START_ALERT_IN_MINUTES)
+      .format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
+    String selectQuery = "SELECT * FROM " + DATABASE_TABLE + " " +
+      "a LEFT JOIN contacts c ON c.Contact_ID = a.Contact_ID " +
+      "WHERE a.User_ID = ? AND a.Start BETWEEN ? AND ? ORDER BY Start DESC LIMIT 1";
+    PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
+
+    preparedStatement.setInt(1, userId);
+    preparedStatement.setString(2, currentDateTime);
+    preparedStatement.setString(3, dateTimePlusFifteen);
+    ResultSet resultSet = preparedStatement.executeQuery();
+    while (resultSet.next()) {
+      return new Appointment(
+        resultSet.getInt("a.Appointment_ID"),
+        resultSet.getString("a.Title"),
+        resultSet.getString("a.Description"),
+        resultSet.getString("a.Location"),
+        resultSet.getString("a.Type"),
+        resultSet.getString("c.Contact_Name"),
+        resultSet.getDate("a.Start"),
+        resultSet.getTimestamp("a.Start"),
+        resultSet.getDate("a.End"),
+        resultSet.getTimestamp("a.End"),
+        resultSet.getDate("a.Create_Date"),
+        resultSet.getString("a.Created_By"),
+        resultSet.getDate("a.Last_Update"),
+        resultSet.getString("a.Last_Updated_By"),
+        resultSet.getInt("a.Customer_ID"),
+        resultSet.getInt("a.User_ID"),
+        resultSet.getInt("a.Contact_ID")
+      );
+    }
+    return null;
   }
 
   private Boolean isValidAppointmentTime(LocalDateTime appointmentDate) {
