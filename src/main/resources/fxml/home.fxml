@@ -18,6 +18,11 @@
                 <fx:include fx:id="appointmentTabPage" source="appointments.fxml"/>
             </content>
           </Tab>
+          <Tab text="%tabs.reports">
+            <content>
+                <fx:include fx:id="reportTabPage" source="reports.fxml"/>
+            </content>
+          </Tab>
         </tabs>
       </TabPane>
    </children>
