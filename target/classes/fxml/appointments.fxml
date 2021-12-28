@@ -10,8 +10,13 @@
          <font>
             <Font size="24.0" />
          </font></Label>
-      <TableView id="appointmentsTable" fx:id="appointmentsTable" layoutX="14.0" layoutY="49.0" prefHeight="342.0" prefWidth="575.0" />
-      <Button fx:id="createAppointmentBtn" layoutX="465.0" layoutY="19.0" mnemonicParsing="false" onAction="#createAppointment" text="%appointments_table.actions.new" />
-      <Button fx:id="editAppointmentBtn" layoutX="342.0" layoutY="19.0" mnemonicParsing="false" onAction="#editAppointment" text="%appointments_table.actions.edit" />
+      <TableView id="appointmentsTable" fx:id="appointmentsTable" layoutX="13.0" layoutY="58.0" prefHeight="342.0" prefWidth="575.0" />
+      <ButtonBar layoutX="194.0" layoutY="18.0" prefHeight="40.0" prefWidth="392.0">
+        <buttons>
+            <Button fx:id="editAppointmentBtn" mnemonicParsing="false" onAction="#editAppointment" prefHeight="25.0" text="%appointments_table.actions.edit" />
+            <Button fx:id="createAppointmentBtn" mnemonicParsing="false" onAction="#createAppointment" text="%appointments_table.actions.new" />
+            <SplitMenuButton fx:id="filterButton" mnemonicParsing="false" prefHeight="25.0" text="%appointments_table.actions.filter" />
+        </buttons>
+      </ButtonBar>
    </children>
 </AnchorPane>

@@ -19,6 +19,8 @@ public class AppointmentService {
   private static final int VALID_END_HOUR_ET = 19; // 10pm eastern
   private static final int APPOINTMENT_START_ALERT_IN_MINUTES = 15;
   private static final String DB_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+  private static final String FILTER_WEEK = "WEEK";
+  private static final String FILTER_MONTH = "MONTH";
   private Database db;
 
   public AppointmentService() {
@@ -65,7 +67,7 @@ public class AppointmentService {
   }
 
   public ObservableList<Appointment> getAppointmentsByUserId(int userId) throws SQLException {
-    String selectQuery = "SELECT * FROM " + DATABASE_TABLE + " a LEFT JOIN contacts c ON c.Contact_ID = a.Contact_ID WHERE a.User_ID = ?";
+    String selectQuery = "SELECT * FROM " + DATABASE_TABLE + " a LEFT JOIN contacts c ON c.Contact_ID = a.Contact_ID WHERE a.User_ID = ? ORDER BY Start DESC";
     PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
     preparedStatement.setInt(1, userId);
     ResultSet resultSet = preparedStatement.executeQuery();
@@ -95,7 +97,74 @@ public class AppointmentService {
     return appointmentList;
   }
 
+  public ObservableList<Appointment> getAppointmentsByWeekOrMonth(int userId, String weekOrMonth) throws SQLException {
+    LocalDateTime midnight = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+    LocalDateTime oneMinuteBeforeMidnight = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+    String startDate;
+    if (weekOrMonth.equals(FILTER_WEEK)) {
+      startDate = midnight
+        .with(DayOfWeek.SUNDAY)
+        .minusDays(7)
+        .format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
+    }
+    else {
+      startDate = midnight
+        .withDayOfMonth(1)
+        .format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
+    }
+
+    String endDate;
+    if (weekOrMonth.equals(FILTER_WEEK)) {
+      endDate = oneMinuteBeforeMidnight
+        .with(DayOfWeek.SATURDAY)
+        .format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
+    }
+    else {
+      endDate = oneMinuteBeforeMidnight
+        .plusMonths(1)
+        .withDayOfMonth(1)
+        .minusDays(1)
+        .format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
+    }
+
+    String selectQuery = "SELECT * FROM " + DATABASE_TABLE + " " +
+      "a LEFT JOIN contacts c ON c.Contact_ID = a.Contact_ID " +
+      "WHERE a.User_ID = ? AND a.Start BETWEEN ? AND ? ORDER BY Start DESC";
+    PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
+
+    preparedStatement.setInt(1, userId);
+    preparedStatement.setString(2, startDate);
+    preparedStatement.setString(3, endDate);
+    ResultSet resultSet = preparedStatement.executeQuery();
+    ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
+
+    while (resultSet.next()) {
+      Appointment appointment = new Appointment(
+        resultSet.getInt("a.Appointment_ID"),
+        resultSet.getString("a.Title"),
+        resultSet.getString("a.Description"),
+        resultSet.getString("a.Location"),
+        resultSet.getString("a.Type"),
+        resultSet.getString("c.Contact_Name"),
+        resultSet.getDate("a.Start"),
+        resultSet.getTimestamp("a.Start"),
+        resultSet.getDate("a.End"),
+        resultSet.getTimestamp("a.End"),
+        resultSet.getDate("a.Create_Date"),
+        resultSet.getString("a.Created_By"),
+        resultSet.getDate("a.Last_Update"),
+        resultSet.getString("a.Last_Updated_By"),
+        resultSet.getInt("a.Customer_ID"),
+        resultSet.getInt("a.User_ID"),
+        resultSet.getInt("a.Contact_ID")
+      );
+      appointmentList.add(appointment);
+    }
+    return appointmentList;
+  }
+
   public Appointment getAppointmentWithinFifteenMinutes(int userId) throws SQLException {
+
     String currentDateTime = LocalDateTime.now(ZoneOffset.UTC)
       .format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
     String dateTimePlusFifteen = LocalDateTime.now(ZoneOffset.UTC)
@@ -103,7 +172,7 @@ public class AppointmentService {
       .format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
     String selectQuery = "SELECT * FROM " + DATABASE_TABLE + " " +
       "a LEFT JOIN contacts c ON c.Contact_ID = a.Contact_ID " +
-      "WHERE a.User_ID = ? AND a.Start BETWEEN ? AND ? ORDER BY Start DESC LIMIT 1";
+      "WHERE a.User_ID = ? AND a.Start BETWEEN ? AND ? LIMIT 1";
     PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
 
     preparedStatement.setInt(1, userId);

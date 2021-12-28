@@ -3,6 +3,7 @@ package com.randalladams.scheduler.controllers;
 import com.randalladams.scheduler.model.Appointment;
 import com.randalladams.scheduler.services.AppointmentService;
 import com.randalladams.scheduler.util.Database;
+import com.randalladams.scheduler.util.Lang;
 import com.randalladams.scheduler.util.SceneManager;
 import com.randalladams.scheduler.util.UserSession;
 import javafx.collections.ObservableList;
@@ -13,9 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -31,9 +30,13 @@ public class AppointmentController implements Initializable {
   private static ResourceBundle langBundle = null;
   private static AppointmentService appointmentService;
   private static final String appointmentForm = "/fxml/appointmentForm.fxml";
+  private static Alert errorAlert;
 
   @FXML
   private TableView<Appointment> appointmentsTable;
+
+  @FXML
+  private SplitMenuButton filterButton;
 
   private static final int MODAL_WIDTH = 800;
   private static final int MODAL_HEIGHT = 600;
@@ -49,6 +52,7 @@ public class AppointmentController implements Initializable {
     String lang = System.getProperty("user.language");
     Locale locale = new Locale(lang, lang.toUpperCase());
     langBundle = ResourceBundle.getBundle("i18n", locale);
+    setupFilterMenu();
     try {
       ObservableList<Appointment> allAppointments = appointmentService.getAppointmentsByUserId(UserSession.getUserId());
       setupAppointmentsTable(allAppointments, resourceBundle);
@@ -81,11 +85,7 @@ public class AppointmentController implements Initializable {
       });
       stage.show();
     } catch (Exception e) {
-      SceneManager.showAlert(
-        Alert.AlertType.ERROR, appointmentsTable.getScene().getWindow(),
-        langBundle.getString("errors.missing_appointment_selection.title"),
-        langBundle.getString("errors.missing_appointment_selection.text") + e.getMessage()
-      );
+      showErrorAlert(langBundle.getString("errors.missing_appointment_selection.text") + e.getMessage());
     }
   }
 
@@ -185,5 +185,44 @@ public class AppointmentController implements Initializable {
       customerIdCol,
       userIdCol
     );
+  }
+
+  private void setupFilterMenu() {
+    MenuItem allAppointments = new MenuItem(langBundle.getString("appointment_form.filter.all"));
+    MenuItem monthAppointments = new MenuItem(langBundle.getString("appointment_form.filter.month"));
+    MenuItem weekAppointments = new MenuItem(langBundle.getString("appointment_form.filter.week"));
+    filterButton.getItems().addAll(allAppointments, monthAppointments, weekAppointments);
+
+    allAppointments.setOnAction((e)-> {
+      try {
+        ObservableList<Appointment> appointments = appointmentService.getAppointmentsByUserId(UserSession.getUserId());
+        setupAppointmentsTable(appointments, AppointmentController.resourceBundle);
+      } catch (Exception ex) {
+        showErrorAlert(ex.getMessage());
+      }
+    });
+    monthAppointments.setOnAction((e)-> {
+      try {
+        ObservableList<Appointment> appointments = appointmentService.getAppointmentsByWeekOrMonth(UserSession.getUserId(), "MONTH");
+        setupAppointmentsTable(appointments, AppointmentController.resourceBundle);
+      } catch (Exception ex) {
+        showErrorAlert(ex.getMessage());
+      }
+    });
+    weekAppointments.setOnAction((e)-> {
+      try {
+        ObservableList<Appointment> appointments = appointmentService.getAppointmentsByWeekOrMonth(UserSession.getUserId(), "WEEK");
+        setupAppointmentsTable(appointments, AppointmentController.resourceBundle);
+      } catch (Exception ex) {
+        showErrorAlert(ex.getMessage());
+      }
+    });
+  }
+
+  private void showErrorAlert(String message) {
+    errorAlert = new Alert(Alert.AlertType.ERROR);
+    errorAlert.setTitle(Lang.getString("appointments_table.error.title"));
+    errorAlert.setContentText(message);
+    errorAlert.show();
   }
 }

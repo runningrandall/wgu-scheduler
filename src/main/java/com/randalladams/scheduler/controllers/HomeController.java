@@ -30,27 +30,39 @@ public class HomeController<CustomerTabPage, AppointmentTabPage> implements Init
   private static Alert appointmentAlert;
 
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    // determine if we can have any appointments
     appointmentService = new AppointmentService();
     try {
       Appointment alertedAppointment = appointmentService.getAppointmentWithinFifteenMinutes(UserSession.getUserId());
-      appointmentAlert = new Alert(Alert.AlertType.INFORMATION);
-      appointmentAlert.setTitle("Upcoming appointment");
-      if (alertedAppointment != null) {
-        appointmentAlert.setContentText(
-          "There is an upcoming appointment:" +
-          "\n Appointment ID: " + alertedAppointment.getAppointmentId() +
-          "\n Appointment Start: " + alertedAppointment.getStartTimestamp()
-        );
-      } else {
-        appointmentAlert.setContentText("There is no appointments within the next 15 minutes.");
-      }
-      appointmentAlert.showAndWait();
+      String appointmentAlertText = getAppointmentAlertText(alertedAppointment);
+      setupAndShowAppointmentAlert(appointmentAlertText);
     } catch (SQLException e) {
-      errorAlert = new Alert(Alert.AlertType.ERROR);
-      errorAlert.setTitle("error trying to get recent appointments");
-      errorAlert.setContentText(e.getMessage());
-      errorAlert.show();
+      showErrorAlert(e.getMessage());
     }
+  }
+
+  public void setupAndShowAppointmentAlert(String appointmentAlertText) {
+    appointmentAlert = new Alert(Alert.AlertType.INFORMATION);
+    appointmentAlert.setTitle("Upcoming appointment");
+    appointmentAlert.setContentText(appointmentAlertText);
+    appointmentAlert.showAndWait();
+  }
+
+  public void showErrorAlert(String alertText) {
+    errorAlert = new Alert(Alert.AlertType.ERROR);
+    errorAlert.setTitle("error trying to get recent appointments");
+    errorAlert.setContentText(alertText);
+    errorAlert.show();
+  }
+
+  public String getAppointmentAlertText(Appointment appointment) {
+    String appointmentAlertText = "";
+    if (appointment != null) {
+      appointmentAlertText = "There is an upcoming appointment:" +
+        "\n Appointment ID: " + appointment.getAppointmentId() +
+        "\n Appointment Start: " + appointment.getStartTimestamp();
+    } else {
+      appointmentAlertText = "There is no appointments within the next 15 minutes.";
+    }
+    return appointmentAlertText;
   }
 }
