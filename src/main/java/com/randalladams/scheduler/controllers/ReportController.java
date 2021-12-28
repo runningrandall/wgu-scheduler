@@ -1,8 +1,10 @@
 package com.randalladams.scheduler.controllers;
 
 import com.randalladams.scheduler.model.Appointment;
+import com.randalladams.scheduler.model.Login;
 import com.randalladams.scheduler.model.ReportAppointmentType;
 import com.randalladams.scheduler.services.AppointmentService;
+import com.randalladams.scheduler.services.LoginService;
 import com.randalladams.scheduler.util.KeyValuePair;
 import com.randalladams.scheduler.util.Lang;
 import javafx.collections.FXCollections;
@@ -34,10 +36,11 @@ public class ReportController implements Initializable {
   private TableView<Appointment> reportContactSchedule;
 
   @FXML
-  private TableView<ReportAppointmentType> reportLoginActivity;
+  private TableView<Login> reportLoginActivity;
 
   private ResourceBundle langBundle;
   private AppointmentService appointmentService = new AppointmentService();
+  private LoginService loginService = new LoginService();
   private static Alert errorAlert;
   private String lang = System.getProperty("user.language");
   private Locale locale = new Locale(lang, lang.toUpperCase());
@@ -76,10 +79,10 @@ public class ReportController implements Initializable {
         printContactSchedule();
         break;
       case 2:
-        System.out.println("baz");
+        printLoginActivity();
         break;
       default:
-        System.out.println("No report found");
+        showErrorAlert("Please select a report");
         break;
     }
   }
@@ -165,6 +168,35 @@ public class ReportController implements Initializable {
       showErrorAlert(e.getMessage());
     }
 
+  }
+
+  private void printLoginActivity() {
+    reportLoginActivity.setVisible(true);
+    try {
+      ObservableList<Login> loginData = loginService.getLoginReport();
+      reportLoginActivity.getColumns().clear();
+
+      TableColumn<Login, String> usernameCol = new TableColumn<>(langBundle.getString("reports_table.columns.username"));
+      usernameCol.setCellValueFactory(
+        new PropertyValueFactory<>("username"));
+
+      TableColumn<Login, String> loginDateCol = new TableColumn<>(langBundle.getString("reports_table.columns.login_date"));
+      loginDateCol.setCellValueFactory(
+        new PropertyValueFactory<>("loginDate"));
+
+      TableColumn<Login, String> statusCol = new TableColumn<>(langBundle.getString("reports_table.columns.login_status"));
+      statusCol.setCellValueFactory(
+        new PropertyValueFactory<>("status"));
+
+      reportLoginActivity.setItems(loginData);
+      reportLoginActivity.getColumns().addAll(
+        usernameCol,
+        loginDateCol,
+        statusCol
+      );
+    } catch (Exception e) {
+      showErrorAlert(e.getMessage());
+    }
   }
   private void showErrorAlert(String message) {
     errorAlert = new Alert(Alert.AlertType.ERROR);

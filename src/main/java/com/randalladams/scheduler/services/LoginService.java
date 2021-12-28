@@ -6,10 +6,17 @@ package com.randalladams.scheduler.services;
  * @since 06/01/2020
  */
 
+import com.randalladams.scheduler.model.Login;
 import com.randalladams.scheduler.util.Database;
 import com.randalladams.scheduler.util.LogUtil;
 import com.randalladams.scheduler.util.UserSession;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
@@ -87,5 +94,24 @@ public class LoginService {
     LogUtil logUtil = new LogUtil(LOG_FILE);
     String successString = isSuccessful ? "Successful" : "Failed";
     logUtil.logInfo("username=" + username + " action=Login status=" + successString);
+  }
+
+  public ObservableList<Login> getLoginReport() throws IOException {
+    ObservableList<Login> logins = FXCollections.observableArrayList();
+    BufferedReader reader = new BufferedReader(new FileReader(LOG_FILE));
+    String loginEntry = reader.readLine();
+    while(loginEntry != null) {
+      if (loginEntry.startsWith("INFO:")) {
+        String[] splitByColon = loginEntry.split(":");
+        String dateString = (splitByColon[1] +  splitByColon[2] + ":" + splitByColon[3]).trim();
+
+        String[] splitBySpace = splitByColon[4].trim().split(" ");
+        String username = splitBySpace[0].split("=")[1];
+        String status = splitBySpace[2].split("=")[1];
+        logins.add(new Login(username, dateString, status));
+      }
+      loginEntry = reader.readLine();
+    }
+    return logins;
   }
 }
