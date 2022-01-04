@@ -207,8 +207,8 @@ public class CustomerService {
 
     boolean isValidAddress;
     FirstLevelDivisionsService fldService = new FirstLevelDivisionsService();
-    String usAndCaAddressPattern = "(\\d)* ([a-zA-Z ])*, ([a-zA-Z ])*";
-    String ukAddressPattern = "(\\d)* ([a-zA-Z ])*, ([a-zA-Z ])*, ([a-zA-Z ])*";
+    String usAndCaAddressPattern = "([a-zA-Z0-9 ])*";
+    String ukAddressPattern = "([a-zA-Z0-9 ])*";
     String phonePattern = "((\\d)*-)*(\\d)*";
     String country = fldService.getCountryStringFromFirstLevelDivisionId(firstLevelDivisionId);
 
