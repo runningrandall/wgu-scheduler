@@ -15,6 +15,8 @@ import javafx.stage.WindowEvent;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
@@ -146,8 +148,8 @@ public class UpsertAppointmentController implements Initializable {
    */
   public void submitAppointment(ActionEvent event) throws SQLException {
     Validator appointValidity = null;
-    LocalDateTime startDateTime = appointmentStart.getDateTimeValue();
-    LocalDateTime endDateTime = appointmentEnd.getDateTimeValue();
+    ZonedDateTime zonedStartDateTime = appointmentStart.getDateTimeValue().atZone(ZoneId.systemDefault());
+    ZonedDateTime zonedEndDateTime = appointmentEnd.getDateTimeValue().atZone(ZoneId.systemDefault());
     try {
       appointValidity = as.validateAppointment(
         isNewAppointment,
@@ -155,8 +157,8 @@ public class UpsertAppointmentController implements Initializable {
         appointmentDescription.getText(),
         appointmentLocation.getText(),
         appointmentType.getText(),
-        startDateTime,
-        endDateTime,
+        zonedStartDateTime,
+        zonedEndDateTime,
         Integer.parseInt(appointmentCustomerId.getText()),
         Integer.parseInt(appointmentUserId.getText()),
         Integer.parseInt(contactsChoiceBox.getValue().getKey())
@@ -171,30 +173,46 @@ public class UpsertAppointmentController implements Initializable {
 
     if (appointValidity.getValid()) {
       if (!isNewAppointment) {
-        as.updateAppointment(
-          Integer.parseInt(appointmentId.getText()),
-          appointmentTitle.getText(),
-          appointmentDescription.getText(),
-          appointmentLocation.getText(),
-          appointmentType.getText(),
-          startDateTime,
-          endDateTime,
-          Integer.parseInt(appointmentCustomerId.getText()),
-          Integer.parseInt(appointmentUserId.getText()),
-          Integer.parseInt(contactsChoiceBox.getValue().getKey())
-        );
+        try {
+          as.updateAppointment(
+            Integer.parseInt(appointmentId.getText()),
+            appointmentTitle.getText(),
+            appointmentDescription.getText(),
+            appointmentLocation.getText(),
+            appointmentType.getText(),
+            appointmentStart.getDateTimeValue(),
+            appointmentEnd.getDateTimeValue(),
+            Integer.parseInt(appointmentCustomerId.getText()),
+            Integer.parseInt(appointmentUserId.getText()),
+            Integer.parseInt(contactsChoiceBox.getValue().getKey())
+          );
+        } catch (SQLException e) {
+          errorAlert = new Alert(Alert.AlertType.ERROR);
+          errorAlert.setTitle(Lang.getString("appointment_form.error.title"));
+          errorAlert.setContentText(e.getMessage());
+          errorAlert.show();
+          return;
+        }
       } else {
-        as.createAppointment(
-          appointmentTitle.getText(),
-          appointmentDescription.getText(),
-          appointmentLocation.getText(),
-          appointmentType.getText(),
-          startDateTime,
-          endDateTime,
-          Integer.parseInt(appointmentCustomerId.getText()),
-          Integer.parseInt(appointmentUserId.getText()),
-          Integer.parseInt(contactsChoiceBox.getValue().getKey())
-        );
+        try {
+          as.createAppointment(
+            appointmentTitle.getText(),
+            appointmentDescription.getText(),
+            appointmentLocation.getText(),
+            appointmentType.getText(),
+            appointmentStart.getDateTimeValue(),
+            appointmentEnd.getDateTimeValue(),
+            Integer.parseInt(appointmentCustomerId.getText()),
+            Integer.parseInt(appointmentUserId.getText()),
+            Integer.parseInt(contactsChoiceBox.getValue().getKey())
+          );
+        } catch (SQLException e) {
+          errorAlert = new Alert(Alert.AlertType.ERROR);
+          errorAlert.setTitle(Lang.getString("appointment_form.error.title"));
+          errorAlert.setContentText(e.getMessage());
+          errorAlert.show();
+          return;
+        }
       }
     } else {
       errorAlert = new Alert(Alert.AlertType.ERROR);

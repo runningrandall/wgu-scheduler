@@ -23,11 +23,10 @@ public class AppointmentService {
   private static Connection conn;
   private static final String DATABASE_TABLE = "appointments";
   private static final int VALID_START_HOUR_ET = 7; // 8am eastern
-  private static final int VALID_END_HOUR_ET = 19; // 10pm eastern
+  private static final int VALID_END_HOUR_ET = 22; // 10pm eastern
   private static final int APPOINTMENT_START_ALERT_IN_MINUTES = 15;
   private static final String DB_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
   private static final String FILTER_WEEK = "WEEK";
-  private static final String FILTER_MONTH = "MONTH";
   private Database db;
 
   /**
@@ -312,10 +311,10 @@ public class AppointmentService {
    * @param appointmentDate LocalDateTime
    * @return
    */
-  private Boolean isValidAppointmentTime(LocalDateTime appointmentDate) {
+  private Boolean isValidAppointmentTime(ZonedDateTime appointmentDate) {
     ZoneId easternZoneId = ZoneId.of("America/New_York");
-    int appointmentHour = appointmentDate.atZone(easternZoneId).getHour();
-    int appointmentMinute = appointmentDate.atZone(easternZoneId).getMinute();
+    int appointmentHour = appointmentDate.withZoneSameInstant(easternZoneId).getHour();
+    int appointmentMinute = appointmentDate.withZoneSameInstant(easternZoneId).getMinute();
     Boolean isValidHour = appointmentHour >= VALID_START_HOUR_ET && appointmentHour <= VALID_END_HOUR_ET;
     Boolean isValidMinute = appointmentHour != VALID_END_HOUR_ET || appointmentMinute == 0;
     return isValidHour && isValidMinute;
@@ -329,15 +328,15 @@ public class AppointmentService {
    * @return bool
    * @throws SQLException
    */
-  private Boolean customerHasOverlappingAppointment(int customerId, LocalDateTime start, LocalDateTime end) throws SQLException {
+  private Boolean customerHasOverlappingAppointment(int customerId, ZonedDateTime start, ZonedDateTime end) throws SQLException {
     String selectQuery = "SELECT * FROM " + DATABASE_TABLE + " " +
       "WHERE ((Start BETWEEN ? AND ?) OR (End BETWEEN ? AND ?)) AND Customer_ID = ?";
     PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
 
-    preparedStatement.setString(1, db.getDbStringFromLocalDateTime(start));
-    preparedStatement.setString(2, db.getDbStringFromLocalDateTime(end));
-    preparedStatement.setString(3, db.getDbStringFromLocalDateTime(start));
-    preparedStatement.setString(4, db.getDbStringFromLocalDateTime(end));
+    preparedStatement.setString(1, db.getDbStringFromLocalDateTime(start.toLocalDateTime()));
+    preparedStatement.setString(2, db.getDbStringFromLocalDateTime(end.toLocalDateTime()));
+    preparedStatement.setString(3, db.getDbStringFromLocalDateTime(start.toLocalDateTime()));
+    preparedStatement.setString(4, db.getDbStringFromLocalDateTime(end.toLocalDateTime()));
     preparedStatement.setInt(5, customerId);
 
     ResultSet resultSet = preparedStatement.executeQuery();
@@ -362,7 +361,7 @@ public class AppointmentService {
    * @return Appointment
    * @throws SQLException
    */
-  public Validator validateAppointment(Boolean isNew, String title, String description, String location, String type, LocalDateTime start, LocalDateTime end, int customerId, int userId, int contactId) throws SQLException {
+  public Validator validateAppointment(Boolean isNew, String title, String description, String location, String type, ZonedDateTime start, ZonedDateTime end, int customerId, int userId, int contactId) throws SQLException {
     boolean isAnyEmpty = title.isEmpty() || description.isEmpty() || location.isEmpty() || type.isEmpty() || start == null || end == null || customerId == 0 || userId == 0 || contactId == 0;
 
     // TODO: i18n
@@ -442,6 +441,7 @@ public class AppointmentService {
     preparedStatement.setInt(12, userId);
     preparedStatement.setInt(13, contactId);
 
+    System.out.println(preparedStatement);
     int affectedRows = preparedStatement.executeUpdate();
 
     if (affectedRows == 0) {
