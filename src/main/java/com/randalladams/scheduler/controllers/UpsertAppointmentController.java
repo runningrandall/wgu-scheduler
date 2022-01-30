@@ -117,8 +117,8 @@ public class UpsertAppointmentController implements Initializable {
     appointmentDescription.setText(appointment.getDescription());
     appointmentLocation.setText(appointment.getLocation());
     appointmentType.setText(appointment.getType());
-    appointmentStart.setDateTimeValue(appointment.getStartTimestamp().toLocalDateTime());
-    appointmentEnd.setDateTimeValue(appointment.getEndTimestamp().toLocalDateTime());
+    appointmentStart.setDateTimeValue(appointment.getStart().toLocalDateTime());
+    appointmentEnd.setDateTimeValue(appointment.getEnd().toLocalDateTime());
     appointmentCustomerId.setText(String.valueOf(appointment.getCustomerId()));
     appointmentUserId.setText(String.valueOf(appointment.getUserId()));
     contactsChoiceBox.setValue(contactKvp);

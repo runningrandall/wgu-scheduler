@@ -84,20 +84,15 @@ public class Database {
    * @return String
    */
   public String getDbStringFromLocalDateTime(LocalDateTime date) {
-    ZonedDateTime localDateTime = date.atZone(ZoneId.systemDefault());
-    ZonedDateTime utcDateTime = localDateTime.withZoneSameInstant(ZoneId.of("UTC"));
-    return utcDateTime.format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
+    return date.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
   }
 
   /**
    * method to get a timestamp in local time from a utc timestamp
-   * @param utcTs timestamp
+   * @param dateToConvert timestamp
    * @return Timestamp
    */
-  public static Timestamp getLocalTimestampFromUtcTimestamp(Timestamp utcTs) {
-    LocalDateTime localDateTime = utcTs.toLocalDateTime();
-    LocalDateTime adjustedTime = localDateTime.minusMinutes(utcTs.getTimezoneOffset());
-
-    return Timestamp.valueOf(adjustedTime);
+  public static ZonedDateTime convertToLocalDateViaSqlDate(Date dateToConvert) {
+    return dateToConvert.toInstant().atZone(ZoneId.systemDefault());
   }
 }
