@@ -23,6 +23,7 @@ public class Database {
   private static String DATABASE_PASSWORD;
   private static String DATABASE_SCHEMA;
   private static final String DB_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+  private static final String EST_TIMEZONE = "America/New_York";
 
   /**
    * Database constructor creates connection and filereader for loading of application properties
@@ -83,8 +84,10 @@ public class Database {
    * @param date LocalDateTime
    * @return String
    */
-  public String getDbStringFromLocalDateTime(LocalDateTime date) {
-    return date.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
+  public String getEstDateFromLocalDate(ZonedDateTime date) {
+    ZoneId easternZoneId = ZoneId.of(EST_TIMEZONE);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DB_DATE_FORMAT);
+    return date.withZoneSameInstant(easternZoneId).format(formatter);
   }
 
   /**
@@ -92,7 +95,15 @@ public class Database {
    * @param dateToConvert timestamp
    * @return Timestamp
    */
-  public static ZonedDateTime convertToLocalDateViaSqlDate(Date dateToConvert) {
-    return dateToConvert.toInstant().atZone(ZoneId.systemDefault());
+  public static ZonedDateTime getZonedDateTimeFromTimestamp(Timestamp dateToConvert) {
+    return dateToConvert.toLocalDateTime().atZone(ZoneId.systemDefault());
+  }
+
+  public static String getDateDisplayString(ZonedDateTime dateTimeToConvert) {
+    return dateTimeToConvert.format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
+  }
+
+  public static LocalDateTime getEstZonedDateTimeFromLocal(ZonedDateTime zonedDateTimeToConvert) {
+    return zonedDateTimeToConvert.toLocalDateTime().atZone(ZoneId.of(EST_TIMEZONE)).toLocalDateTime();
   }
 }

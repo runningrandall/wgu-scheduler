@@ -2,6 +2,7 @@ package com.randalladams.scheduler.model;
 
 import com.randalladams.scheduler.util.Database;
 
+import java.sql.Timestamp;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -31,6 +32,8 @@ public class Appointment {
   private int customerId;
   private int userId;
   private int contactId;
+  private String startDisplayString;
+  private String endDisplayString;
   private String monthYear;
   private String weekYear;
 
@@ -52,15 +55,15 @@ public class Appointment {
    * @param userId - appointment user id
    * @param contactId - appointment contact id
    */
-  public Appointment(int appointmentId, String title, String description, String location, String type, String contactName, Date start, Date end, Date createDate, String createdBy, Date lastUpdate, String lastUpdatedBy, int customerId, int userId, int contactId) {
+  public Appointment(int appointmentId, String title, String description, String location, String type, String contactName, Timestamp start, Timestamp end, Date createDate, String createdBy, Date lastUpdate, String lastUpdatedBy, int customerId, int userId, int contactId) {
     this.appointmentId = appointmentId;
     this.title = title;
     this.description = description;
     this.location = location;
     this.type = type;
     this.contactName = contactName;
-    this.start = Database.convertToLocalDateViaSqlDate(start);
-    this.end = Database.convertToLocalDateViaSqlDate(end);
+    this.start = Database.getZonedDateTimeFromTimestamp(start);
+    this.end = Database.getZonedDateTimeFromTimestamp(end);
     this.createDate = createDate;
     this.createdBy = createdBy;
     this.lastUpdate = lastUpdate;
@@ -68,8 +71,10 @@ public class Appointment {
     this.customerId = customerId;
     this.userId = userId;
     this.contactId = contactId;
-    setAppointmentMonthYear(start);
-    setAppointmentWeekYear(end);
+    this.startDisplayString = Database.getDateDisplayString(Database.getZonedDateTimeFromTimestamp(start));
+    this.endDisplayString = Database.getDateDisplayString(Database.getZonedDateTimeFromTimestamp(end));
+    setAppointmentMonthYear(Database.getZonedDateTimeFromTimestamp(start));
+    setAppointmentWeekYear(Database.getZonedDateTimeFromTimestamp(end));
   }
 
   public ZonedDateTime getStart() {
@@ -190,20 +195,35 @@ public class Appointment {
 
   /**
    * method to set the month year for an appointment
-   * @param start Date
+   * @param start ZonedDateTime
    */
-  public void setAppointmentMonthYear(Date start) {
-    LocalDate localStartDate = start.toLocalDate();
-    this.monthYear = localStartDate.format(DateTimeFormatter.ofPattern("MM-yyyy"));
+  public void setAppointmentMonthYear(ZonedDateTime start) {
+    this.monthYear = start.format(DateTimeFormatter.ofPattern("MM-yyyy"));
   }
 
   /**
    * method to set the week year based on start
-   * @param start Date
+   * @param start ZonedDateTime
    */
-  public void setAppointmentWeekYear(Date start) {
+  public void setAppointmentWeekYear(ZonedDateTime start) {
     LocalDate localStartDate = start.toLocalDate();
     LocalDate previousOrSameSunday = localStartDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
     this.weekYear = previousOrSameSunday.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+  }
+
+  public String getStartDisplayString() {
+    return startDisplayString;
+  }
+
+  public void setStartDisplayString(String startDisplayString) {
+    this.startDisplayString = startDisplayString;
+  }
+
+  public String getEndDisplayString() {
+    return endDisplayString;
+  }
+
+  public void setEndDisplayString(String endDisplayString) {
+    this.endDisplayString = endDisplayString;
   }
 }

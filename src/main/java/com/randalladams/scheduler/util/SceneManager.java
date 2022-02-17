@@ -40,16 +40,14 @@ public class SceneManager {
     String lang = System.getProperty("user.language");
     Locale locale = new Locale(lang, lang.toUpperCase());
     ResourceBundle bundle = ResourceBundle.getBundle("i18n", locale);
-    try {
+
       Parent scene = FXMLLoader.load(getClass().getResource(fxml), bundle);
       stage = new Stage();
       stage.setTitle(title);
       stage.setScene(new Scene(scene, theWidth, theHeight));
       stage.show();
       return scene;
-    } catch(Exception e) {
-      throw new IOException(e.getMessage());
-    }
+
   }
 
   /**

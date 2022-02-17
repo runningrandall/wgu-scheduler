@@ -117,8 +117,8 @@ public class UpsertAppointmentController implements Initializable {
     appointmentDescription.setText(appointment.getDescription());
     appointmentLocation.setText(appointment.getLocation());
     appointmentType.setText(appointment.getType());
-    appointmentStart.setDateTimeValue(appointment.getStart().toLocalDateTime());
-    appointmentEnd.setDateTimeValue(appointment.getEnd().toLocalDateTime());
+    appointmentStart.setDateTimeValue(Database.getEstZonedDateTimeFromLocal(appointment.getStart()));
+    appointmentEnd.setDateTimeValue(Database.getEstZonedDateTimeFromLocal(appointment.getEnd()));
     appointmentCustomerId.setText(String.valueOf(appointment.getCustomerId()));
     appointmentUserId.setText(String.valueOf(appointment.getUserId()));
     contactsChoiceBox.setValue(contactKvp);
@@ -180,8 +180,8 @@ public class UpsertAppointmentController implements Initializable {
             appointmentDescription.getText(),
             appointmentLocation.getText(),
             appointmentType.getText(),
-            appointmentStart.getDateTimeValue(),
-            appointmentEnd.getDateTimeValue(),
+            appointmentStart.getDateTimeValue().atZone(ZoneId.systemDefault()),
+            appointmentEnd.getDateTimeValue().atZone(ZoneId.systemDefault()),
             Integer.parseInt(appointmentCustomerId.getText()),
             Integer.parseInt(appointmentUserId.getText()),
             Integer.parseInt(contactsChoiceBox.getValue().getKey())
@@ -200,8 +200,8 @@ public class UpsertAppointmentController implements Initializable {
             appointmentDescription.getText(),
             appointmentLocation.getText(),
             appointmentType.getText(),
-            appointmentStart.getDateTimeValue(),
-            appointmentEnd.getDateTimeValue(),
+            appointmentStart.getDateTimeValue().atZone(ZoneId.systemDefault()),
+            appointmentEnd.getDateTimeValue().atZone(ZoneId.systemDefault()),
             Integer.parseInt(appointmentCustomerId.getText()),
             Integer.parseInt(appointmentUserId.getText()),
             Integer.parseInt(contactsChoiceBox.getValue().getKey())

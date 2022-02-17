@@ -61,8 +61,8 @@ public class AppointmentService {
       resultSet.getString("a.Location"),
       resultSet.getString("a.Type"),
       resultSet.getString("c.Contact_Name"),
-      resultSet.getDate("a.Start"),
-      resultSet.getDate("a.End"),
+      resultSet.getTimestamp("a.Start"),
+      resultSet.getTimestamp("a.End"),
       resultSet.getDate("a.Create_Date"),
       resultSet.getString("a.Created_By"),
       resultSet.getDate("a.Last_Update"),
@@ -105,8 +105,8 @@ public class AppointmentService {
         resultSet.getString("a.Location"),
         resultSet.getString("a.Type"),
         resultSet.getString("c.Contact_Name"),
-        resultSet.getDate("a.Start"),
-        resultSet.getDate("a.End"),
+        resultSet.getTimestamp("a.Start"),
+        resultSet.getTimestamp("a.End"),
         resultSet.getDate("a.Create_Date"),
         resultSet.getString("a.Created_By"),
         resultSet.getDate("a.Last_Update"),
@@ -176,8 +176,8 @@ public class AppointmentService {
         resultSet.getString("a.Location"),
         resultSet.getString("a.Type"),
         resultSet.getString("c.Contact_Name"),
-        resultSet.getDate("a.Start"),
-        resultSet.getDate("a.End"),
+        resultSet.getTimestamp("a.Start"),
+        resultSet.getTimestamp("a.End"),
         resultSet.getDate("a.Create_Date"),
         resultSet.getString("a.Created_By"),
         resultSet.getDate("a.Last_Update"),
@@ -236,8 +236,8 @@ public class AppointmentService {
         resultSet.getString("a.Location"),
         resultSet.getString("a.Type"),
         resultSet.getString("c.Contact_Name"),
-        resultSet.getDate("a.Start"),
-        resultSet.getDate("a.End"),
+        resultSet.getTimestamp("a.Start"),
+        resultSet.getTimestamp("a.End"),
         resultSet.getDate("a.Create_Date"),
         resultSet.getString("a.Created_By"),
         resultSet.getDate("a.Last_Update"),
@@ -281,8 +281,8 @@ public class AppointmentService {
         resultSet.getString("a.Location"),
         resultSet.getString("a.Type"),
         resultSet.getString("c.Contact_Name"),
-        resultSet.getDate("a.Start"),
-        resultSet.getDate("a.End"),
+        resultSet.getTimestamp("a.Start"),
+        resultSet.getTimestamp("a.End"),
         resultSet.getDate("a.Create_Date"),
         resultSet.getString("a.Created_By"),
         resultSet.getDate("a.Last_Update"),
@@ -323,10 +323,10 @@ public class AppointmentService {
       "WHERE ((Start BETWEEN ? AND ?) OR (End BETWEEN ? AND ?)) AND Customer_ID = ?";
     PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
 
-    preparedStatement.setString(1, db.getDbStringFromLocalDateTime(start.toLocalDateTime()));
-    preparedStatement.setString(2, db.getDbStringFromLocalDateTime(end.toLocalDateTime()));
-    preparedStatement.setString(3, db.getDbStringFromLocalDateTime(start.toLocalDateTime()));
-    preparedStatement.setString(4, db.getDbStringFromLocalDateTime(end.toLocalDateTime()));
+    preparedStatement.setString(1, db.getEstDateFromLocalDate(start));
+    preparedStatement.setString(2, db.getEstDateFromLocalDate(end));
+    preparedStatement.setString(3, db.getEstDateFromLocalDate(start));
+    preparedStatement.setString(4, db.getEstDateFromLocalDate(end));
     preparedStatement.setInt(5, customerId);
 
     ResultSet resultSet = preparedStatement.executeQuery();
@@ -394,7 +394,7 @@ public class AppointmentService {
    * @return Appointment
    * @throws SQLException
    */
-  public Appointment createAppointment(String title, String description, String location, String type, LocalDateTime start, LocalDateTime end, int customerId, int userId, int contactId) throws SQLException {
+  public Appointment createAppointment(String title, String description, String location, String type, ZonedDateTime start, ZonedDateTime end, int customerId, int userId, int contactId) throws SQLException {
     String insertQuery = "INSERT INTO `client_schedule`.`appointments`\n" +
       "(`Title`,\n" +
       "`Description`,\n" +
@@ -421,8 +421,8 @@ public class AppointmentService {
     preparedStatement.setString(2, description);
     preparedStatement.setString(3, location);
     preparedStatement.setString(4, type);
-    preparedStatement.setString(5, db.getDbStringFromLocalDateTime(start));
-    preparedStatement.setString(6, db.getDbStringFromLocalDateTime(end));
+    preparedStatement.setString(5, db.getEstDateFromLocalDate(start));
+    preparedStatement.setString(6, db.getEstDateFromLocalDate(end));
     preparedStatement.setDate(7, createDate);
     preparedStatement.setString(8, createUserName);
     preparedStatement.setDate(9, lateUpdateDate);
@@ -467,7 +467,7 @@ public class AppointmentService {
    * @return Appointment
    * @throws SQLException
    */
-  public Appointment updateAppointment(int appointmentId, String title, String description, String location, String type, LocalDateTime start, LocalDateTime end, int customerId, int userId, int contactId) throws SQLException {
+  public Appointment updateAppointment(int appointmentId, String title, String description, String location, String type, ZonedDateTime start, ZonedDateTime end, int customerId, int userId, int contactId) throws SQLException {
     String updateQuery = "UPDATE `client_schedule`.`appointments`\n" +
       "SET\n" +
       "`Title` = ?,\n" +
@@ -490,8 +490,8 @@ public class AppointmentService {
     preparedStatement.setString(2, description);
     preparedStatement.setString(3, location);
     preparedStatement.setString(4, type);
-    preparedStatement.setString(5, db.getDbStringFromLocalDateTime(start));
-    preparedStatement.setString(6, db.getDbStringFromLocalDateTime(end));
+    preparedStatement.setString(5, db.getEstDateFromLocalDate(start));
+    preparedStatement.setString(6, db.getEstDateFromLocalDate(end));
     preparedStatement.setDate(7, sqlDate);
     preparedStatement.setString(8, UserSession.getUserName());
     preparedStatement.setInt(9, customerId);
