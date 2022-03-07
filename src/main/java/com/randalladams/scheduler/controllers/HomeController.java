@@ -2,6 +2,7 @@ package com.randalladams.scheduler.controllers;
 
 import com.randalladams.scheduler.model.Appointment;
 import com.randalladams.scheduler.services.AppointmentService;
+import com.randalladams.scheduler.util.Database;
 import com.randalladams.scheduler.util.UserSession;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -97,7 +98,7 @@ public class HomeController<CustomerTabPage, AppointmentTabPage, ReportTabPage> 
     if (appointment != null) {
       appointmentAlertText = langBundle.getString("appointment_alert.text_1") +
         "\n " + langBundle.getString("appointment_alert.text_2") + " " + appointment.getAppointmentId() +
-        "\n " + langBundle.getString("appointment_alert.text_3") + " " + appointment.getStarTime();
+        "\n " + langBundle.getString("appointment_alert.text_3") + " " + Database.getZonedDateTimeFromDbDate(appointment.getStart());
     } else {
       appointmentAlertText = langBundle.getString("appointment_alert.no_appointment");
     }

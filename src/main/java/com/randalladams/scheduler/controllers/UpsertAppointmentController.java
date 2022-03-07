@@ -5,7 +5,6 @@ import com.randalladams.scheduler.services.AppointmentService;
 import com.randalladams.scheduler.services.ContactService;
 import com.randalladams.scheduler.util.*;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -14,7 +13,6 @@ import javafx.stage.WindowEvent;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ResourceBundle;
@@ -67,12 +65,9 @@ public class UpsertAppointmentController implements Initializable {
   @FXML
   private Button deleteButton;
 
-  private static Appointment appointment;
   private static Boolean isNewAppointment;
   private static final ContactService contactService = new ContactService();
-  private static Alert confirmationAlert;
-  private static Alert errorAlert;
-  private static AppointmentService as = new AppointmentService();
+  private static final AppointmentService as = new AppointmentService();
   private static ObservableList<KeyValuePair> contacts;
 
   /**
@@ -106,10 +101,10 @@ public class UpsertAppointmentController implements Initializable {
 
   /**
    * Method to populate the appointment form when updating
-   * @throws SQLException
+   * @throws SQLException - sql error
    */
   private void populateAppointment() throws SQLException {
-    appointment = as.getAppointmentById(UserSession.getCurrentAppointmentSelected());
+    Appointment appointment = as.getAppointmentById(UserSession.getCurrentAppointmentSelected());
     KeyValuePair contactKvp = new KeyValuePair(String.valueOf(appointment.getContactId()), appointment.getContactName());
     appointmentId.setText(String.valueOf(appointment.getAppointmentId()));
     appointmentId.setDisable(true);
@@ -117,8 +112,8 @@ public class UpsertAppointmentController implements Initializable {
     appointmentDescription.setText(appointment.getDescription());
     appointmentLocation.setText(appointment.getLocation());
     appointmentType.setText(appointment.getType());
-    appointmentStart.setDateTimeValue(Database.getEstZonedDateTimeFromLocal(appointment.getStart()));
-    appointmentEnd.setDateTimeValue(Database.getEstZonedDateTimeFromLocal(appointment.getEnd()));
+    appointmentStart.setDateTimeValue(Database.getEstLocalDateTimeFromDbDate(appointment.getStart()));
+    appointmentEnd.setDateTimeValue(Database.getEstLocalDateTimeFromDbDate(appointment.getEnd()));
     appointmentCustomerId.setText(String.valueOf(appointment.getCustomerId()));
     appointmentUserId.setText(String.valueOf(appointment.getUserId()));
     contactsChoiceBox.setValue(contactKvp);
@@ -127,7 +122,7 @@ public class UpsertAppointmentController implements Initializable {
 
   /**
    * method to get the proper index for selecting the right contact when updating
-   * @param contactKvp
+   * @param contactKvp - the contact key value pair
    * @return int
    */
   private int getSelectedContactIndex(KeyValuePair contactKvp) {
@@ -143,13 +138,12 @@ public class UpsertAppointmentController implements Initializable {
   /**
    * method to submit the appointment for creating/updating
    * the method first checks for appointment validity and then updates/creates
-   * @param event
-   * @throws SQLException
    */
-  public void submitAppointment(ActionEvent event) throws SQLException {
-    Validator appointValidity = null;
+  public void submitAppointment() {
+    Validator appointValidity;
     ZonedDateTime zonedStartDateTime = appointmentStart.getDateTimeValue().atZone(ZoneId.systemDefault());
     ZonedDateTime zonedEndDateTime = appointmentEnd.getDateTimeValue().atZone(ZoneId.systemDefault());
+    Alert errorAlert;
     try {
       appointValidity = as.validateAppointment(
         isNewAppointment,
@@ -180,8 +174,8 @@ public class UpsertAppointmentController implements Initializable {
             appointmentDescription.getText(),
             appointmentLocation.getText(),
             appointmentType.getText(),
-            appointmentStart.getDateTimeValue().atZone(ZoneId.systemDefault()),
-            appointmentEnd.getDateTimeValue().atZone(ZoneId.systemDefault()),
+            appointmentStart.getDateTimeValue(),
+            appointmentEnd.getDateTimeValue(),
             Integer.parseInt(appointmentCustomerId.getText()),
             Integer.parseInt(appointmentUserId.getText()),
             Integer.parseInt(contactsChoiceBox.getValue().getKey())
@@ -200,8 +194,8 @@ public class UpsertAppointmentController implements Initializable {
             appointmentDescription.getText(),
             appointmentLocation.getText(),
             appointmentType.getText(),
-            appointmentStart.getDateTimeValue().atZone(ZoneId.systemDefault()),
-            appointmentEnd.getDateTimeValue().atZone(ZoneId.systemDefault()),
+            appointmentStart.getDateTimeValue(),
+            appointmentEnd.getDateTimeValue(),
             Integer.parseInt(appointmentCustomerId.getText()),
             Integer.parseInt(appointmentUserId.getText()),
             Integer.parseInt(contactsChoiceBox.getValue().getKey())
@@ -230,16 +224,15 @@ public class UpsertAppointmentController implements Initializable {
    * method to confirm the delete request
    * users must confirm before deleting so appointments
    * are not deleted by accident
-   * @param event
    */
-  public void confirmAppointmentDelete(ActionEvent event) {
-    confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+  public void confirmAppointmentDelete() {
+    Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
     confirmationAlert.setTitle(Lang.getString("appointment_form.delete.title"));
     confirmationAlert.setContentText(Lang.getString("appointment_form.delete.text"));
     confirmationAlert.showAndWait();
     if (confirmationAlert.getResult() == ButtonType.OK) {
       try {
-        as.deleteAppointmentById(UserSession.getCurrentAppointmentSelected());
+        AppointmentService.deleteAppointmentById(UserSession.getCurrentAppointmentSelected());
         Stage stage = (Stage) deleteButton.getScene().getWindow();
         stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
       } catch (Exception e) {

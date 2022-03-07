@@ -7,7 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.regex.Pattern;
 
 /**
@@ -20,7 +20,6 @@ public class CustomerService {
   private static Connection conn;
   private static final String DATABASE_TABLE = "customers";
   private static final FirstLevelDivisionsService fldService = new FirstLevelDivisionsService();
-  private static final CountryService countryService = new CountryService();
   private static final String uk = "UK";
 
   /**
@@ -38,7 +37,7 @@ public class CustomerService {
   /**
    * Method to get all customers
    * @return ObservableList of Customers
-   * @throws SQLException
+   * @throws SQLException sql error
    */
   public ObservableList<Customer> getCustomers() throws SQLException {
     String customersQuery = "SELECT * FROM " + DATABASE_TABLE + " c " +
@@ -63,12 +62,10 @@ public class CustomerService {
           resultSet.getString("c.Last_Updated_By"),
           resultSet.getInt("c.Division_ID"),
           resultSet.getInt("fld.Country_ID"),
-          countryService.getCountryById(resultSet.getInt("fld.Country_ID")),
+          CountryService.getCountryById(resultSet.getInt("fld.Country_ID")),
           fldService.getFirstLevelDivisionById(resultSet.getInt("c.Division_ID")));
           customerList.add(customer);
-      } catch (SQLException e) {
-        System.out.println(e.getMessage());
-      } catch(Exception e) {
+      } catch (Exception e) {
         System.out.println(e.getMessage());
       }
     }
@@ -79,7 +76,7 @@ public class CustomerService {
    * Gets a customer based on customer id
    * @param customerId int
    * @return Customer
-   * @throws SQLException
+   * @throws SQLException sql error
    */
   public static Customer getCustomerById(int customerId) throws SQLException {
     String sql = "SELECT * FROM " + DATABASE_TABLE + " c " +
@@ -103,7 +100,7 @@ public class CustomerService {
       resultSet.getString("c.Last_Updated_By"),
       resultSet.getInt("c.Division_ID"),
       resultSet.getInt("fld.Country_ID"),
-      countryService.getCountryById(resultSet.getInt("fld.Country_ID")),
+      CountryService.getCountryById(resultSet.getInt("fld.Country_ID")),
       fldService.getFirstLevelDivisionById(resultSet.getInt("c.Division_ID"))
     );
   }
@@ -117,22 +114,20 @@ public class CustomerService {
    * @param phone string
    * @param divisionId int
    * @return Customer
-   * @throws SQLException
+   * @throws SQLException sql error
    */
   public static Customer editCustomer(int customerId, String name, String address, String postalCode, String phone, int divisionId) throws SQLException {
-    Customer editCustomer;
     String updateQuery = "UPDATE " + DATABASE_TABLE + " " +
       "SET Customer_Name = ?, Address = ?, Postal_Code = ?, Phone = ?, Last_Update = ?, Last_Updated_By = ?, Division_ID = ? " +
       "WHERE Customer_ID = ?";
     PreparedStatement preparedStatement = conn.prepareStatement(updateQuery);
-    Date currentDate = new Date();
-    java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
+    ZonedDateTime ldt = Database.getCurrentDbTimeInUtc();
 
     preparedStatement.setString(1, name);
     preparedStatement.setString(2, address);
     preparedStatement.setString(3, postalCode);
     preparedStatement.setString(4, phone);
-    preparedStatement.setDate(5, sqlDate);
+    preparedStatement.setObject(5, ldt.toLocalDateTime());
     preparedStatement.setString(6, UserSession.getUserName());
     preparedStatement.setInt(7, divisionId);
     preparedStatement.setInt(8, customerId);
@@ -150,7 +145,7 @@ public class CustomerService {
    * @param phone string
    * @param divisionId int
    * @return Customer
-   * @throws SQLException
+   * @throws SQLException sql error
    */
   public static Customer createCustomer(String name, String address, String postalCode, String phone, int divisionId) throws SQLException {
     Customer newCustomer;
@@ -158,16 +153,15 @@ public class CustomerService {
       "(`Customer_Name`, `Address`, `Postal_Code`, `Phone`, `Create_Date`, `Created_By`, `Last_Update`, `Last_Updated_By`, `Division_ID`) " +
       "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
     PreparedStatement preparedStatement = conn.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
-    Date currentDate = new Date();
-    java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
+    ZonedDateTime ldt = Database.getCurrentDbTimeInUtc();
 
     preparedStatement.setString(1, name);
     preparedStatement.setString(2, address);
     preparedStatement.setString(3, postalCode);
     preparedStatement.setString(4, phone);
-    preparedStatement.setDate(5, sqlDate);
+    preparedStatement.setObject(5, ldt.toLocalDateTime());
     preparedStatement.setString(6, UserSession.getUserName());
-    preparedStatement.setDate(7, sqlDate);
+    preparedStatement.setObject(7, ldt.toLocalDateTime());
     preparedStatement.setString(8, UserSession.getUserName());
     preparedStatement.setInt(9, divisionId);
 
@@ -197,7 +191,7 @@ public class CustomerService {
    * @param phoneNumber string
    * @param firstLevelDivisionId int
    * @return bool
-   * @throws SQLException
+   * @throws SQLException sql error
    */
   public static boolean validateCustomer(String name, String address, String postalCode, String phoneNumber, int firstLevelDivisionId) throws SQLException {
     boolean isAnyEmpty = name.isEmpty() || address.isEmpty() || postalCode.isEmpty() || phoneNumber.isEmpty() || firstLevelDivisionId == 0;
@@ -213,13 +207,10 @@ public class CustomerService {
     String country = fldService.getCountryStringFromFirstLevelDivisionId(firstLevelDivisionId);
 
     // TODO: not hard code this...db can change and break this
-    switch(country) {
-      case uk:
-        isValidAddress = Pattern.matches(ukAddressPattern, address);
-        break;
-      default:
-        isValidAddress = Pattern.matches(usAndCaAddressPattern, address);
-        break;
+    if (uk.equals(country)) {
+      isValidAddress = Pattern.matches(ukAddressPattern, address);
+    } else {
+      isValidAddress = Pattern.matches(usAndCaAddressPattern, address);
     }
 
     boolean isValidPhone = Pattern.matches(phonePattern, phoneNumber);
@@ -231,7 +222,7 @@ public class CustomerService {
    * method to delete a customer by id
    * must first delete all appointments
    * @param customerId int
-   * @throws SQLException
+   * @throws SQLException sql error
    */
   public static void deleteCustomer(int customerId) throws SQLException {
     // first delete all appointments

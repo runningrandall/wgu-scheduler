@@ -2,9 +2,9 @@ package com.randalladams.scheduler.model;
 
 import com.randalladams.scheduler.util.Database;
 
-import java.sql.Timestamp;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
@@ -17,25 +17,21 @@ import java.sql.Date;
  * @since 12/01/2021
  */
 public class Appointment {
-  private int appointmentId;
+  private final int appointmentId;
   private String title;
-  private String description;
-  private String location;
+  private final String description;
+  private final String location;
   private String type;
   private String contactName;
-  private ZonedDateTime start;
-  private ZonedDateTime end;
-  private Date createDate;
-  private String createdBy;
-  private Date lastUpdate;
-  private String lastUpdatedBy;
+  private final LocalDateTime start;
+  private final LocalDateTime end;
   private int customerId;
-  private int userId;
-  private int contactId;
+  private final int userId;
+  private final int contactId;
   private String startDisplayString;
-  private String endDisplayString;
-  private String monthYear;
+  private final String endDisplayString;
   private String weekYear;
+  private String monthYear;
 
   /**
    * Constructor for setting up appointments
@@ -55,37 +51,33 @@ public class Appointment {
    * @param userId - appointment user id
    * @param contactId - appointment contact id
    */
-  public Appointment(int appointmentId, String title, String description, String location, String type, String contactName, Timestamp start, Timestamp end, Date createDate, String createdBy, Date lastUpdate, String lastUpdatedBy, int customerId, int userId, int contactId) {
+  public Appointment(int appointmentId, String title, String description, String location, String type, String contactName, LocalDateTime start, LocalDateTime end, Date createDate, String createdBy, Date lastUpdate, String lastUpdatedBy, int customerId, int userId, int contactId) {
     this.appointmentId = appointmentId;
     this.title = title;
     this.description = description;
     this.location = location;
     this.type = type;
     this.contactName = contactName;
-    this.start = Database.getZonedDateTimeFromTimestamp(start);
-    this.end = Database.getZonedDateTimeFromTimestamp(end);
-    this.createDate = createDate;
-    this.createdBy = createdBy;
-    this.lastUpdate = lastUpdate;
-    this.lastUpdatedBy = lastUpdatedBy;
+    this.start = start;
+    this.end = end;
     this.customerId = customerId;
     this.userId = userId;
     this.contactId = contactId;
-    this.startDisplayString = Database.getDateDisplayString(Database.getZonedDateTimeFromTimestamp(start));
-    this.endDisplayString = Database.getDateDisplayString(Database.getZonedDateTimeFromTimestamp(end));
-    setAppointmentMonthYear(Database.getZonedDateTimeFromTimestamp(start));
-    setAppointmentWeekYear(Database.getZonedDateTimeFromTimestamp(end));
+    this.startDisplayString = Database.getDateDisplayString(Database.getZonedDateTimeFromDbDate(start));
+    this.endDisplayString = Database.getDateDisplayString(Database.getZonedDateTimeFromDbDate(end));
+    setAppointmentMonthYear(Database.getZonedDateTimeFromDbDate(start));
+    setAppointmentWeekYear(Database.getZonedDateTimeFromDbDate(end));
   }
 
-  public ZonedDateTime getStart() {
+  public LocalDateTime getStart() {
     return start;
   }
 
-  public ZonedDateTime getEnd() {
+  public LocalDateTime getEnd() {
     return end;
   }
 
-  public String getStarTime() {
+  public String getStartTime() {
     return start.toString();
   }
 
@@ -211,19 +203,16 @@ public class Appointment {
     this.weekYear = previousOrSameSunday.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
   }
 
-  public String getStartDisplayString() {
-    return startDisplayString;
-  }
-
   public void setStartDisplayString(String startDisplayString) {
     this.startDisplayString = startDisplayString;
+  }
+
+  public String getStartDisplayString() {
+    return startDisplayString;
   }
 
   public String getEndDisplayString() {
     return endDisplayString;
   }
 
-  public void setEndDisplayString(String endDisplayString) {
-    this.endDisplayString = endDisplayString;
-  }
 }

@@ -11,10 +11,9 @@ import javafx.collections.ObservableList;
 import java.sql.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 /**
- * Service class for managing and gettign appointments
+ * Service class for managing and getting appointments
  * @author Randall Adams
  * @version 1.0.0
  * @since 12/01/2021
@@ -42,18 +41,7 @@ public class AppointmentService {
     }
   }
 
-  /**
-   * gets an appointment by the appointment id
-   * @param appointmentId int
-   * @return Appointment
-   * @throws SQLException
-   */
-  public static Appointment getAppointmentById(int appointmentId) throws SQLException {
-    String selectQuery = "SELECT * FROM " + DATABASE_TABLE + " a LEFT JOIN contacts c ON c.Contact_ID = a.Contact_ID WHERE a.Appointment_ID = ?";
-    PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
-    preparedStatement.setInt(1, appointmentId);
-    ResultSet resultSet = preparedStatement.executeQuery();
-    resultSet.next();
+  private Appointment getAppointmentFromResult(ResultSet resultSet) throws SQLException {
     return new Appointment(
       resultSet.getInt("a.Appointment_ID"),
       resultSet.getString("a.Title"),
@@ -61,8 +49,8 @@ public class AppointmentService {
       resultSet.getString("a.Location"),
       resultSet.getString("a.Type"),
       resultSet.getString("c.Contact_Name"),
-      resultSet.getTimestamp("a.Start"),
-      resultSet.getTimestamp("a.End"),
+      resultSet.getObject("a.Start", LocalDateTime.class),
+      resultSet.getObject("a.End", LocalDateTime.class),
       resultSet.getDate("a.Create_Date"),
       resultSet.getString("a.Created_By"),
       resultSet.getDate("a.Last_Update"),
@@ -74,9 +62,24 @@ public class AppointmentService {
   }
 
   /**
+   * gets an appointment by the appointment id
+   * @param appointmentId int
+   * @return Appointment
+   * @throws SQLException - sql error
+   */
+  public Appointment getAppointmentById(int appointmentId) throws SQLException {
+    String selectQuery = "SELECT * FROM " + DATABASE_TABLE + " a LEFT JOIN contacts c ON c.Contact_ID = a.Contact_ID WHERE a.Appointment_ID = ?";
+    PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
+    preparedStatement.setInt(1, appointmentId);
+    ResultSet resultSet = preparedStatement.executeQuery();
+    resultSet.next();
+    return this.getAppointmentFromResult(resultSet);
+  }
+
+  /**
    * deletes all the appointments for a given customer id
    * @param customerId int
-   * @throws SQLException
+   * @throws SQLException - sql error
    */
   public void deleteAllAppointmentsByCustomerId (int customerId) throws SQLException {
     String deleteQuery = "DELETE FROM " + DATABASE_TABLE + " WHERE Customer_ID = ?";
@@ -89,7 +92,7 @@ public class AppointmentService {
    * gets all appointments for a given user id
    * @param userId int
    * @return ObservableList of Appointments
-   * @throws SQLException
+   * @throws SQLException sql error
    */
   public ObservableList<Appointment> getAppointmentsByUserId(int userId) throws SQLException {
     String selectQuery = "SELECT * FROM " + DATABASE_TABLE + " a LEFT JOIN contacts c ON c.Contact_ID = a.Contact_ID WHERE a.User_ID = ? ORDER BY Start DESC";
@@ -98,24 +101,8 @@ public class AppointmentService {
     ResultSet resultSet = preparedStatement.executeQuery();
     ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
     while (resultSet.next()) {
-      Appointment appointment = new Appointment(
-        resultSet.getInt("a.Appointment_ID"),
-        resultSet.getString("a.Title"),
-        resultSet.getString("a.Description"),
-        resultSet.getString("a.Location"),
-        resultSet.getString("a.Type"),
-        resultSet.getString("c.Contact_Name"),
-        resultSet.getTimestamp("a.Start"),
-        resultSet.getTimestamp("a.End"),
-        resultSet.getDate("a.Create_Date"),
-        resultSet.getString("a.Created_By"),
-        resultSet.getDate("a.Last_Update"),
-        resultSet.getString("a.Last_Updated_By"),
-        resultSet.getInt("a.Customer_ID"),
-        resultSet.getInt("a.User_ID"),
-        resultSet.getInt("a.Contact_ID")
-      );
-      appointmentList.add(appointment);
+      Appointment appointmentFromResult = this.getAppointmentFromResult(resultSet);
+      appointmentList.add(appointmentFromResult);
     }
     return appointmentList;
   }
@@ -123,9 +110,9 @@ public class AppointmentService {
   /**
    * gets all appointments based on a week month
    * @param userId string
-   * @param weekOrMonth string representationof a week month
+   * @param weekOrMonth string representation of a week month
    * @return ObservableList of Appointments
-   * @throws SQLException
+   * @throws SQLException sql error
    */
   public ObservableList<Appointment> getAppointmentsByWeekOrMonth(int userId, String weekOrMonth) throws SQLException {
     LocalDateTime midnight = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
@@ -169,24 +156,8 @@ public class AppointmentService {
     ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
 
     while (resultSet.next()) {
-      Appointment appointment = new Appointment(
-        resultSet.getInt("a.Appointment_ID"),
-        resultSet.getString("a.Title"),
-        resultSet.getString("a.Description"),
-        resultSet.getString("a.Location"),
-        resultSet.getString("a.Type"),
-        resultSet.getString("c.Contact_Name"),
-        resultSet.getTimestamp("a.Start"),
-        resultSet.getTimestamp("a.End"),
-        resultSet.getDate("a.Create_Date"),
-        resultSet.getString("a.Created_By"),
-        resultSet.getDate("a.Last_Update"),
-        resultSet.getString("a.Last_Updated_By"),
-        resultSet.getInt("a.Customer_ID"),
-        resultSet.getInt("a.User_ID"),
-        resultSet.getInt("a.Contact_ID")
-      );
-      appointmentList.add(appointment);
+      Appointment appointmentFromResult = this.getAppointmentFromResult(resultSet);
+      appointmentList.add(appointmentFromResult);
     }
     return appointmentList;
   }
@@ -194,7 +165,7 @@ public class AppointmentService {
   /**
    * gets appointments organized by type and month
    * @return ObservableList of Appointments
-   * @throws SQLException
+   * @throws SQLException sql error
    */
   public ObservableList<ReportAppointmentType> getAppointmentsByTypeAndMonth() throws SQLException {
 
@@ -218,7 +189,7 @@ public class AppointmentService {
   /**
    * gets appointments and organizes them by contact name
    * @return ObservableList of Appointments
-   * @throws SQLException
+   * @throws SQLException sql error
    */
   public ObservableList<Appointment> getContactsAppointmentSchedule() throws SQLException {
     String selectQuery = "SELECT * FROM " + DATABASE_TABLE +" a " +
@@ -229,33 +200,17 @@ public class AppointmentService {
     ResultSet resultSet = preparedStatement.executeQuery();
     ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
     while (resultSet.next()) {
-      Appointment appointment = new Appointment(
-        resultSet.getInt("a.Appointment_ID"),
-        resultSet.getString("a.Title"),
-        resultSet.getString("a.Description"),
-        resultSet.getString("a.Location"),
-        resultSet.getString("a.Type"),
-        resultSet.getString("c.Contact_Name"),
-        resultSet.getTimestamp("a.Start"),
-        resultSet.getTimestamp("a.End"),
-        resultSet.getDate("a.Create_Date"),
-        resultSet.getString("a.Created_By"),
-        resultSet.getDate("a.Last_Update"),
-        resultSet.getString("a.Last_Updated_By"),
-        resultSet.getInt("a.Customer_ID"),
-        resultSet.getInt("a.User_ID"),
-        resultSet.getInt("a.Contact_ID")
-      );
-      appointmentList.add(appointment);
+      Appointment appointmentFromResult = this.getAppointmentFromResult(resultSet);
+      appointmentList.add(appointmentFromResult);
     }
     return appointmentList;
   }
 
   /**
-   * gets any appointment occuring within 15 minutes of login
+   * gets any appointment occurring within 15 minutes of login
    * @param userId int
    * @return ObservableList of Appointments
-   * @throws SQLException
+   * @throws SQLException sql error
    */
   public Appointment getAppointmentWithinFifteenMinutes(int userId) throws SQLException {
 
@@ -273,24 +228,8 @@ public class AppointmentService {
     preparedStatement.setString(2, currentDateTime);
     preparedStatement.setString(3, dateTimePlusFifteen);
     ResultSet resultSet = preparedStatement.executeQuery();
-    while (resultSet.next()) {
-      return new Appointment(
-        resultSet.getInt("a.Appointment_ID"),
-        resultSet.getString("a.Title"),
-        resultSet.getString("a.Description"),
-        resultSet.getString("a.Location"),
-        resultSet.getString("a.Type"),
-        resultSet.getString("c.Contact_Name"),
-        resultSet.getTimestamp("a.Start"),
-        resultSet.getTimestamp("a.End"),
-        resultSet.getDate("a.Create_Date"),
-        resultSet.getString("a.Created_By"),
-        resultSet.getDate("a.Last_Update"),
-        resultSet.getString("a.Last_Updated_By"),
-        resultSet.getInt("a.Customer_ID"),
-        resultSet.getInt("a.User_ID"),
-        resultSet.getInt("a.Contact_ID")
-      );
+    if (resultSet.next()) {
+      return this.getAppointmentFromResult(resultSet);
     }
     return null;
   }
@@ -299,7 +238,7 @@ public class AppointmentService {
    * checks to see if the appointment time is valid
    * no overlapping or outside business hours
    * @param appointmentDate LocalDateTime
-   * @return
+   * @return true if appointment time is valid
    */
   private Boolean isValidAppointmentTime(ZonedDateTime appointmentDate) {
     ZoneId easternZoneId = ZoneId.of("America/New_York");
@@ -316,24 +255,21 @@ public class AppointmentService {
    * @param start LocalDateTime
    * @param end LocalDateTime
    * @return bool
-   * @throws SQLException
+   * @throws SQLException sql error
    */
   private Boolean customerHasOverlappingAppointment(int customerId, ZonedDateTime start, ZonedDateTime end) throws SQLException {
     String selectQuery = "SELECT * FROM " + DATABASE_TABLE + " " +
       "WHERE ((Start BETWEEN ? AND ?) OR (End BETWEEN ? AND ?)) AND Customer_ID = ?";
     PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
 
-    preparedStatement.setString(1, db.getEstDateFromLocalDate(start));
-    preparedStatement.setString(2, db.getEstDateFromLocalDate(end));
-    preparedStatement.setString(3, db.getEstDateFromLocalDate(start));
-    preparedStatement.setString(4, db.getEstDateFromLocalDate(end));
+    preparedStatement.setString(1, db.getDbDateFromLocalDate(start));
+    preparedStatement.setString(2, db.getDbDateFromLocalDate(end));
+    preparedStatement.setString(3, db.getDbDateFromLocalDate(start));
+    preparedStatement.setString(4, db.getDbDateFromLocalDate(end));
     preparedStatement.setInt(5, customerId);
 
     ResultSet resultSet = preparedStatement.executeQuery();
-    while (resultSet.next()) {
-      return true;
-    }
-    return false;
+    return resultSet.next();
   }
 
   /**
@@ -349,7 +285,7 @@ public class AppointmentService {
    * @param userId int
    * @param contactId int
    * @return Appointment
-   * @throws SQLException
+   * @throws SQLException sql error
    */
   public Validator validateAppointment(Boolean isNew, String title, String description, String location, String type, ZonedDateTime start, ZonedDateTime end, int customerId, int userId, int contactId) throws SQLException {
     boolean isAnyEmpty = title.isEmpty() || description.isEmpty() || location.isEmpty() || type.isEmpty() || start == null || end == null || customerId == 0 || userId == 0 || contactId == 0;
@@ -392,9 +328,9 @@ public class AppointmentService {
    * @param userId int
    * @param contactId int
    * @return Appointment
-   * @throws SQLException
+   * @throws SQLException sql error
    */
-  public Appointment createAppointment(String title, String description, String location, String type, ZonedDateTime start, ZonedDateTime end, int customerId, int userId, int contactId) throws SQLException {
+  public Appointment createAppointment(String title, String description, String location, String type, LocalDateTime start, LocalDateTime end, int customerId, int userId, int contactId) throws SQLException {
     String insertQuery = "INSERT INTO `client_schedule`.`appointments`\n" +
       "(`Title`,\n" +
       "`Description`,\n" +
@@ -411,21 +347,19 @@ public class AppointmentService {
       "`Contact_ID`)\n" +
       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     PreparedStatement preparedStatement = conn.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
-    Date currentDate = new Date();
-    java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
-    java.sql.Date createDate = sqlDate;
-    java.sql.Date lateUpdateDate = sqlDate;
+    ZonedDateTime ldt;
+    ldt = Database.getCurrentDbTimeInUtc();
     String createUserName = UserSession.getUserName();
 
     preparedStatement.setString(1, title);
     preparedStatement.setString(2, description);
     preparedStatement.setString(3, location);
     preparedStatement.setString(4, type);
-    preparedStatement.setString(5, db.getEstDateFromLocalDate(start));
-    preparedStatement.setString(6, db.getEstDateFromLocalDate(end));
-    preparedStatement.setDate(7, createDate);
+    preparedStatement.setObject(5, Database.getEstLocalDateTimeFromDbDate(start));
+    preparedStatement.setObject(6, Database.getEstLocalDateTimeFromDbDate(end));
+    preparedStatement.setObject(7, ldt.toLocalDateTime());
     preparedStatement.setString(8, createUserName);
-    preparedStatement.setDate(9, lateUpdateDate);
+    preparedStatement.setObject(9, ldt.toLocalDateTime());
     preparedStatement.setString(10, createUserName);
     preparedStatement.setInt(11, customerId);
     preparedStatement.setInt(12, userId);
@@ -465,9 +399,9 @@ public class AppointmentService {
    * @param userId int
    * @param contactId int
    * @return Appointment
-   * @throws SQLException
+   * @throws SQLException sql error
    */
-  public Appointment updateAppointment(int appointmentId, String title, String description, String location, String type, ZonedDateTime start, ZonedDateTime end, int customerId, int userId, int contactId) throws SQLException {
+  public Appointment updateAppointment(int appointmentId, String title, String description, String location, String type, LocalDateTime start, LocalDateTime end, int customerId, int userId, int contactId) throws SQLException {
     String updateQuery = "UPDATE `client_schedule`.`appointments`\n" +
       "SET\n" +
       "`Title` = ?,\n" +
@@ -483,16 +417,15 @@ public class AppointmentService {
       "`Contact_ID` = ?\n" +
       "WHERE `Appointment_ID` = ?";
     PreparedStatement preparedStatement = conn.prepareStatement(updateQuery);
-    Date currentDate = new Date();
-    java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
+    ZonedDateTime ldt = Database.getCurrentDbTimeInUtc();
 
     preparedStatement.setString(1, title);
     preparedStatement.setString(2, description);
     preparedStatement.setString(3, location);
     preparedStatement.setString(4, type);
-    preparedStatement.setString(5, db.getEstDateFromLocalDate(start));
-    preparedStatement.setString(6, db.getEstDateFromLocalDate(end));
-    preparedStatement.setDate(7, sqlDate);
+    preparedStatement.setObject(5, Database.getEstLocalDateTimeFromDbDate(start));
+    preparedStatement.setObject(6, Database.getEstLocalDateTimeFromDbDate(end));
+    preparedStatement.setObject(7, ldt.toLocalDateTime());
     preparedStatement.setString(8, UserSession.getUserName());
     preparedStatement.setInt(9, customerId);
     preparedStatement.setInt(10, userId);
@@ -507,7 +440,7 @@ public class AppointmentService {
   /**
    * deletes an appointment with a given appointment id
    * @param appointmentId int
-   * @throws SQLException
+   * @throws SQLException sql error
    */
   public static void deleteAppointmentById(int appointmentId) throws SQLException {
     String deleteQuery = "DELETE FROM " + DATABASE_TABLE + " WHERE Appointment_ID = ?";
