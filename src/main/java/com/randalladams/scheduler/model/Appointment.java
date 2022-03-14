@@ -203,12 +203,12 @@ public class Appointment {
     this.weekYear = previousOrSameSunday.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
   }
 
-  public void setStartDisplayString(String startDisplayString) {
-    this.startDisplayString = startDisplayString;
+  public String getStartDisplayString() {
+     return startDisplayString;
   }
 
-  public String getStartDisplayString() {
-    return startDisplayString;
+  public void setStartDisplayString(String startDisplayString) {
+    this.startDisplayString = startDisplayString;
   }
 
   public String getEndDisplayString() {

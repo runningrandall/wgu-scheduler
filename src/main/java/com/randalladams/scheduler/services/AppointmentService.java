@@ -421,8 +421,8 @@ public class AppointmentService {
     preparedStatement.setString(2, description);
     preparedStatement.setString(3, location);
     preparedStatement.setString(4, type);
-    preparedStatement.setObject(5, Database.getEstFromZoneLocalDateTime(start));
-    preparedStatement.setObject(6, Database.getEstFromZoneLocalDateTime(end));
+    preparedStatement.setObject(5, start);
+    preparedStatement.setObject(6, end);
     preparedStatement.setObject(7, ldt.toLocalDateTime());
     preparedStatement.setString(8, UserSession.getUserName());
     preparedStatement.setInt(9, customerId);

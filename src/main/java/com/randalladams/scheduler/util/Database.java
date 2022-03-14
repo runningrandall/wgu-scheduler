@@ -89,6 +89,11 @@ public class Database {
     return getUtcDateTimeFromEstDateTime(date).format(formatter);
   }
 
+  /**
+   * function to convert an easter timezone date to a utc date
+   * @param localDt the local datetime
+   * @return LocalDateTie
+   */
   public static LocalDateTime getUtcDateTimeFromEstDateTime(LocalDateTime localDt) {
     return localDt.atZone(ZoneId.of(EST_TIMEZONE)).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
   }
@@ -102,16 +107,30 @@ public class Database {
     return dbDate.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of(EST_TIMEZONE)).toLocalDateTime();
   }
 
+  /**
+   * converts a local date time to a proper converted string
+   * @param dateTimeToConvert the local date time to convert
+   * @return String
+   */
   public static String getDateDisplayString(LocalDateTime dateTimeToConvert) {
     return dateTimeToConvert.format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
   }
 
+  /**
+   * converts a localdatetime in users current timezone and converts it to eastern
+   * @return ZonedDateTime
+   */
   public static ZonedDateTime getCurrentDbTimeInEst() {
     ZoneId z = ZoneId.of(EST_TIMEZONE);
     return LocalDateTime.now().atZone(ZoneId.systemDefault()).withZoneSameInstant(z);
   }
 
+  /**
+   * converts a local date time and converts it to eastern
+   * @param localDate the local date time
+   * @return ZonedDateTime
+   */
   public static ZonedDateTime getEstFromZoneLocalDateTime(LocalDateTime localDate) {
-    return localDate.atZone(ZoneId.of(EST_TIMEZONE));
+    return localDate.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of(EST_TIMEZONE));
   }
 }
