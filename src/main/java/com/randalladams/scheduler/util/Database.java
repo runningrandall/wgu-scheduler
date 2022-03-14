@@ -84,10 +84,13 @@ public class Database {
    * @param date ZonedDateTime - local timezone in
    * @return String
    */
-  public String getDbDateFromLocalDate(ZonedDateTime date) {
-    ZoneId utcZoneId = ZoneId.of("UTC");
+  public String getDbDateFromLocalDate(LocalDateTime date) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DB_DATE_FORMAT);
-    return date.withZoneSameInstant(utcZoneId).format(formatter);
+    return getUtcDateTimeFromEstDateTime(date).format(formatter);
+  }
+
+  public static LocalDateTime getUtcDateTimeFromEstDateTime(LocalDateTime localDt) {
+    return localDt.atZone(ZoneId.of(EST_TIMEZONE)).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
   }
 
   /**
@@ -95,20 +98,20 @@ public class Database {
    * @param dbDate timestamp
    * @return Timestamp
    */
-  public static ZonedDateTime getZonedDateTimeFromDbDate(LocalDateTime dbDate) {
-    return dbDate.atZone(ZoneId.systemDefault());
+  public static LocalDateTime getZonedDateTimeFromDbDate(LocalDateTime dbDate) {
+    return dbDate.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of(EST_TIMEZONE)).toLocalDateTime();
   }
 
-  public static String getDateDisplayString(ZonedDateTime dateTimeToConvert) {
+  public static String getDateDisplayString(LocalDateTime dateTimeToConvert) {
     return dateTimeToConvert.format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
   }
 
-  public static LocalDateTime getEstLocalDateTimeFromDbDate(LocalDateTime dbDate) {
-    return dbDate.atZone(ZoneId.of(EST_TIMEZONE)).toLocalDateTime();
+  public static ZonedDateTime getCurrentDbTimeInEst() {
+    ZoneId z = ZoneId.of(EST_TIMEZONE);
+    return LocalDateTime.now().atZone(ZoneId.systemDefault()).withZoneSameInstant(z);
   }
 
-  public static ZonedDateTime getCurrentDbTimeInUtc() {
-    ZoneId z = ZoneId.of( "UTC" ) ;
-    return LocalDateTime.now().atZone(z);
+  public static ZonedDateTime getEstFromZoneLocalDateTime(LocalDateTime localDate) {
+    return localDate.atZone(ZoneId.of(EST_TIMEZONE));
   }
 }

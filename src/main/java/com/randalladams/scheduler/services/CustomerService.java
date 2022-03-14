@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.regex.Pattern;
 
@@ -20,6 +21,7 @@ public class CustomerService {
   private static Connection conn;
   private static final String DATABASE_TABLE = "customers";
   private static final FirstLevelDivisionsService fldService = new FirstLevelDivisionsService();
+  private static final CountryService countryService = new CountryService();
   private static final String uk = "UK";
 
   /**
@@ -45,7 +47,6 @@ public class CustomerService {
       "ON fld.Division_ID = c.Division_ID " +
       "ORDER BY c.Create_date DESC";
     PreparedStatement preparedStatement = conn.prepareStatement(customersQuery);
-
     ResultSet resultSet = preparedStatement.executeQuery();
     ObservableList<Customer> customerList = FXCollections.observableArrayList();
     while (resultSet.next()) {
@@ -56,13 +57,13 @@ public class CustomerService {
           resultSet.getString("c.Address"),
           resultSet.getString("c.Postal_Code"),
           resultSet.getString("c.Phone"),
-          resultSet.getDate("c.Create_Date"),
+          resultSet.getObject("c.Create_Date", LocalDateTime.class),
           resultSet.getString("c.Created_By"),
-          resultSet.getDate("c.Last_Update"),
+          resultSet.getObject("c.Last_Update", LocalDateTime.class),
           resultSet.getString("c.Last_Updated_By"),
           resultSet.getInt("c.Division_ID"),
           resultSet.getInt("fld.Country_ID"),
-          CountryService.getCountryById(resultSet.getInt("fld.Country_ID")),
+          countryService.getCountryById(resultSet.getInt("fld.Country_ID")),
           fldService.getFirstLevelDivisionById(resultSet.getInt("c.Division_ID")));
           customerList.add(customer);
       } catch (Exception e) {
@@ -94,13 +95,13 @@ public class CustomerService {
       resultSet.getString("c.Address"),
       resultSet.getString("c.Postal_Code"),
       resultSet.getString("c.Phone"),
-      resultSet.getDate("c.Create_Date"),
+      resultSet.getObject("c.Create_Date", LocalDateTime.class),
       resultSet.getString("c.Created_By"),
-      resultSet.getDate("c.Last_Update"),
+      resultSet.getObject("c.Last_Update", LocalDateTime.class),
       resultSet.getString("c.Last_Updated_By"),
       resultSet.getInt("c.Division_ID"),
       resultSet.getInt("fld.Country_ID"),
-      CountryService.getCountryById(resultSet.getInt("fld.Country_ID")),
+      countryService.getCountryById(resultSet.getInt("fld.Country_ID")),
       fldService.getFirstLevelDivisionById(resultSet.getInt("c.Division_ID"))
     );
   }
@@ -121,7 +122,7 @@ public class CustomerService {
       "SET Customer_Name = ?, Address = ?, Postal_Code = ?, Phone = ?, Last_Update = ?, Last_Updated_By = ?, Division_ID = ? " +
       "WHERE Customer_ID = ?";
     PreparedStatement preparedStatement = conn.prepareStatement(updateQuery);
-    ZonedDateTime ldt = Database.getCurrentDbTimeInUtc();
+    ZonedDateTime ldt = Database.getCurrentDbTimeInEst();
 
     preparedStatement.setString(1, name);
     preparedStatement.setString(2, address);
@@ -153,7 +154,7 @@ public class CustomerService {
       "(`Customer_Name`, `Address`, `Postal_Code`, `Phone`, `Create_Date`, `Created_By`, `Last_Update`, `Last_Updated_By`, `Division_ID`) " +
       "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
     PreparedStatement preparedStatement = conn.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
-    ZonedDateTime ldt = Database.getCurrentDbTimeInUtc();
+    ZonedDateTime ldt = Database.getCurrentDbTimeInEst();
 
     preparedStatement.setString(1, name);
     preparedStatement.setString(2, address);

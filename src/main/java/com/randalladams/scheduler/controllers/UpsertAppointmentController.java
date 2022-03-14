@@ -13,7 +13,6 @@ import javafx.stage.WindowEvent;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -112,8 +111,8 @@ public class UpsertAppointmentController implements Initializable {
     appointmentDescription.setText(appointment.getDescription());
     appointmentLocation.setText(appointment.getLocation());
     appointmentType.setText(appointment.getType());
-    appointmentStart.setDateTimeValue(Database.getEstLocalDateTimeFromDbDate(appointment.getStart()));
-    appointmentEnd.setDateTimeValue(Database.getEstLocalDateTimeFromDbDate(appointment.getEnd()));
+    appointmentStart.setDateTimeValue(Database.getZonedDateTimeFromDbDate(appointment.getStart()));
+    appointmentEnd.setDateTimeValue(Database.getZonedDateTimeFromDbDate(appointment.getEnd()));
     appointmentCustomerId.setText(String.valueOf(appointment.getCustomerId()));
     appointmentUserId.setText(String.valueOf(appointment.getUserId()));
     contactsChoiceBox.setValue(contactKvp);
@@ -141,8 +140,8 @@ public class UpsertAppointmentController implements Initializable {
    */
   public void submitAppointment() {
     Validator appointValidity;
-    ZonedDateTime zonedStartDateTime = appointmentStart.getDateTimeValue().atZone(ZoneId.systemDefault());
-    ZonedDateTime zonedEndDateTime = appointmentEnd.getDateTimeValue().atZone(ZoneId.systemDefault());
+    ZonedDateTime zonedStartDateTime = Database.getEstFromZoneLocalDateTime(appointmentStart.getDateTimeValue());
+    ZonedDateTime zonedEndDateTime = Database.getEstFromZoneLocalDateTime(appointmentEnd.getDateTimeValue());
     Alert errorAlert;
     try {
       appointValidity = as.validateAppointment(
@@ -174,8 +173,8 @@ public class UpsertAppointmentController implements Initializable {
             appointmentDescription.getText(),
             appointmentLocation.getText(),
             appointmentType.getText(),
-            appointmentStart.getDateTimeValue(),
-            appointmentEnd.getDateTimeValue(),
+            Database.getUtcDateTimeFromEstDateTime(appointmentStart.getDateTimeValue()),
+            Database.getUtcDateTimeFromEstDateTime(appointmentEnd.getDateTimeValue()),
             Integer.parseInt(appointmentCustomerId.getText()),
             Integer.parseInt(appointmentUserId.getText()),
             Integer.parseInt(contactsChoiceBox.getValue().getKey())
@@ -194,8 +193,8 @@ public class UpsertAppointmentController implements Initializable {
             appointmentDescription.getText(),
             appointmentLocation.getText(),
             appointmentType.getText(),
-            appointmentStart.getDateTimeValue(),
-            appointmentEnd.getDateTimeValue(),
+            Database.getUtcDateTimeFromEstDateTime(appointmentStart.getDateTimeValue()),
+            Database.getUtcDateTimeFromEstDateTime(appointmentEnd.getDateTimeValue()),
             Integer.parseInt(appointmentCustomerId.getText()),
             Integer.parseInt(appointmentUserId.getText()),
             Integer.parseInt(contactsChoiceBox.getValue().getKey())

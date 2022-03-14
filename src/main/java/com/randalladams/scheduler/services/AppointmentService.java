@@ -214,9 +214,9 @@ public class AppointmentService {
    */
   public Appointment getAppointmentWithinFifteenMinutes(int userId) throws SQLException {
 
-    String currentDateTime = LocalDateTime.now(ZoneOffset.UTC)
+    String currentDateTime = LocalDateTime.now(ZoneId.of("America/New_York"))
       .format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
-    String dateTimePlusFifteen = LocalDateTime.now(ZoneOffset.UTC)
+    String dateTimePlusFifteen = LocalDateTime.now(ZoneId.of("America/New_York"))
       .plusMinutes(APPOINTMENT_START_ALERT_IN_MINUTES)
       .format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
     String selectQuery = "SELECT * FROM " + DATABASE_TABLE + " " +
@@ -237,13 +237,12 @@ public class AppointmentService {
   /**
    * checks to see if the appointment time is valid
    * no overlapping or outside business hours
-   * @param appointmentDate LocalDateTime
+   * @param appointmentDate ZonedDateTime in EST
    * @return true if appointment time is valid
    */
   private Boolean isValidAppointmentTime(ZonedDateTime appointmentDate) {
-    ZoneId easternZoneId = ZoneId.of("America/New_York");
-    int appointmentHour = appointmentDate.withZoneSameInstant(easternZoneId).getHour();
-    int appointmentMinute = appointmentDate.withZoneSameInstant(easternZoneId).getMinute();
+    int appointmentHour = appointmentDate.getHour();
+    int appointmentMinute = appointmentDate.getMinute();
     Boolean isValidHour = appointmentHour >= VALID_START_HOUR_ET && appointmentHour <= VALID_END_HOUR_ET;
     Boolean isValidMinute = appointmentHour != VALID_END_HOUR_ET || appointmentMinute == 0;
     return isValidHour && isValidMinute;
@@ -257,7 +256,7 @@ public class AppointmentService {
    * @return bool
    * @throws SQLException sql error
    */
-  private Boolean customerHasOverlappingAppointment(int customerId, ZonedDateTime start, ZonedDateTime end) throws SQLException {
+  private Boolean customerHasOverlappingAppointment(int customerId, LocalDateTime start, LocalDateTime end) throws SQLException {
     String selectQuery = "SELECT * FROM " + DATABASE_TABLE + " " +
       "WHERE ((Start BETWEEN ? AND ?) OR (End BETWEEN ? AND ?)) AND Customer_ID = ?";
     PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
@@ -308,7 +307,7 @@ public class AppointmentService {
     }
 
     if (isNew) {
-      if (this.customerHasOverlappingAppointment(customerId, start, end)) {
+      if (this.customerHasOverlappingAppointment(customerId, start.toLocalDateTime(), end.toLocalDateTime())) {
         return new Validator(false, "The customer already has an appointment during this time.");
       }
     }
@@ -348,15 +347,15 @@ public class AppointmentService {
       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     PreparedStatement preparedStatement = conn.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
     ZonedDateTime ldt;
-    ldt = Database.getCurrentDbTimeInUtc();
+    ldt = Database.getCurrentDbTimeInEst();
     String createUserName = UserSession.getUserName();
 
     preparedStatement.setString(1, title);
     preparedStatement.setString(2, description);
     preparedStatement.setString(3, location);
     preparedStatement.setString(4, type);
-    preparedStatement.setObject(5, Database.getEstLocalDateTimeFromDbDate(start));
-    preparedStatement.setObject(6, Database.getEstLocalDateTimeFromDbDate(end));
+    preparedStatement.setObject(5, start);
+    preparedStatement.setObject(6, end);
     preparedStatement.setObject(7, ldt.toLocalDateTime());
     preparedStatement.setString(8, createUserName);
     preparedStatement.setObject(9, ldt.toLocalDateTime());
@@ -365,7 +364,6 @@ public class AppointmentService {
     preparedStatement.setInt(12, userId);
     preparedStatement.setInt(13, contactId);
 
-    System.out.println(preparedStatement);
     int affectedRows = preparedStatement.executeUpdate();
 
     if (affectedRows == 0) {
@@ -417,14 +415,14 @@ public class AppointmentService {
       "`Contact_ID` = ?\n" +
       "WHERE `Appointment_ID` = ?";
     PreparedStatement preparedStatement = conn.prepareStatement(updateQuery);
-    ZonedDateTime ldt = Database.getCurrentDbTimeInUtc();
+    ZonedDateTime ldt = Database.getCurrentDbTimeInEst();
 
     preparedStatement.setString(1, title);
     preparedStatement.setString(2, description);
     preparedStatement.setString(3, location);
     preparedStatement.setString(4, type);
-    preparedStatement.setObject(5, Database.getEstLocalDateTimeFromDbDate(start));
-    preparedStatement.setObject(6, Database.getEstLocalDateTimeFromDbDate(end));
+    preparedStatement.setObject(5, Database.getEstFromZoneLocalDateTime(start));
+    preparedStatement.setObject(6, Database.getEstFromZoneLocalDateTime(end));
     preparedStatement.setObject(7, ldt.toLocalDateTime());
     preparedStatement.setString(8, UserSession.getUserName());
     preparedStatement.setInt(9, customerId);

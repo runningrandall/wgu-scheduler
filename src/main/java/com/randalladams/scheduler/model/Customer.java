@@ -1,6 +1,6 @@
 package com.randalladams.scheduler.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * model class for creating customers
@@ -15,9 +15,9 @@ public class Customer {
   private String address;
   private String postalCode;
   private String phone;
-  private Date createDate;
+  private LocalDateTime createDate;
   private String createdBy;
-  private Date lastUpdateDate;
+  private LocalDateTime lastUpdateDate;
   private String lastUpdatedBy;
   private int divisionId;
   private int countryId;
@@ -40,7 +40,7 @@ public class Customer {
    * @param country country
    * @param division division
    */
-  public Customer(int customer_id, String customer_name, String address, String postal_code, String phone, java.sql.Date create_date, String created_by, java.sql.Date last_update, String last_updated_by, int division_id, int country_id, String country, String division) {
+  public Customer(int customer_id, String customer_name, String address, String postal_code, String phone, LocalDateTime create_date, String created_by, LocalDateTime last_update, String last_updated_by, int division_id, int country_id, String country, String division) {
     this.setId(customer_id);
     this.setName(customer_name);
     this.setAddress(address);
@@ -156,7 +156,7 @@ public class Customer {
    * setter for create date
    * @param createDate date
    */
-  public void setCreateDate(Date createDate) {
+  public void setCreateDate(LocalDateTime createDate) {
     this.createDate = createDate;
   }
 
@@ -172,7 +172,7 @@ public class Customer {
    * setter for last update date
    * @param lastUpdateDate date
    */
-  public void setLastUpdateDate(Date lastUpdateDate) {
+  public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
     this.lastUpdateDate = lastUpdateDate;
   }
 
@@ -236,7 +236,7 @@ public class Customer {
    * getter for create date
    * @return Date
    */
-  public Date getCreateDate() {
+  public LocalDateTime getCreateDate() {
     return createDate;
   }
 
@@ -252,7 +252,7 @@ public class Customer {
    * getter for lastUpdateDate
    * @return Date
    */
-  public Date getLastUpdateDate() {
+  public LocalDateTime getLastUpdateDate() {
     return lastUpdateDate;
   }
 

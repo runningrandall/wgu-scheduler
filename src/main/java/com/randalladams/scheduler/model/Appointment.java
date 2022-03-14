@@ -189,7 +189,7 @@ public class Appointment {
    * method to set the month year for an appointment
    * @param start ZonedDateTime
    */
-  public void setAppointmentMonthYear(ZonedDateTime start) {
+  public void setAppointmentMonthYear(LocalDateTime start) {
     this.monthYear = start.format(DateTimeFormatter.ofPattern("MM-yyyy"));
   }
 
@@ -197,7 +197,7 @@ public class Appointment {
    * method to set the week year based on start
    * @param start ZonedDateTime
    */
-  public void setAppointmentWeekYear(ZonedDateTime start) {
+  public void setAppointmentWeekYear(LocalDateTime start) {
     LocalDate localStartDate = start.toLocalDate();
     LocalDate previousOrSameSunday = localStartDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
     this.weekYear = previousOrSameSunday.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));

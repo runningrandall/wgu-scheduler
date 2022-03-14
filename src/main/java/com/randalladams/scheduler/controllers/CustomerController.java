@@ -70,7 +70,7 @@ public class CustomerController implements Initializable {
    */
   private void setupCustomersTable(ObservableList<Customer> allCustomers, ResourceBundle resourceBundle) {
     customersTable.getColumns().clear();
-    // TODO: get labels from i18n
+
     TableColumn<Customer, String> idCol = new TableColumn<>(resourceBundle.getString("customers_table.columns.id"));
     idCol.setMinWidth(10);
     idCol.setCellValueFactory(
