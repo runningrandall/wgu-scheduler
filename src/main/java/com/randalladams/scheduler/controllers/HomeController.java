@@ -98,7 +98,7 @@ public class HomeController<CustomerTabPage, AppointmentTabPage, ReportTabPage> 
     if (appointment != null) {
       appointmentAlertText = langBundle.getString("appointment_alert.text_1") +
         "\n " + langBundle.getString("appointment_alert.text_2") + " " + appointment.getAppointmentId() +
-        "\n " + langBundle.getString("appointment_alert.text_3") + " " + Database.getZonedDateTimeFromDbDate(appointment.getStart());
+        "\n " + langBundle.getString("appointment_alert.text_3") + " " + Database.getZonedDateTimeFromDbDate(appointment.getStart()) + " EST";
     } else {
       appointmentAlertText = langBundle.getString("appointment_alert.no_appointment");
     }

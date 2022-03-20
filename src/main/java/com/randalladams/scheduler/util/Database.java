@@ -108,6 +108,14 @@ public class Database {
   }
 
   /**
+   * method to get datetime in utc from localdate time
+   * @return Timestamp
+   */
+  public static LocalDateTime getUtcDateFromLocalDateTime() {
+    return LocalDateTime.now().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+  }
+
+  /**
    * converts a local date time to a proper converted string
    * @param dateTimeToConvert the local date time to convert
    * @return String

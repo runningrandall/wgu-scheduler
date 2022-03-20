@@ -214,20 +214,22 @@ public class AppointmentService {
    */
   public Appointment getAppointmentWithinFifteenMinutes(int userId) throws SQLException {
 
-    String currentDateTime = LocalDateTime.now(ZoneId.of("America/New_York"))
-      .format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
-    String dateTimePlusFifteen = LocalDateTime.now(ZoneId.of("America/New_York"))
+    LocalDateTime currentUtcDateTime = Database.getUtcDateFromLocalDateTime();
+    String currentUtcDateTimeString = currentUtcDateTime.format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
+    String dateTimePlusFifteen = currentUtcDateTime
       .plusMinutes(APPOINTMENT_START_ALERT_IN_MINUTES)
       .format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
+
     String selectQuery = "SELECT * FROM " + DATABASE_TABLE + " " +
       "a LEFT JOIN contacts c ON c.Contact_ID = a.Contact_ID " +
       "WHERE a.User_ID = ? AND a.Start BETWEEN ? AND ? LIMIT 1";
     PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
 
     preparedStatement.setInt(1, userId);
-    preparedStatement.setString(2, currentDateTime);
+    preparedStatement.setString(2, currentUtcDateTimeString);
     preparedStatement.setString(3, dateTimePlusFifteen);
     ResultSet resultSet = preparedStatement.executeQuery();
+    System.out.println(preparedStatement.toString());
     if (resultSet.next()) {
       return this.getAppointmentFromResult(resultSet);
     }
