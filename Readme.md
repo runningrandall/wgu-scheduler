@@ -23,7 +23,7 @@ Current application version is 1.0.0 as found in the pom.
 
 #### Date
 
-Updated as of 12/27/2021
+Updated as of 03/20/2022
 
 #### Application Build Details
 
@@ -33,6 +33,8 @@ Updated as of 12/27/2021
 * MySQL Connector Driver: `8.0.2.1`
 
 ## Running The Application
+
+### Locally
 
 1. clone the repo
 1. Create a `src/main/resources/application.properties` with the following contents:
@@ -46,6 +48,10 @@ db.schema=client_schedule
 1. Add a run `Application" and name it `Main`. Include the following configuration details:
     * Main Class: `com.randalladams.scheduler.MainApp`
     * VM Options: `--module-path "C:\Program Files\Java\javafx-sdk-11.0.2\lib" --add-modules javafx.controls,javafx.fxml`
+
+### In The Lab
+
+You can simply open the project in IntelliJ and click run.
 
 ## Reports
 

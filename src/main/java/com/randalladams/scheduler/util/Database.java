@@ -86,16 +86,16 @@ public class Database {
    */
   public String getDbDateFromLocalDate(LocalDateTime date) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DB_DATE_FORMAT);
-    return getUtcDateTimeFromEstDateTime(date).format(formatter);
+    return getUtcDateTimeFromLocalDateTime(date).format(formatter);
   }
 
   /**
-   * function to convert an easter timezone date to a utc date
+   * function to convert an local timezone date to a utc date
    * @param localDt the local datetime
    * @return LocalDateTie
    */
-  public static LocalDateTime getUtcDateTimeFromEstDateTime(LocalDateTime localDt) {
-    return localDt.atZone(ZoneId.of(EST_TIMEZONE)).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+  public static LocalDateTime getUtcDateTimeFromLocalDateTime(LocalDateTime localDt) {
+    return localDt.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
   }
 
   /**
@@ -104,7 +104,7 @@ public class Database {
    * @return Timestamp
    */
   public static LocalDateTime getZonedDateTimeFromDbDate(LocalDateTime dbDate) {
-    return dbDate.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of(EST_TIMEZONE)).toLocalDateTime();
+    return dbDate.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
   }
 
   /**
@@ -134,11 +134,29 @@ public class Database {
   }
 
   /**
+   * converts a localdatetime in users current timezone
+   * @return ZonedDateTime
+   */
+  public static ZonedDateTime getCurrentDbTimeInLocal() {
+    ZoneId z = ZoneId.systemDefault();
+    return LocalDateTime.now().atZone(z);
+  }
+
+  /**
    * converts a local date time and converts it to eastern
    * @param localDate the local date time
    * @return ZonedDateTime
    */
   public static ZonedDateTime getEstFromZoneLocalDateTime(LocalDateTime localDate) {
     return localDate.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of(EST_TIMEZONE));
+  }
+
+  /**
+   * converts a local date time and converts it to eastern
+   * @param localDate the local date time
+   * @return ZonedDateTime
+   */
+  public static ZonedDateTime getLocalZonedDateTimeFromLocalDateTime(LocalDateTime localDate) {
+    return localDate.atZone(ZoneId.systemDefault());
   }
 }

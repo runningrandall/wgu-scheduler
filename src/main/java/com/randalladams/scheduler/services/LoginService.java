@@ -51,6 +51,7 @@ public class LoginService {
     String loginQuery = "SELECT * FROM " + DATABASE_TABLE + " WHERE User_name = ? AND Password = ? LIMIT 1";
     PreparedStatement preparedStatement = conn.prepareStatement(loginQuery);
     preparedStatement.setString(1, username);
+    // TODO: remove encryption...not sure why this class allows unencrypted passwords AT ALL
     preparedStatement.setString(2, encryptPassword(password));
     // Execute the query
     ResultSet resultSet = preparedStatement.executeQuery();
@@ -112,7 +113,7 @@ public class LoginService {
     while(loginEntry != null) {
       if (loginEntry.startsWith("INFO:")) {
         String[] splitByColon = loginEntry.split(":");
-        String dateString = (splitByColon[1] +  splitByColon[2] + ":" + splitByColon[3]).trim();
+        String dateString = (splitByColon[1] + ":" + splitByColon[2] + ":" + splitByColon[3]).trim();
 
         String[] splitBySpace = splitByColon[4].trim().split(" ");
         String username = splitBySpace[0].split("=")[1];

@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter;
 public class AppointmentService {
   private static Connection conn;
   private static final String DATABASE_TABLE = "appointments";
-  private static final int VALID_START_HOUR_ET = 7; // 8am eastern
+  private static final int VALID_START_HOUR_ET = 8; // 8am eastern
   private static final int VALID_END_HOUR_ET = 22; // 10pm eastern
   private static final int APPOINTMENT_START_ALERT_IN_MINUTES = 15;
   private static final String DB_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
@@ -121,7 +121,6 @@ public class AppointmentService {
     if (weekOrMonth.equals(FILTER_WEEK)) {
       startDate = midnight
         .with(DayOfWeek.SUNDAY)
-        .minusDays(7)
         .format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
     }
     else {
@@ -133,7 +132,8 @@ public class AppointmentService {
     String endDate;
     if (weekOrMonth.equals(FILTER_WEEK)) {
       endDate = oneMinuteBeforeMidnight
-        .with(DayOfWeek.SATURDAY)
+        .with(DayOfWeek.SUNDAY)
+        .plusDays(6)
         .format(DateTimeFormatter.ofPattern(DB_DATE_FORMAT));
     }
     else {
@@ -153,6 +153,7 @@ public class AppointmentService {
     preparedStatement.setString(2, startDate);
     preparedStatement.setString(3, endDate);
     ResultSet resultSet = preparedStatement.executeQuery();
+
     ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
 
     while (resultSet.next()) {
@@ -229,7 +230,7 @@ public class AppointmentService {
     preparedStatement.setString(2, currentUtcDateTimeString);
     preparedStatement.setString(3, dateTimePlusFifteen);
     ResultSet resultSet = preparedStatement.executeQuery();
-    System.out.println(preparedStatement.toString());
+
     if (resultSet.next()) {
       return this.getAppointmentFromResult(resultSet);
     }
@@ -243,8 +244,9 @@ public class AppointmentService {
    * @return true if appointment time is valid
    */
   private Boolean isValidAppointmentTime(ZonedDateTime appointmentDate) {
-    int appointmentHour = appointmentDate.getHour();
-    int appointmentMinute = appointmentDate.getMinute();
+    ZonedDateTime appointmentDateInEst = db.getEstFromZoneLocalDateTime(appointmentDate.toLocalDateTime());
+    int appointmentHour = appointmentDateInEst.getHour();
+    int appointmentMinute = appointmentDateInEst.getMinute();
     Boolean isValidHour = appointmentHour >= VALID_START_HOUR_ET && appointmentHour <= VALID_END_HOUR_ET;
     Boolean isValidMinute = appointmentHour != VALID_END_HOUR_ET || appointmentMinute == 0;
     return isValidHour && isValidMinute;
@@ -263,10 +265,12 @@ public class AppointmentService {
       "WHERE ((Start BETWEEN ? AND ?) OR (End BETWEEN ? AND ?)) AND Customer_ID = ?";
     PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
 
-    preparedStatement.setString(1, db.getDbDateFromLocalDate(start));
-    preparedStatement.setString(2, db.getDbDateFromLocalDate(end));
-    preparedStatement.setString(3, db.getDbDateFromLocalDate(start));
-    preparedStatement.setString(4, db.getDbDateFromLocalDate(end));
+    LocalDateTime startInUtc = db.getUtcDateTimeFromLocalDateTime(start);
+    LocalDateTime endInUtc = db.getUtcDateTimeFromLocalDateTime(end);
+    preparedStatement.setString(1, db.getDbDateFromLocalDate(startInUtc));
+    preparedStatement.setString(2, db.getDbDateFromLocalDate(endInUtc));
+    preparedStatement.setString(3, db.getDbDateFromLocalDate(startInUtc));
+    preparedStatement.setString(4, db.getDbDateFromLocalDate(endInUtc));
     preparedStatement.setInt(5, customerId);
 
     ResultSet resultSet = preparedStatement.executeQuery();
@@ -417,7 +421,7 @@ public class AppointmentService {
       "`Contact_ID` = ?\n" +
       "WHERE `Appointment_ID` = ?";
     PreparedStatement preparedStatement = conn.prepareStatement(updateQuery);
-    ZonedDateTime ldt = Database.getCurrentDbTimeInEst();
+    ZonedDateTime ldt = Database.getCurrentDbTimeInLocal();
 
     preparedStatement.setString(1, title);
     preparedStatement.setString(2, description);

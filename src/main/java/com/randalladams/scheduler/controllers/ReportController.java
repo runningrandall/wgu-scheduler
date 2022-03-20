@@ -171,11 +171,11 @@ public class ReportController implements Initializable {
 
       TableColumn<Appointment, String> startCol = new TableColumn<>(langBundle.getString("reports_table.columns.start"));
       startCol.setCellValueFactory(
-        new PropertyValueFactory<>("startTimestamp"));
+        new PropertyValueFactory<>("startDisplayString"));
 
       TableColumn<Appointment, String> endCol = new TableColumn<>(langBundle.getString("reports_table.columns.end"));
       endCol.setCellValueFactory(
-        new PropertyValueFactory<>("endTimestamp"));
+        new PropertyValueFactory<>("endDisplayString"));
 
       TableColumn<Appointment, String> customerIdCol = new TableColumn<>(langBundle.getString("reports_table.columns.customer_id"));
       customerIdCol.setCellValueFactory(

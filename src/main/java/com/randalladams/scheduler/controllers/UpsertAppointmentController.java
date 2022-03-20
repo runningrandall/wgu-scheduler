@@ -140,8 +140,8 @@ public class UpsertAppointmentController implements Initializable {
    */
   public void submitAppointment() {
     Validator appointValidity;
-    ZonedDateTime zonedStartDateTime = Database.getEstFromZoneLocalDateTime(appointmentStart.getDateTimeValue());
-    ZonedDateTime zonedEndDateTime = Database.getEstFromZoneLocalDateTime(appointmentEnd.getDateTimeValue());
+    ZonedDateTime zonedStartDateTime = Database.getLocalZonedDateTimeFromLocalDateTime(appointmentStart.getDateTimeValue());
+    ZonedDateTime zonedEndDateTime = Database.getLocalZonedDateTimeFromLocalDateTime(appointmentEnd.getDateTimeValue());
     Alert errorAlert;
     try {
       appointValidity = as.validateAppointment(
@@ -173,8 +173,8 @@ public class UpsertAppointmentController implements Initializable {
             appointmentDescription.getText(),
             appointmentLocation.getText(),
             appointmentType.getText(),
-            Database.getUtcDateTimeFromEstDateTime(appointmentStart.getDateTimeValue()),
-            Database.getUtcDateTimeFromEstDateTime(appointmentEnd.getDateTimeValue()),
+            Database.getUtcDateTimeFromLocalDateTime(appointmentStart.getDateTimeValue()),
+            Database.getUtcDateTimeFromLocalDateTime(appointmentEnd.getDateTimeValue()),
             Integer.parseInt(appointmentCustomerId.getText()),
             Integer.parseInt(appointmentUserId.getText()),
             Integer.parseInt(contactsChoiceBox.getValue().getKey())
@@ -193,8 +193,8 @@ public class UpsertAppointmentController implements Initializable {
             appointmentDescription.getText(),
             appointmentLocation.getText(),
             appointmentType.getText(),
-            Database.getUtcDateTimeFromEstDateTime(appointmentStart.getDateTimeValue()),
-            Database.getUtcDateTimeFromEstDateTime(appointmentEnd.getDateTimeValue()),
+            Database.getUtcDateTimeFromLocalDateTime(appointmentStart.getDateTimeValue()),
+            Database.getUtcDateTimeFromLocalDateTime(appointmentEnd.getDateTimeValue()),
             Integer.parseInt(appointmentCustomerId.getText()),
             Integer.parseInt(appointmentUserId.getText()),
             Integer.parseInt(contactsChoiceBox.getValue().getKey())
